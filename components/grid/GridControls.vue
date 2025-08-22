@@ -28,7 +28,6 @@ const handleSizeChange = (event) => {
 </template>
 
 <style>
-@import '../../styles/shared.css';
 
 /* Component-specific styles */
 .grid-controls {
@@ -44,7 +43,7 @@ const handleSizeChange = (event) => {
   padding: 8px 12px;
   font-size: 16px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: var(--radius-xs);
   min-width: 120px;
 }
 

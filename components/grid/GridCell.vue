@@ -104,18 +104,13 @@ const onMiniSwatchTouchEnd = (e) => {
 </template>
 
 <style>
-@import '../../styles/shared.css';
 
 .grid-cell {
   aspect-ratio: 1;
   border: none;
-  border-radius: 6px;
-  background: linear-gradient(145deg, #f0f0f0, #e8e8e8);
-  box-shadow: 
-    inset 0 1px 2px rgba(0,0,0,0.08),
-    inset 0 -1px 2px rgba(255,255,255,0.5),
-    inset 1px 0 2px rgba(0,0,0,0.05),
-    inset -1px 0 2px rgba(255,255,255,0.3);
+  border-radius: var(--radius-grid-cell);
+  background: var(--gradient-container-neutral);
+  box-shadow: var(--shadow-grid-cell);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -126,12 +121,8 @@ const onMiniSwatchTouchEnd = (e) => {
 }
 
 .grid-cell.drag-over {
-  background: linear-gradient(145deg, #e8f2ff, #dae8ff);
-  box-shadow: 
-    inset 0 1px 2px rgba(0,123,255,0.12),
-    inset 0 -1px 2px rgba(255,255,255,0.6),
-    inset 1px 0 2px rgba(0,123,255,0.08),
-    inset -1px 0 2px rgba(255,255,255,0.4);
+  background: var(--gradient-container-hover);
+  box-shadow: var(--shadow-grid-cell-hover);
   transform: scale(1.02);
 }
 
@@ -143,8 +134,8 @@ const onMiniSwatchTouchEnd = (e) => {
 .mini-swatch {
   width: 100%;
   height: 100%;
-  border-radius: 4px;
-  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: var(--radius-swatch-mini);
+  border: var(--border-swatch);
   cursor: grab;
   display: flex;
   flex-direction: column;
@@ -163,18 +154,19 @@ const onMiniSwatchTouchEnd = (e) => {
 }
 
 .mini-color-name {
+  font-family: var(--font-family-primary);
   font-size: 12px;
   font-weight: bold;
-  color: rgba(0,0,0,0.8);
+  color: var(--color-text-primary);
   text-align: center;
   margin-top: 2px;
-  text-shadow: 0 0 3px rgba(255,255,255,0.8);
+  text-shadow: var(--text-shadow-light);
   pointer-events: none;
   max-width: 64px;
 }
 
 .mini-swatch.dark-mini-swatch .mini-color-name {
-  color: white;
-  text-shadow: 0 0 3px rgba(0,0,0,0.8);
+  color: var(--color-text-white);
+  text-shadow: var(--text-shadow-dark);
 }
 </style>

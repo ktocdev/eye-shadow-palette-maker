@@ -4,17 +4,16 @@ defineEmits(['clear', 'randomize'])
 
 <template>
   <div class="palette-controls flex-column-mobile flex-center">
-    <button @click="$emit('clear')" class="btn-compact btn-gradient-red">
-      Clear Palette
-    </button>
-    <button @click="$emit('randomize')" class="btn-compact btn-gradient-purple">
+    <button @click="$emit('randomize')" class="btn btn-compact btn-gradient-purple">
       Random Palette
+    </button>
+    <button @click="$emit('clear')" class="btn btn-compact btn-gradient-red">
+      Clear Palette
     </button>
   </div>
 </template>
 
 <style>
-@import '../../styles/shared.css';
 
 /* Component-specific responsive layout */
 .palette-controls {

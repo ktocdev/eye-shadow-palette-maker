@@ -13,7 +13,7 @@
    BASE STYLES & TYPOGRAPHY
    ========================================= */
 
-p {
+p, label, select, button {
   font-family: var(--font-family-primary);
   font-size: var(--font-size-base);
   color: var(--color-text-primary);
@@ -29,6 +29,10 @@ h1, h2, h3, h4, h5, h6 {
   background-color: #fff;
   color: #333;
   min-height: 100vh;
+}
+
+h1 {
+  font-size: var(--font-size-3xl);
 }
 
 /* =========================================
@@ -61,19 +65,19 @@ h1, h2, h3, h4, h5, h6 {
 /* Button Base Styles */
 .btn-standard {
   padding: 12px 16px;
-  border-radius: 6px;
+  border-radius: var(--radius-button);
   font-size: 16px;
 }
 
 .btn-compact {
   padding: 8px 12px;
-  border-radius: 6px;
+  border-radius: var(--radius-button);
   font-size: 14px;
 }
 
 /* Button Gradients */
 .btn-gradient-red {
-  background: linear-gradient(135deg, rgba(107, 15, 26, 0.7), rgba(255, 0, 85, 0.8));
+  background: var(--gradient-button-red);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.2);
   cursor: pointer;
@@ -81,20 +85,16 @@ h1, h2, h3, h4, h5, h6 {
   transition: all 0.2s ease;
   touch-action: manipulation;
   backdrop-filter: blur(10px);
-  box-shadow: 
-    0 4px 16px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  box-shadow: var(--shadow-button);
 }
 
 .btn-gradient-red:hover {
-  background: linear-gradient(135deg, rgba(90, 13, 22, 0.8), rgba(230, 0, 76, 0.9));
-  box-shadow: 
-    0 6px 20px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  background: var(--gradient-button-red-hover);
+  box-shadow: var(--shadow-button-hover);
 }
 
 .btn-gradient-purple {
-  background: linear-gradient(135deg, rgba(106, 90, 205, 0.7), rgba(44, 42, 74, 0.8));
+  background: var(--gradient-button-purple);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.2);
   cursor: pointer;
@@ -102,20 +102,16 @@ h1, h2, h3, h4, h5, h6 {
   transition: all 0.2s ease;
   touch-action: manipulation;
   backdrop-filter: blur(10px);
-  box-shadow: 
-    0 4px 16px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  box-shadow: var(--shadow-button);
 }
 
 .btn-gradient-purple:hover {
-  background: linear-gradient(135deg, rgba(90, 74, 183, 0.8), rgba(36, 34, 64, 0.9));
-  box-shadow: 
-    0 6px 20px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  background: var(--gradient-button-purple-hover);
+  box-shadow: var(--shadow-button-hover);
 }
 
 .btn-gradient-gray {
-  background: linear-gradient(135deg, #8a8a8a, #444444);
+  background: var(--gradient-button-gray);
   color: white;
   border: none;
   cursor: pointer;
@@ -125,54 +121,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-gradient-gray:hover {
-  background: linear-gradient(135deg, #777777, #333333);
-}
-
-/* =========================================
-   PALETTE CONTAINER COMPONENTS
-   ========================================= */
-
-.palette-lid {
-  background: linear-gradient(145deg, #e8e4f0, #d6d0e0);
-  border-radius: 0 0 8px 8px;
-  box-shadow: 
-    0 4px 16px rgba(0,0,0,0.15),
-    inset 0 -1px 0 rgba(255,255,255,0.6),
-    inset 0 -2px 6px rgba(139,129,165,0.2);
-  border: 1px solid rgba(139,129,165,0.3);
-  border-top: none;
-  padding: 15px;
-  margin: 0 0 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 56px;
-  align-items: center;
-}
-
-.palette-lid > *:not(:last-child) {
-  position: relative;
-}
-
-.palette-lid > *:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80vw;
-  max-width: 200px;
-  height: 1px;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(139,129,165,0.2) 20%, 
-    rgba(139,129,165,0.3) 50%, 
-    rgba(139,129,165,0.2) 80%, 
-    transparent 100%
-  );
-  margin-top: 28px;
-  box-shadow: 
-    0 1px 0 rgba(255,255,255,0.4),
-    inset 0 1px 1px rgba(139,129,165,0.15);
+  background: var(--gradient-button-gray-hover);
 }
 
 /* =========================================
@@ -181,14 +130,13 @@ h1, h2, h3, h4, h5, h6 {
 
 .effect-matte {
   /* Clean matte finish - starting blank */
+  visibility: visible;
 }
 
 .effect-shimmer {
   /* Static metallic shimmer with soft outset square look */
   position: relative;
-  box-shadow: 
-    0 0 8px rgba(255, 255, 255, 0.3),
-    inset 0 0 8px rgba(255, 255, 255, 0.2);
+  box-shadow: var(--shadow-shimmer);
 }
 
 .effect-shimmer::before {
@@ -198,14 +146,7 @@ h1, h2, h3, h4, h5, h6 {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.0) 0%,
-    rgba(255, 255, 255, 0.3) 25%,
-    rgba(255, 255, 255, 0.1) 50%,
-    rgba(255, 255, 255, 0.3) 75%,
-    rgba(255, 255, 255, 0.0) 100%
-  );
+  background: var(--gradient-shimmer-effect);
   pointer-events: none;
 }
 
@@ -266,83 +207,53 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* =========================================
-   RESPONSIVE UTILITIES
+   PALETTE CONTAINER COMPONENTS
    ========================================= */
 
-/* Responsive Typography */
-.text-sm-mobile {
-  font-size: 8px;
+.palette-lid {
+  background: var(--gradient-container-primary);
+  border-radius: var(--radius-palette-lid-bottom);
+  box-shadow: var(--shadow-palette-container);
+  border: 1px solid rgba(139,129,165,0.3);
+  border-top: none;
+  padding: 15px;
+  margin: 0 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  align-items: center;
 }
 
-.text-base-mobile {
-  font-size: 14px;
+.palette-lid > *:not(:last-child) {
+  position: relative;
 }
 
-/* Responsive Spacing */
-.gap-responsive {
-  gap: 8px;
+.palette-lid > *:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80vw;
+  max-width: 200px;
+  height: 1px;
+  background: var(--gradient-divider);
+  margin-top: 28px;
+  box-shadow: var(--shadow-divider);
 }
-
-.padding-responsive {
-  padding: 10px;
-}
-
-/* =========================================
-   MEDIA QUERIES
-   ========================================= */
 
 /* Tablet (481px and up) */
 @media (min-width: 481px) {
-  .flex-row-tablet {
-    flex-direction: row;
-  }
-  
-  .justify-between-tablet {
-    justify-content: space-between;
-  }
-  
-  .justify-start-tablet {
-    justify-content: flex-start;
-  }
-
-  .text-sm-mobile {
-    font-size: 9px;
-  }
-  
-  .text-base-mobile {
-    font-size: 14px;
-  }
-
-  .gap-responsive {
-    gap: 10px;
-  }
-
-  .padding-responsive {
-    padding: 15px;
-  }
-
   .palette-lid {
     padding: 18px;
-    border-radius: 0 0 10px 10px;
+    border-radius: var(--radius-palette-lid-bottom-tablet);
   }
 }
 
 /* Desktop (769px and up) */
 @media (min-width: 769px) {
-  .text-sm-mobile {
-    font-size: 10px;
-  }
-
-  .gap-responsive {
-    gap: 15px;
-  }
-
-  .padding-responsive {
-    padding: 20px;
-  }
-
   .palette-lid {
     padding: 20px;
-    border-radius: 0 0 12px 12px;
+    border-radius: var(--radius-palette-lid-bottom-desktop);
   }
 }

@@ -134,12 +134,9 @@ defineExpose({
 .palette-grid-container {
   margin-top: 10px;
   padding: 15px;
-  background: linear-gradient(145deg, #e8e4f0, #d6d0e0);
-  border-radius: 8px 8px 0 0;
-  box-shadow: 
-    0 4px 16px rgba(0,0,0,0.15),
-    inset 0 1px 0 rgba(255,255,255,0.6),
-    inset 0 2px 6px rgba(139,129,165,0.2);
+  background: var(--gradient-container-primary);
+  border-radius: var(--radius-grid-container-top);
+  box-shadow: var(--shadow-grid-container);
   max-width: 100%;
   border: 1px solid rgba(139,129,165,0.3);
   border-bottom: none;
@@ -149,12 +146,9 @@ defineExpose({
   display: grid;
   gap: 8px;
   padding: 15px;
-  background: linear-gradient(145deg, #f0ecf8, #e4dced);
-  border-radius: 8px;
-  box-shadow: 
-    inset 0 3px 8px rgba(139,129,165,0.25),
-    inset 0 1px 2px rgba(100,85,130,0.3),
-    inset 0 -1px 2px rgba(255,255,255,0.4);
+  background: var(--gradient-container-secondary);
+  border-radius: var(--radius-container);
+  box-shadow: var(--shadow-grid-inner);
   border: 1px solid rgba(139,129,165,0.2);
 }
 
@@ -162,7 +156,7 @@ defineExpose({
 @media (min-width: 481px) {
   .palette-grid-container {
     padding: 18px;
-    border-radius: 10px 10px 0 0;
+    border-radius: var(--radius-grid-container-top-tablet);
   }
 }
 
@@ -171,9 +165,7 @@ defineExpose({
   .palette-grid-container {
     margin-top: 0;
     padding: 20px;
-    box-shadow: 
-      0 8px 32px rgba(0,0,0,0.1),
-      inset 0 1px 0 rgba(255,255,255,0.8);
+    box-shadow: var(--shadow-grid-container-desktop);
     max-width: 400px;
     flex: 1 1 auto;
   }

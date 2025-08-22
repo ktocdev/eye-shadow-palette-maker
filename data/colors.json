@@ -51,11 +51,11 @@
         ],
         "browns": [
           {
-            "name": "Lava Caress",
+            "name": "Gushing Lava",
             "hex": "#A65C3A",
             "id": "lava-caress",
             "is_dark": true,
-            "effect": "matte"
+            "effect": "sparkly"
           },
           {
             "name": "Boardwalk Maple",
@@ -97,9 +97,9 @@
         ],
         "pinks": [
           {
-            "name": "Bubblegum Burlesque",
+            "name": "Burlesque Bubblegum",
             "hex": "#FF69B4",
-            "id": "bubblegum-burlesque",
+            "id": "burlesque-bubblegum",
             "is_dark": false,
             "effect": "shimmer"
           },
@@ -136,7 +136,7 @@
         ],
         "bluesAndTeals": [
           {
-            "name": "Verdant Virtue",
+            "name": "Heavenly Virtue",
             "hex": "#00CED1",
             "id": "verdant-virtue",
             "is_dark": false,
@@ -152,23 +152,23 @@
         ],
         "greens": [
           {
-            "name": "Vintage Whimsy",
+            "name": "Vintage Kitchen",
             "hex": "#B4F8C8",
-            "id": "vintage-whimsy",
+            "id": "vintage-ktichen",
             "is_dark": false,
             "effect": "matte"
           },
           {
-            "name": "Glitched Out",
+            "name": "Tweaked Out",
             "hex": "#39FF14",
-            "id": "glitched-out",
+            "id": "tweaked-out",
             "is_dark": false,
             "effect": "sparkly"
           },
           {
-            "name": "Poisoned Ivy",
+            "name": "Crawling Ivy",
             "hex": "#2C7265",
-            "id": "poisoned-Ivy",
+            "id": "crawling-Ivy",
             "is_dark": true,
             "effect": "matte"
           }

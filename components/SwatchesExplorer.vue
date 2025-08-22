@@ -63,22 +63,21 @@ onUnmounted(() => {
           @grid-size-change="handleGridSizeChange"
         />
         
-        <!-- Palette lid with all controls -->
         <div class="palette-lid">
-          <PaletteControls 
-            @clear="handleClear"
-            @randomize="handleRandomize"
-          />
-          
+          <div class="app-info">
+            <h1>Eye Shadow Palette Maker</h1>
+            <p>Create beautiful eyeshadow combinations</p>
+          </div>
+
           <GridControls
             :grid-size="currentGridSize"
             @size-change="handleGridSizeChange"
           />
 
-          <div class="app-info">
-            <h2>Eye Shadow Palette Maker</h2>
-            <p>Create beautiful eyeshadow combinations</p>
-          </div>
+          <PaletteControls 
+            @clear="handleClear"
+            @randomize="handleRandomize"
+          />
         </div>
       </div>
     </div>
@@ -90,12 +89,7 @@ onUnmounted(() => {
 
 /* Component-specific styles */
 .swatches-explorer {
-  background: 
-    radial-gradient(circle at 30% 20%, rgba(188, 179, 222, 0.4) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(188, 179, 222, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 40% 90%, rgba(255, 255, 255, 0.2) 0%, transparent 40%),
-    radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.15) 0%, transparent 30%),
-    linear-gradient(135deg, #bcb3de 0%, #e8e4f0 50%, #f5f2f8 100%);
+  background: var(--gradient-main-background);
 }
 
 /* Responsive adjustments */

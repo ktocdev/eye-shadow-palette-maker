@@ -71,7 +71,6 @@ const onTouchEnd = (e) => handleTouchEnd(e)
 </template>
 
 <style>
-@import '../../styles/shared.css';
 
 /* Mobile-first design */
 .swatch-block {
@@ -98,16 +97,19 @@ const onTouchEnd = (e) => handleTouchEnd(e)
 }
 
 .color-name {
-  font-size: 9px;
-  font-weight: bold;
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
   line-height: 1.2;
   white-space: normal;
   word-wrap: break-word;
 }
 
 .hex-code {
-  font-size: 8px;
-  color: #555;
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
   line-height: 1.1;
 }
 
@@ -124,11 +126,11 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   }
   
   .color-name {
-    font-size: 10px;
+    font-size: var(--font-size-sm);
   }
   
   .hex-code {
-    font-size: 9px;
+    font-size: var(--font-size-xs);
   }
 }
 
@@ -145,11 +147,11 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   }
   
   .color-name {
-    font-size: 12px;
+    font-size: var(--font-size-base);
   }
   
   .hex-code {
-    font-size: 11px;
+    font-size: var(--font-size-sm);
   }
 }
 
