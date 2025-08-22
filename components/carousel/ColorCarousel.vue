@@ -91,7 +91,7 @@ const {
   font-family: var(--font-family-primary);
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   text-align: center;
   min-width: 40px;
 }
@@ -182,7 +182,7 @@ const {
 }
 
 /* Tablet swatch sizing - fixed dimensions */
-@media (min-width: 481px) {
+/* @media (min-width: 481px) {
   .color-carousel {
     padding: 20px;
   }
@@ -214,10 +214,10 @@ const {
     height: 10px;
     margin-top: 2px;
   }
-}
+} */
 
 /* Desktop layout adjustments - container queries handle sizing */
-@media (min-width: 769px) {
+/* @media (min-width: 973px) {
   .color-carousel {
     padding: 25px;
   }
@@ -236,7 +236,7 @@ const {
     height: 12px;
     margin-top: 2px;
   }
-}
+} */
 
 /* Container Queries for smooth responsive transitions */
 @container (max-width: 320px) {
@@ -345,6 +345,51 @@ const {
   
   .carousel-swatches .hex-code {
     font-size: var(--font-size-xs);
+  }
+}
+
+/* Large Desktop (1440px and up) */
+@container (min-width: 1440px) {
+  .color-carousel {
+    padding: 30px;
+  }
+  
+  .carousel-swatches {
+    min-height: 140px;
+    gap: 15px;
+  }
+
+  .carousel-swatches .swatch-block {
+    width: 110px;
+    height: 160px;
+  }
+  
+  .carousel-swatches .swatch {
+    width: 110px;
+    height: 110px;
+    margin-bottom: 5px;
+    border-radius: var(--radius-xl);
+  }
+  
+  .carousel-swatches .color-name {
+    font-size: var(--font-size-base);
+    min-height: 18px;
+  }
+  
+  .carousel-swatches .hex-code {
+    font-size: var(--font-size-sm);
+    height: 14px;
+  }
+
+  .carousel-arrow {
+    width: 50px;
+    height: 50px;
+    font-size: var(--font-size-2xl);
+  }
+
+  .carousel-info {
+    font-size: var(--font-size-base);
+    min-width: 50px;
   }
 }
 </style>

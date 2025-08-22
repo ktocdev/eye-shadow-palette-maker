@@ -140,5 +140,6 @@
   /* Complete Border Styles */
   --border-standard: var(--border-width-thin) solid var(--border-color-light);
   --border-container: var(--border-width-thin) solid var(--border-color-medium);
+  --border-container-light: var(--border-width-thin) solid rgba(139, 129, 165, 0.2);
   --border-swatch: var(--border-width-thin) solid var(--border-color-dark);
 }

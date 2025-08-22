@@ -251,7 +251,7 @@ h1 {
 }
 
 /* Desktop (769px and up) */
-@media (min-width: 769px) {
+@media (min-width: 973px) {
   .palette-lid {
     padding: 20px;
     border-radius: var(--radius-palette-lid-bottom-desktop);

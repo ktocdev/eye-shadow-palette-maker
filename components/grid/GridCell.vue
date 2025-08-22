@@ -98,8 +98,8 @@ const onMiniSwatchTouchEnd = (e) => {
       @touchmove="onMiniSwatchTouchMove"
       @touchend="onMiniSwatchTouchEnd"
     >
-      <div class="mini-color-name">{{ colorData.colorName }}</div>
     </div>
+    <div v-if="colorData" class="mini-color-name">{{ colorData.colorName }}</div>
   </div>
 </template>
 
@@ -137,10 +137,6 @@ const onMiniSwatchTouchEnd = (e) => {
   border-radius: var(--radius-swatch-mini);
   border: var(--border-swatch);
   cursor: grab;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   position: relative;
 }
 
@@ -159,14 +155,45 @@ const onMiniSwatchTouchEnd = (e) => {
   font-weight: bold;
   color: var(--color-text-primary);
   text-align: center;
-  margin-top: 2px;
   text-shadow: var(--text-shadow-light);
   pointer-events: none;
   max-width: 64px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  line-height: 1;
 }
 
 .mini-swatch.dark-mini-swatch .mini-color-name {
   color: var(--color-text-white);
   text-shadow: var(--text-shadow-dark);
+}
+
+/* Large Desktop (1440px and up) */
+@media (min-width: 1440px) {
+  .grid-cell {
+    height: 128px;
+    width: 128px;
+  }
+
+  .mini-color-name {
+    font-family: var(--font-family-primary);
+    font-size: var(--font-size-base);
+    font-weight: bold;
+    color: var(--color-text-primary);
+    text-align: center;
+    text-shadow: var(--text-shadow-light);
+    max-width: none;
+    pointer-events: none;
+    padding: 8px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    line-height: 1;
+  }
 }
 </style>

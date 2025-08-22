@@ -137,8 +137,7 @@ defineExpose({
   background: var(--gradient-container-primary);
   border-radius: var(--radius-grid-container-top);
   box-shadow: var(--shadow-grid-container);
-  max-width: 100%;
-  border: 1px solid rgba(139,129,165,0.3);
+  border: var(--border-container);
   border-bottom: none;
 }
 
@@ -149,7 +148,7 @@ defineExpose({
   background: var(--gradient-container-secondary);
   border-radius: var(--radius-container);
   box-shadow: var(--shadow-grid-inner);
-  border: 1px solid rgba(139,129,165,0.2);
+  border: var(--border-container-light);
 }
 
 /* Tablet and up */
@@ -161,12 +160,11 @@ defineExpose({
 }
 
 /* Desktop and up */
-@media (min-width: 769px) {
+@media (min-width: 973px) {
   .palette-grid-container {
     margin-top: 0;
     padding: 20px;
     box-shadow: var(--shadow-grid-container-desktop);
-    max-width: 400px;
     flex: 1 1 auto;
   }
 }

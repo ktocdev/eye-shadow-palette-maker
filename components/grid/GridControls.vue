@@ -61,7 +61,7 @@ const handleSizeChange = (event) => {
   }
 }
 
-@media (min-width: 769px) {
+@media (min-width: 973px) {
   .grid-controls {
     justify-content: flex-start;
   }
