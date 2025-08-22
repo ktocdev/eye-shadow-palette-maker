@@ -33,7 +33,7 @@ const {
         <div class="carousel-info">{{ currentPage + 1 }} / {{ totalPages }}</div>
         <button 
           @click="goToPrevPage" 
-          class="carousel-arrow prev-arrow"
+          class="btn carousel-arrow prev-arrow"
           :disabled="!canGoPrev"
           :class="{ disabled: !canGoPrev }"
         >
@@ -55,7 +55,7 @@ const {
       
       <button 
         @click="goToNextPage" 
-        class="carousel-arrow next-arrow"
+        class="btn carousel-arrow next-arrow"
         :disabled="!canGoNext"
         :class="{ disabled: !canGoNext }"
       >
@@ -65,19 +65,15 @@ const {
   </div>
 </template>
 
-<style scoped>
-/* Color Carousel Styles - Responsive with Container Queries */
+<style>
 .color-carousel {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: linear-gradient(145deg, #e8e4f0, #d6d0e0);
-  border-radius: 12px;
-  box-shadow: 
-    0 4px 16px rgba(0,0,0,0.15),
-    inset 0 1px 0 rgba(255,255,255,0.6),
-    inset 0 2px 6px rgba(139,129,165,0.2);
-  border: 1px solid rgba(139,129,165,0.3);
+  background: var(--gradient-container-primary);
+  border-radius: var(--radius-container-large);
+  box-shadow: var(--shadow-carousel);
+  border: var(--border-container);
   border-top: none;
   padding: 15px;
   container-type: inline-size;
@@ -92,8 +88,9 @@ const {
 }
 
 .carousel-info {
-  font-size: 10px;
-  color: #666;
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
   font-weight: 500;
   text-align: center;
   min-width: 40px;
@@ -108,31 +105,23 @@ const {
 }
 
 .carousel-arrow {
-  background: linear-gradient(135deg, #6A5ACD, #2C2A4A);
-  color: white;
-  border: none;
+  background: var(--gradient-arrow);
+  color: var(--color-text-white);
   width: 40px;
   height: 40px;
-  border-radius: 50%;
-  font-size: 20px;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
+  border-radius: var(--radius-circle);
+  font-size: var(--font-size-xl);
   flex-shrink: 0;
-  touch-action: manipulation;
 }
 
 .carousel-arrow:hover:not(.disabled) {
-  background: linear-gradient(135deg, #5A4AB7, #242240);
+  background: var(--gradient-arrow-hover);
   transform: scale(1.05);
 }
 
 .carousel-arrow.disabled {
-  background: #ddd;
-  color: #999;
+  background: var(--color-background-muted);
+  color: var(--color-text-muted);
   cursor: not-allowed;
   opacity: 0.5;
 }
@@ -147,7 +136,7 @@ const {
 }
 
 /* Mobile carousel swatch blocks - fixed sizing */
-.carousel-swatches :deep(.swatch-block) {
+.carousel-swatches .swatch-block {
   width: 50px;
   height: 80px;
   display: flex;
@@ -155,19 +144,17 @@ const {
   align-items: center;
 }
 
-.carousel-swatches :deep(.swatch) {
+.carousel-swatches .swatch {
   width: 50px;
   height: 50px;
   margin-bottom: 2px;
   flex-shrink: 0;
-  border-radius: 6px;
-  box-shadow: 
-    inset 0 2px 0 rgba(0,0,0,0.1),
-    inset 0 2px 0 rgba(255,255,255,0.2);
+  border-radius: var(--radius-swatch);
+  box-shadow: var(--shadow-swatch);
 }
 
-.carousel-swatches :deep(.color-name) {
-  font-size: 7px;
+.carousel-swatches .color-name {
+  font-size: var(--font-size-xs);
   line-height: 1;
   text-align: center;
   max-width: 100%;
@@ -179,8 +166,8 @@ const {
   justify-content: center;
 }
 
-.carousel-swatches :deep(.hex-code) {
-  font-size: 6px;
+.carousel-swatches .hex-code {
+  font-size: var(--font-size-xs);
   line-height: 1;
   text-align: center;
   max-width: 100%;
@@ -205,25 +192,25 @@ const {
     gap: 8px;
   }
 
-  .carousel-swatches :deep(.swatch-block) {
+  .carousel-swatches .swatch-block {
     width: 70px;
     height: 100px;
   }
 
-  .carousel-swatches :deep(.swatch) {
+  .carousel-swatches .swatch {
     width: 70px;
     height: 70px;
     margin-bottom: 3px;
-    border-radius: 8px;
+    border-radius: var(--radius-container);
   }
 
-  .carousel-swatches :deep(.color-name) {
-    font-size: 8px;
+  .carousel-swatches .color-name {
+    font-size: var(--font-size-xs);
     min-height: 14px;
   }
 
-  .carousel-swatches :deep(.hex-code) {
-    font-size: 7px;
+  .carousel-swatches .hex-code {
+    font-size: var(--font-size-xs);
     height: 10px;
     margin-top: 2px;
   }
@@ -240,12 +227,12 @@ const {
     gap: 10px;
   }
 
-  .carousel-swatches :deep(.swatch) {
+  .carousel-swatches .swatch {
     margin-bottom: 4px;
-    border-radius: 10px;
+    border-radius: var(--radius-lg);
   }
 
-  .carousel-swatches :deep(.hex-code) {
+  .carousel-swatches .hex-code {
     height: 12px;
     margin-top: 2px;
   }
@@ -253,111 +240,111 @@ const {
 
 /* Container Queries for smooth responsive transitions */
 @container (max-width: 320px) {
-  .carousel-swatches :deep(.swatch-block) {
+  .carousel-swatches .swatch-block {
     width: 45px;
     height: 75px;
   }
   
-  .carousel-swatches :deep(.swatch) {
+  .carousel-swatches .swatch {
     width: 45px;
     height: 45px;
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
   }
   
-  .carousel-swatches :deep(.color-name) {
-    font-size: 6px;
+  .carousel-swatches .color-name {
+    font-size: var(--font-size-xs);
   }
   
-  .carousel-swatches :deep(.hex-code) {
-    font-size: 5px;
+  .carousel-swatches .hex-code {
+    font-size: var(--font-size-xxs);
   }
 }
 
 @container (min-width: 400px) and (max-width: 540px) {
-  .carousel-swatches :deep(.swatch-block) {
+  .carousel-swatches .swatch-block {
     width: 55px;
     height: 85px;
   }
   
-  .carousel-swatches :deep(.swatch) {
+  .carousel-swatches .swatch {
     width: 55px;
     height: 55px;
-    border-radius: 6px;
+    border-radius: var(--radius-swatch);
   }
   
-  .carousel-swatches :deep(.color-name) {
-    font-size: 7.5px;
+  .carousel-swatches .color-name {
+    font-size: var(--font-size-xs);
     min-height: 13px;
   }
   
-  .carousel-swatches :deep(.hex-code) {
-    font-size: 6.5px;
+  .carousel-swatches .hex-code {
+    font-size: var(--font-size-xs);
   }
 }
 
 @container (min-width: 540px) and (max-width: 650px) {
-  .carousel-swatches :deep(.swatch-block) {
+  .carousel-swatches .swatch-block {
     width: 65px;
     height: 95px;
   }
   
-  .carousel-swatches :deep(.swatch) {
+  .carousel-swatches .swatch {
     width: 65px;
     height: 65px;
-    border-radius: 7px;
+    border-radius: var(--radius-sm);
   }
   
-  .carousel-swatches :deep(.color-name) {
-    font-size: 8.5px;
+  .carousel-swatches .color-name {
+    font-size: var(--font-size-xs);
     min-height: 14px;
   }
   
-  .carousel-swatches :deep(.hex-code) {
-    font-size: 7.5px;
+  .carousel-swatches .hex-code {
+    font-size: var(--font-size-xs);
   }
 }
 
 @container (min-width: 650px) and (max-width: 920px) {
-  .carousel-swatches :deep(.swatch-block) {
+  .carousel-swatches .swatch-block {
     width: 85px;
     height: 115px;
   }
   
-  .carousel-swatches :deep(.swatch) {
+  .carousel-swatches .swatch {
     width: 85px;
     height: 85px;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
   }
   
-  .carousel-swatches :deep(.color-name) {
-    font-size: 9.5px;
+  .carousel-swatches .color-name {
+    font-size: var(--font-size-sm);
     min-height: 15px;
   }
   
-  .carousel-swatches :deep(.hex-code) {
-    font-size: 8.5px;
+  .carousel-swatches .hex-code {
+    font-size: var(--font-size-xs);
   }
 }
 
 @container (min-width: 920px) {
-  .carousel-swatches :deep(.swatch-block) {
+  .carousel-swatches .swatch-block {
     width: 90px;
     height: 120px;
   }
   
-  .carousel-swatches :deep(.swatch) {
+  .carousel-swatches .swatch {
     width: 90px;
     height: 90px;
-    border-radius: 10px;
+    border-radius: var(--radius-lg);
   }
   
-  .carousel-swatches :deep(.color-name) {
-    font-size: 10px;
+  .carousel-swatches .color-name {
+    font-size: var(--font-size-sm);
     min-height: 16px;
   }
   
-  .carousel-swatches :deep(.hex-code) {
-    font-size: 8px;
+  .carousel-swatches .hex-code {
+    font-size: var(--font-size-xs);
   }
 }
 </style>

@@ -42,20 +42,20 @@
             "effect": "shimmer"
           },
           {
-            "name": "Spiced Bolt",
+            "name": "Spiced Soda",
             "hex": "#FFB000",
-            "id": "spiced-bolt",
+            "id": "spiced-soda",
             "is_dark": false,
             "effect": "sparkly"
           }
         ],
         "browns": [
           {
-            "name": "Earthen Caress",
+            "name": "Gushing Lava",
             "hex": "#A65C3A",
-            "id": "earthen-caress",
+            "id": "lava-caress",
             "is_dark": true,
-            "effect": "matte"
+            "effect": "sparkly"
           },
           {
             "name": "Boardwalk Maple",
@@ -97,9 +97,9 @@
         ],
         "pinks": [
           {
-            "name": "Bubblegum Banter",
+            "name": "Burlesque Bubblegum",
             "hex": "#FF69B4",
-            "id": "bubblegum-banter",
+            "id": "burlesque-bubblegum",
             "is_dark": false,
             "effect": "shimmer"
           },
@@ -136,9 +136,9 @@
         ],
         "bluesAndTeals": [
           {
-            "name": "Satin Virtue",
+            "name": "Heavenly Virtue",
             "hex": "#00CED1",
-            "id": "satin-virtue",
+            "id": "verdant-virtue",
             "is_dark": false,
             "effect": "sparkly"
           },
@@ -152,23 +152,23 @@
         ],
         "greens": [
           {
-            "name": "Vintage Whimsy",
+            "name": "Vintage Kitchen",
             "hex": "#B4F8C8",
-            "id": "vintage-whimsy",
+            "id": "vintage-ktichen",
             "is_dark": false,
             "effect": "matte"
           },
           {
-            "name": "Glitched Out",
+            "name": "Spiked Absinthe",
             "hex": "#39FF14",
-            "id": "glitched-out",
+            "id": "spiked-absinthe",
             "is_dark": false,
             "effect": "sparkly"
           },
           {
-            "name": "Poisoned Ivy",
+            "name": "Crawling Ivy",
             "hex": "#2C7265",
-            "id": "poisoned-Ivy",
+            "id": "crawling-Ivy",
             "is_dark": true,
             "effect": "matte"
           }
