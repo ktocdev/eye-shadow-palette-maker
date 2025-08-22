@@ -42,18 +42,18 @@
             "effect": "shimmer"
           },
           {
-            "name": "Spiced Bolt",
+            "name": "Spiced Soda",
             "hex": "#FFB000",
-            "id": "spiced-bolt",
+            "id": "spiced-soda",
             "is_dark": false,
             "effect": "sparkly"
           }
         ],
         "browns": [
           {
-            "name": "Earthen Caress",
+            "name": "Lava Caress",
             "hex": "#A65C3A",
-            "id": "earthen-caress",
+            "id": "lava-caress",
             "is_dark": true,
             "effect": "matte"
           },
@@ -97,9 +97,9 @@
         ],
         "pinks": [
           {
-            "name": "Bubblegum Banter",
+            "name": "Bubblegum Burlesque",
             "hex": "#FF69B4",
-            "id": "bubblegum-banter",
+            "id": "bubblegum-burlesque",
             "is_dark": false,
             "effect": "shimmer"
           },
@@ -136,9 +136,9 @@
         ],
         "bluesAndTeals": [
           {
-            "name": "Satin Virtue",
+            "name": "Verdant Virtue",
             "hex": "#00CED1",
-            "id": "satin-virtue",
+            "id": "verdant-virtue",
             "is_dark": false,
             "effect": "sparkly"
           },

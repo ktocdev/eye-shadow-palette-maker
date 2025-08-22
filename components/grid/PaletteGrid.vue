@@ -129,7 +129,7 @@ defineExpose({
   </div>
 </template>
 
-<style scoped>
+<style>
 /* Mobile-first palette grid container */
 .palette-grid-container {
   margin-top: 10px;

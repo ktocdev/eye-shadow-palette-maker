@@ -65,7 +65,7 @@ const {
   </div>
 </template>
 
-<style scoped>
+<style>
 /* Color Carousel Styles - Responsive with Container Queries */
 .color-carousel {
   position: sticky;

@@ -103,7 +103,7 @@ const onMiniSwatchTouchEnd = (e) => {
   </div>
 </template>
 
-<style scoped>
+<style>
 @import '../../styles/shared.css';
 
 .grid-cell {
@@ -163,7 +163,7 @@ const onMiniSwatchTouchEnd = (e) => {
 }
 
 .mini-color-name {
-  font-size: 8px;
+  font-size: 12px;
   font-weight: bold;
   color: rgba(0,0,0,0.8);
   text-align: center;

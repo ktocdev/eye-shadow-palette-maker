@@ -1,0 +1,53 @@
+/* =========================================
+   CSS VARIABLES - DESIGN SYSTEM
+   ========================================= */
+
+:root {
+  /* Font Families */
+  --font-family-primary: 'Quicksand', sans-serif;
+  --font-family-heading: 'Zain', sans-serif;
+  --font-family-fallback: Arial, sans-serif;
+  
+  /* Font Sizes */
+  --font-size-xs: 8px;
+  --font-size-sm: 10px;
+  --font-size-base: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 28px;
+  --font-size-4xl: 32px;
+  
+  /* Font Weights */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --font-weight-black: 900;
+  
+  /* Font Colors */
+  --color-text-primary: #333333;
+  --color-text-secondary: #666666;
+  --color-text-muted: #999999;
+  --color-text-light: #cccccc;
+  --color-text-white: #ffffff;
+  --color-text-black: #000000;
+  
+  /* Theme Colors */
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f8f9fa;
+  --color-background-muted: #e9ecef;
+  
+  /* Brand Colors */
+  --color-purple-light: #bcb3de;
+  --color-purple-medium: #8b81a5;
+  --color-purple-dark: #6a5a8d;
+  
+  /* Interactive Colors */
+  --color-hover: rgba(0, 0, 0, 0.05);
+  --color-focus: rgba(106, 90, 205, 0.3);
+  --color-active: rgba(106, 90, 205, 0.1);
+}

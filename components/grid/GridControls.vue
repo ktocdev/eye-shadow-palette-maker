@@ -27,7 +27,7 @@ const handleSizeChange = (event) => {
   </div>
 </template>
 
-<style scoped>
+<style>
 @import '../../styles/shared.css';
 
 /* Component-specific styles */

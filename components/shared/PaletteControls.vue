@@ -13,7 +13,7 @@ defineEmits(['clear', 'randomize'])
   </div>
 </template>
 
-<style scoped>
+<style>
 @import '../../styles/shared.css';
 
 /* Component-specific responsive layout */

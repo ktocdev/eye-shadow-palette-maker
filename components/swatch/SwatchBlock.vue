@@ -70,7 +70,7 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   </div>
 </template>
 
-<style scoped>
+<style>
 @import '../../styles/shared.css';
 
 /* Mobile-first design */
