@@ -114,11 +114,11 @@
   --radius-grid-cell: var(--radius-sm);
   --radius-container: var(--radius-md);
   --radius-container-large: var(--radius-xl);
-  --radius-palette-lid-bottom: 0 0 var(--radius-md) var(--radius-md);
-  --radius-palette-lid-bottom-tablet: 0 0 var(--radius-lg) var(--radius-lg);
-  --radius-palette-lid-bottom-desktop: 0 0 var(--radius-xl) var(--radius-xl);
-  --radius-grid-container-top: var(--radius-md) var(--radius-md) 0 0;
-  --radius-grid-container-top-tablet: var(--radius-lg) var(--radius-lg) 0 0;
+  --radius-palette-lid-bottom: var(--radius-md) var(--radius-md);
+  --radius-palette-lid-bottom-tablet: var(--radius-lg) var(--radius-lg);
+  --radius-palette-lid-bottom-desktop: var(--radius-xl) var(--radius-xl);
+  --radius-grid-container-top: var(--radius-md) var(--radius-md);
+  --radius-grid-container-top-tablet: var(--radius-lg) var(--radius-lg);
   
   /* Text Shadow Variables */
   --text-shadow-light: 0 0 3px rgba(255, 255, 255, 0.8); /* White glow for dark text on light backgrounds */

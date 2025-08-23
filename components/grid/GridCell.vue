@@ -145,7 +145,7 @@ const onMiniSwatchTouchEnd = (e) => {
   border: var(--border-swatch);
   cursor: grab;
   position: relative;
-  box-shadow: inset -2px -2px 0 rgb(106 104 104 / 20%)
+  box-shadow: var(--shadow-swatch);
 }
 
 .mini-swatch:active {

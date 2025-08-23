@@ -165,7 +165,6 @@ defineExpose({
     margin-top: 0;
     padding: 20px;
     box-shadow: var(--shadow-grid-container-desktop);
-    flex: 1 1 auto;
   }
 }
 </style>
