@@ -116,8 +116,15 @@ const onMiniSwatchTouchEnd = (e) => {
   justify-content: center;
   transition: all 0.2s ease;
   position: relative;
-  height: 72px;
-  width: 72px;
+  height: 64px;
+  width: 64px;
+}
+
+@media (min-width: 480px) {
+  .grid-cell {
+    height: 72px;
+    width: 72px;
+  }
 }
 
 .grid-cell.drag-over {
@@ -138,6 +145,7 @@ const onMiniSwatchTouchEnd = (e) => {
   border: var(--border-swatch);
   cursor: grab;
   position: relative;
+  box-shadow: inset -2px -2px 0 rgb(106 104 104 / 20%)
 }
 
 .mini-swatch:active {
@@ -151,13 +159,14 @@ const onMiniSwatchTouchEnd = (e) => {
 
 .mini-color-name {
   font-family: var(--font-family-primary);
-  font-size: 12px;
-  font-weight: bold;
-  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-black);
+  /* text-shadow: 0 -1px 0px #000; */
   text-align: center;
-  text-shadow: var(--text-shadow-light);
+  /* mix-blend-mode: hard-light; */
+  padding: 4px;
   pointer-events: none;
-  max-width: 64px;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -166,34 +175,21 @@ const onMiniSwatchTouchEnd = (e) => {
   line-height: 1;
 }
 
-.mini-swatch.dark-mini-swatch .mini-color-name {
+.grid-cell:has(.mini-swatch.dark-mini-swatch) .mini-color-name {
   color: var(--color-text-white);
-  text-shadow: var(--text-shadow-dark);
+  /* mix-blend-mode: soft-light; */
 }
 
-/* Large Desktop (1440px and up) */
-@media (min-width: 1440px) {
+@media (min-width: 1024px) {
   .grid-cell {
     height: 128px;
     width: 128px;
   }
 
   .mini-color-name {
-    font-family: var(--font-family-primary);
     font-size: var(--font-size-base);
-    font-weight: bold;
-    color: var(--color-text-primary);
-    text-align: center;
-    text-shadow: var(--text-shadow-light);
-    max-width: none;
-    pointer-events: none;
     padding: 8px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    line-height: 1;
+    line-height: 1.2;
   }
 }
 </style>

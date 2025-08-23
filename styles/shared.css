@@ -44,7 +44,13 @@ h1 {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 10px;
+  padding: 5px;
+}
+
+@media (min-width: 480px) {
+  .main-content-layout {
+    padding: 10px;
+  }
 }
 
 .flex-center {
@@ -136,7 +142,6 @@ h1 {
 .effect-shimmer {
   /* Static metallic shimmer with soft outset square look */
   position: relative;
-  box-shadow: var(--shadow-shimmer);
 }
 
 .effect-shimmer::before {

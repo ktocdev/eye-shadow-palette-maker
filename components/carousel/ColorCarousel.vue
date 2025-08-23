@@ -75,7 +75,7 @@ const {
   box-shadow: var(--shadow-carousel);
   border: var(--border-container);
   border-top: none;
-  padding: 15px;
+  padding: var(--font-size-base);
   container-type: inline-size;
 }
 
@@ -181,85 +181,6 @@ const {
   margin-top: 1px;
 }
 
-/* Tablet swatch sizing - fixed dimensions */
-/* @media (min-width: 481px) {
-  .color-carousel {
-    padding: 20px;
-  }
-  
-  .carousel-swatches {
-    min-height: 100px;
-    gap: 8px;
-  }
-
-  .carousel-swatches .swatch-block {
-    width: 70px;
-    height: 100px;
-  }
-
-  .carousel-swatches .swatch {
-    width: 70px;
-    height: 70px;
-    margin-bottom: 3px;
-    border-radius: var(--radius-container);
-  }
-
-  .carousel-swatches .color-name {
-    font-size: var(--font-size-xs);
-    min-height: 14px;
-  }
-
-  .carousel-swatches .hex-code {
-    font-size: var(--font-size-xs);
-    height: 10px;
-    margin-top: 2px;
-  }
-} */
-
-/* Desktop layout adjustments - container queries handle sizing */
-/* @media (min-width: 973px) {
-  .color-carousel {
-    padding: 25px;
-  }
-  
-  .carousel-swatches {
-    min-height: 120px;
-    gap: 10px;
-  }
-
-  .carousel-swatches .swatch {
-    margin-bottom: 4px;
-    border-radius: var(--radius-lg);
-  }
-
-  .carousel-swatches .hex-code {
-    height: 12px;
-    margin-top: 2px;
-  }
-} */
-
-/* Container Queries for smooth responsive transitions */
-@container (max-width: 320px) {
-  .carousel-swatches .swatch-block {
-    width: 45px;
-    height: 75px;
-  }
-  
-  .carousel-swatches .swatch {
-    width: 45px;
-    height: 45px;
-    border-radius: var(--radius-xs);
-  }
-  
-  .carousel-swatches .color-name {
-    font-size: var(--font-size-xs);
-  }
-  
-  .carousel-swatches .hex-code {
-    font-size: var(--font-size-xxs);
-  }
-}
-
 @container (min-width: 400px) and (max-width: 540px) {
   .carousel-swatches .swatch-block {
     width: 55px;
@@ -351,7 +272,7 @@ const {
 /* Large Desktop (1440px and up) */
 @container (min-width: 1440px) {
   .color-carousel {
-    padding: 30px;
+    padding: var(--font-size-2xl);
   }
   
   .carousel-swatches {

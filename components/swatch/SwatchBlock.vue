@@ -72,7 +72,6 @@ const onTouchEnd = (e) => handleTouchEnd(e)
 
 <style>
 
-/* Mobile-first design */
 .swatch-block {
   width: 60px;
   text-align: center;
@@ -99,7 +98,7 @@ const onTouchEnd = (e) => handleTouchEnd(e)
 .color-name {
   font-family: var(--font-family-primary);
   font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
   line-height: 1.2;
   white-space: normal;
