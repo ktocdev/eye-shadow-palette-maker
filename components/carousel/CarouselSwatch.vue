@@ -53,9 +53,9 @@ const onTouchEnd = (e) => handleTouchEnd(e)
 </script>
 
 <template>
-  <div class="swatch-block">
+  <div class="carousel-swatch-block">
     <div 
-      class="swatch" 
+      class="carousel-swatch" 
       :class="`effect-${effect}`"
       :style="{ backgroundColor: backgroundColor }"
       draggable="true"
@@ -65,48 +65,48 @@ const onTouchEnd = (e) => handleTouchEnd(e)
       @touchmove="onTouchMove"
       @touchend="onTouchEnd"
     ></div>
-    <div class="color-name">{{ colorName }}</div>
-    <div class="hex-code">{{ hexCode }}</div>
+    <div class="carousel-color-name">{{ colorName }}</div>
+    <div class="carousel-hex-code">{{ hexCode }}</div>
   </div>
 </template>
 
 <style>
-
-.swatch-block {
-  width: 60px;
+.carousel-swatch-block {
+  width: 50px;
+  height: 80px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.swatch {
-  width: 60px;
-  height: 60px;
+.carousel-swatch {
+  width: 50px;
+  height: 50px;
   border: var(--border-swatch);
   border-radius: var(--radius-swatch);
   box-shadow: var(--shadow-swatch);
-  margin-bottom: 3px;
+  margin-bottom: 2px;
   cursor: grab;
   transition: transform 0.2s ease;
   flex-shrink: 0;
 }
 
-.swatch:active {
+.carousel-swatch:active {
   cursor: grabbing;
 }
 
-.swatch.dragging {
+.carousel-swatch.dragging {
   opacity: 0.5;
   transform: rotate(5deg) scale(0.95);
 }
 
-.color-name {
+.carousel-color-name {
   font-family: var(--font-family-primary);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
-  line-height: 1.2;
+  line-height: 1;
   white-space: normal;
   word-wrap: break-word;
   text-align: center;
@@ -117,7 +117,7 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   min-height: 12px;
 }
 
-.hex-code {
+.carousel-hex-code {
   font-family: var(--font-family-primary);
   font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
@@ -134,46 +134,98 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   margin-top: 1px;
 }
 
-/* Tablet and up */
-@media (min-width: 481px) {
-  .swatch-block {
-    width: 75px;
+/* Responsive sizing for different container widths */
+@container (min-width: 400px) and (max-width: 540px) {
+  .carousel-swatch-block {
+    width: 55px;
+    height: 85px;
   }
   
-  .swatch {
-    width: 75px;
-    height: 75px;
-    margin-bottom: 4px;
+  .carousel-swatch {
+    width: 55px;
+    height: 55px;
   }
   
-  .color-name {
-    font-size: var(--font-size-sm);
-  }
-  
-  .hex-code {
-    font-size: var(--font-size-xs);
+  .carousel-color-name {
+    min-height: 13px;
   }
 }
 
-/* Desktop and up */
-@media (min-width: 973px) {
-  .swatch-block {
-    width: 100px;
+@container (min-width: 540px) and (max-width: 650px) {
+  .carousel-swatch-block {
+    width: 65px;
+    height: 95px;
   }
   
-  .swatch {
-    width: 100px;
-    height: 100px;
+  .carousel-swatch {
+    width: 65px;
+    height: 65px;
+    border-radius: var(--radius-sm);
+  }
+  
+  .carousel-color-name {
+    min-height: 14px;
+  }
+}
+
+@container (min-width: 650px) and (max-width: 920px) {
+  .carousel-swatch-block {
+    width: 85px;
+    height: 115px;
+  }
+  
+  .carousel-swatch {
+    width: 85px;
+    height: 85px;
+    border-radius: var(--radius-md);
+  }
+  
+  .carousel-color-name {
+    font-size: var(--font-size-sm);
+    min-height: 15px;
+  }
+}
+
+@container (min-width: 920px) {
+  .carousel-swatch-block {
+    width: 90px;
+    height: 120px;
+  }
+  
+  .carousel-swatch {
+    width: 90px;
+    height: 90px;
+    border-radius: var(--radius-lg);
+  }
+  
+  .carousel-color-name {
+    font-size: var(--font-size-sm);
+    min-height: 16px;
+  }
+}
+
+/* Large Desktop (1440px and up) */
+@container (min-width: 1440px) {
+  .carousel-swatch-block {
+    width: 110px;
+    height: 160px;
+  }
+  
+  .carousel-swatch {
+    width: 110px;
+    height: 110px;
     margin-bottom: 5px;
+    border-radius: var(--radius-xl);
   }
   
-  .color-name {
+  .carousel-color-name {
     font-size: var(--font-size-base);
+    min-height: 18px;
   }
   
-  .hex-code {
+  .carousel-hex-code {
     font-size: var(--font-size-sm);
+    height: 14px;
   }
 }
-
 </style>

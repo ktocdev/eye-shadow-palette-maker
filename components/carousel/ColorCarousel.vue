@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import SwatchBlock from '../swatch/SwatchBlock.vue'
+import CarouselSwatch from './CarouselSwatch.vue'
 import { useCarousel } from '../../composables/useCarousel.js'
 
 const props = defineProps({
@@ -42,7 +42,7 @@ const {
       </div>
       
       <div class="carousel-swatches">
-        <SwatchBlock 
+        <CarouselSwatch 
           v-for="color in currentPageColors" 
           :key="color.id"
           :color-name="color.name" 
@@ -135,139 +135,6 @@ const {
   align-items: flex-start;
 }
 
-/* Mobile carousel swatch blocks - fixed sizing */
-.carousel-swatches .swatch-block {
-  width: 50px;
-  height: 80px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.carousel-swatches .swatch {
-  width: 50px;
-  height: 50px;
-  margin-bottom: 2px;
-  flex-shrink: 0;
-  border-radius: var(--radius-swatch);
-  box-shadow: var(--shadow-swatch);
-}
-
-.carousel-swatches .color-name {
-  font-size: var(--font-size-xs);
-  line-height: 1;
-  text-align: center;
-  max-width: 100%;
-  white-space: normal;
-  word-wrap: break-word;
-  min-height: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.carousel-swatches .hex-code {
-  font-size: var(--font-size-xs);
-  line-height: 1;
-  text-align: center;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  height: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 1px;
-}
-
-@container (min-width: 400px) and (max-width: 540px) {
-  .carousel-swatches .swatch-block {
-    width: 55px;
-    height: 85px;
-  }
-  
-  .carousel-swatches .swatch {
-    width: 55px;
-    height: 55px;
-    border-radius: var(--radius-swatch);
-  }
-  
-  .carousel-swatches .color-name {
-    font-size: var(--font-size-xs);
-    min-height: 13px;
-  }
-  
-  .carousel-swatches .hex-code {
-    font-size: var(--font-size-xs);
-  }
-}
-
-@container (min-width: 540px) and (max-width: 650px) {
-  .carousel-swatches .swatch-block {
-    width: 65px;
-    height: 95px;
-  }
-  
-  .carousel-swatches .swatch {
-    width: 65px;
-    height: 65px;
-    border-radius: var(--radius-sm);
-  }
-  
-  .carousel-swatches .color-name {
-    font-size: var(--font-size-xs);
-    min-height: 14px;
-  }
-  
-  .carousel-swatches .hex-code {
-    font-size: var(--font-size-xs);
-  }
-}
-
-@container (min-width: 650px) and (max-width: 920px) {
-  .carousel-swatches .swatch-block {
-    width: 85px;
-    height: 115px;
-  }
-  
-  .carousel-swatches .swatch {
-    width: 85px;
-    height: 85px;
-    border-radius: var(--radius-md);
-  }
-  
-  .carousel-swatches .color-name {
-    font-size: var(--font-size-sm);
-    min-height: 15px;
-  }
-  
-  .carousel-swatches .hex-code {
-    font-size: var(--font-size-xs);
-  }
-}
-
-@container (min-width: 920px) {
-  .carousel-swatches .swatch-block {
-    width: 90px;
-    height: 120px;
-  }
-  
-  .carousel-swatches .swatch {
-    width: 90px;
-    height: 90px;
-    border-radius: var(--radius-lg);
-  }
-  
-  .carousel-swatches .color-name {
-    font-size: var(--font-size-sm);
-    min-height: 16px;
-  }
-  
-  .carousel-swatches .hex-code {
-    font-size: var(--font-size-xs);
-  }
-}
 
 /* Large Desktop (1440px and up) */
 @container (min-width: 1440px) {
@@ -278,28 +145,6 @@ const {
   .carousel-swatches {
     min-height: 140px;
     gap: 15px;
-  }
-
-  .carousel-swatches .swatch-block {
-    width: 110px;
-    height: 160px;
-  }
-  
-  .carousel-swatches .swatch {
-    width: 110px;
-    height: 110px;
-    margin-bottom: 5px;
-    border-radius: var(--radius-xl);
-  }
-  
-  .carousel-swatches .color-name {
-    font-size: var(--font-size-base);
-    min-height: 18px;
-  }
-  
-  .carousel-swatches .hex-code {
-    font-size: var(--font-size-sm);
-    height: 14px;
   }
 
   .carousel-arrow {
