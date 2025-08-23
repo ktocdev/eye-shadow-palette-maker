@@ -51,9 +51,9 @@
         ],
         "browns": [
           {
-            "name": "Gushing Lava",
+            "name": "Lava Cream",
             "hex": "#A65C3A",
-            "id": "lava-caress",
+            "id": "lava-cream",
             "is_dark": true,
             "effect": "sparkly"
           },
@@ -152,23 +152,23 @@
         ],
         "greens": [
           {
-            "name": "Vintage Kitchen",
+            "name": "Botanic Bliss",
             "hex": "#B4F8C8",
-            "id": "vintage-ktichen",
+            "id": "Botanic-Bliss",
             "is_dark": false,
             "effect": "matte"
           },
           {
-            "name": "Spiked Absinthe",
+            "name": "Absinthe",
             "hex": "#39FF14",
-            "id": "spiked-absinthe",
+            "id": "absinthe",
             "is_dark": false,
             "effect": "sparkly"
           },
           {
-            "name": "Crawling Ivy",
+            "name": "Covered in Ivy",
             "hex": "#2C7265",
-            "id": "crawling-Ivy",
+            "id": "covering-in-Ivy",
             "is_dark": true,
             "effect": "matte"
           }

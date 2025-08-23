@@ -10,7 +10,7 @@ export function useResponsive() {
   // Breakpoints (matching CSS)
   const breakpoints = {
     mobile: 481,
-    tablet: 769
+    tablet: 973
   }
   
   // Computed breakpoint checks

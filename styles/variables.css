@@ -70,7 +70,6 @@
   --shadow-grid-cell-hover: inset 0 1px 2px rgba(0,123,255,0.12), inset 0 -1px 2px rgba(255,255,255,0.6), inset 1px 0 2px rgba(0,123,255,0.08), inset -1px 0 2px rgba(255,255,255,0.4);
   
   /* Effect Shadows */
-  --shadow-shimmer: 0 0 8px rgba(255, 255, 255, 0.3), inset 0 0 8px rgba(255, 255, 255, 0.2);
   --shadow-swatch: inset 0 2px 0 rgba(0,0,0,0.1), inset 0 2px 0 rgba(255,255,255,0.2);
   
   /* Divider Shadows */
@@ -140,5 +139,6 @@
   /* Complete Border Styles */
   --border-standard: var(--border-width-thin) solid var(--border-color-light);
   --border-container: var(--border-width-thin) solid var(--border-color-medium);
+  --border-container-light: var(--border-width-thin) solid rgba(139, 129, 165, 0.2);
   --border-swatch: var(--border-width-thin) solid var(--border-color-dark);
 }

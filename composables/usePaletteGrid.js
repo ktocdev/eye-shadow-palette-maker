@@ -148,7 +148,8 @@ export function usePaletteGrid(colors) {
         colorName: selectedColor.name,
         hexCode: selectedColor.hex,
         bgColor: selectedColor.hex,
-        isDark: selectedColor.is_dark
+        isDark: selectedColor.is_dark,
+        effect: selectedColor.effect || 'matte'
       }
       gridData.set(i, colorData) // Direct set without triggering for each one
     }

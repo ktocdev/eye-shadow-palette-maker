@@ -34,15 +34,6 @@ const handleClear = () => {
 const handleRandomize = () => {
   paletteGridRef.value?.generateRandomPalette()
 }
-
-// Setup and cleanup
-onMounted(() => {
-  document.body.style.overflow = 'hidden'
-})
-
-onUnmounted(() => {
-  document.body.style.overflow = ''
-})
 </script>
 
 <template>
