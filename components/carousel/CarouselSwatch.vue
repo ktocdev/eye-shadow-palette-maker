@@ -109,12 +109,6 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   line-height: 1;
   white-space: normal;
   word-wrap: break-word;
-  text-align: center;
-  max-width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 12px;
 }
 
 .carousel-hex-code {
@@ -122,15 +116,6 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
   line-height: 1;
-  text-align: center;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  height: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   margin-top: 1px;
 }
 

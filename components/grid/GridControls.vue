@@ -42,7 +42,7 @@ const handleSizeChange = (event) => {
 .grid-controls select {
   padding: 8px 12px;
   font-size: 16px;
-  border:var(--border-standard);
+  border: var(--border-standard);
   border-radius: var(--radius-xs);
   min-width: 120px;
 }
