@@ -169,9 +169,7 @@ const handleSwipeRight = () => {
   align-items: flex-start;
 }
 
-
-/* Large Desktop (1440px and up) */
-@container (min-width: 1440px) {
+@container (min-width: 1024px) {
   .color-carousel {
     padding: var(--font-size-2xl);
   }

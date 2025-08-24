@@ -126,7 +126,7 @@ export function useDragDrop(options = {}) {
     preview.style.pointerEvents = 'none'
     preview.style.opacity = '0.7'
     preview.style.transform = 'scale(0.9)'
-    preview.style.borderRadius = 'var(--radius-swatch-mini, 8px)'
+    preview.style.borderRadius = 'var(--radius-container, 8px)'
     preview.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.3)'
     
     // Position at cursor/touch location

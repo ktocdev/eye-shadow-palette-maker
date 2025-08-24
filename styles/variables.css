@@ -104,13 +104,11 @@
   --radius-sm: 6px;
   --radius-md: 8px;
   --radius-lg: 10px;
-  --radius-xl: 20px;
+  --radius-xl: 30px;
   --radius-circle: 50%;
   
   /* Component-specific Border Radius */
   --radius-button: var(--radius-md);
-  --radius-swatch-mini: var(--radius-lg);
-  --radius-grid-cell: var(--radius-lg);
   --radius-container: var(--radius-md);
   --radius-container-large: var(--radius-xl);
   

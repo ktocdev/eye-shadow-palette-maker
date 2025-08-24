@@ -107,7 +107,7 @@ const onMiniSwatchTouchEnd = (e) => {
 .palette-swatch {
   width: 100%;
   height: 100%;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   border: var(--border-swatch);
   cursor: grab;
   position: relative;
@@ -145,8 +145,9 @@ const onMiniSwatchTouchEnd = (e) => {
 
 @media (min-width: 1024px) {
   .palette-swatch {
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-xl);
   }
+
   .palette-color-name {
     font-size: var(--font-size-base);
     padding: 8px;
