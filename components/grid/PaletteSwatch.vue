@@ -140,12 +140,12 @@ const onMiniSwatchTouchEnd = (e) => {
 }
 
 .palette-swatch-container:has(.palette-swatch.dark-palette-swatch) .palette-color-name {
-  color: var(--color-text-light);
+  color: #f8f9fa;
 }
 
 @media (min-width: 1024px) {
   .palette-swatch {
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-lg);
   }
   .palette-color-name {
     font-size: var(--font-size-base);

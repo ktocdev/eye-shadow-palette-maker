@@ -70,7 +70,7 @@ onMounted(() => {
 .grid-cell {
   aspect-ratio: 1;
   border: none;
-  border-radius: var(--radius-grid-cell);
+  border-radius: var(--radius-lg);
   background: var(--gradient-container-neutral);
   box-shadow: var(--shadow-grid-cell);
   display: flex;
@@ -100,6 +100,7 @@ onMounted(() => {
 
 @media (min-width: 1024px) {
   .grid-cell {
+    border-radius: var(--radius-xl);
     height: 124px;
     width: 124px;
   }
