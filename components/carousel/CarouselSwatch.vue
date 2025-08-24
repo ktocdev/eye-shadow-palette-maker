@@ -29,6 +29,7 @@ const props = defineProps({
 const { 
   isDragging,
   handleDragStart,
+  handleDrag,
   handleDragEnd,
   handleTouchStart,
   handleTouchMove,
@@ -46,6 +47,7 @@ const colorData = computed(() => ({
 
 // Handle events with proper data
 const onDragStart = (e) => handleDragStart(e, colorData.value, false)
+const onDrag = (e) => handleDrag(e)
 const onDragEnd = (e) => handleDragEnd(e)
 const onTouchStart = (e) => handleTouchStart(e, colorData.value, false)
 const onTouchMove = (e) => handleTouchMove(e)
@@ -60,6 +62,7 @@ const onTouchEnd = (e) => handleTouchEnd(e)
       :style="{ backgroundColor: backgroundColor }"
       draggable="true"
       @dragstart="onDragStart"
+      @drag="onDrag"
       @dragend="onDragEnd"
       @touchstart="onTouchStart"
       @touchmove="onTouchMove"

@@ -13,7 +13,8 @@ const emit = defineEmits(['clear-swatch'])
 
 // Use drag and drop composable
 const { 
-  handleDragStart: handleMiniDragStart, 
+  handleDragStart: handleMiniDragStart,
+  handleDrag: handleMiniDrag,
   handleDragEnd: handleMiniDragEnd,
   handleTouchStart: handleMiniTouchStart,
   handleTouchMove: handleMiniTouchMove,
@@ -23,6 +24,10 @@ const {
 // Handle drag events with proper data
 const onMiniSwatchDragStart = (e) => {
   handleMiniDragStart(e, props.colorData, true)
+}
+
+const onMiniSwatchDrag = (e) => {
+  handleMiniDrag(e)
 }
 
 const onMiniSwatchDragEnd = (e) => {
@@ -73,6 +78,7 @@ const onMiniSwatchTouchEnd = (e) => {
       :style="{ backgroundColor: colorData.bgColor }"
       draggable="true"
       @dragstart="onMiniSwatchDragStart"
+      @drag="onMiniSwatchDrag"
       @dragend="onMiniSwatchDragEnd"
       @touchstart="onMiniSwatchTouchStart"
       @touchmove="onMiniSwatchTouchMove"
