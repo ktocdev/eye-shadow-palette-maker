@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import CarouselSwatch from './CarouselSwatch.vue'
 import { useCarousel } from '../../composables/useCarousel.js'
+import { useSound } from '../../composables/useSound.js'
 
 const props = defineProps({
   colors: {
@@ -25,6 +26,24 @@ const {
   goToNextPage 
 } = useCarousel(computed(() => props.colors))
 
+// Use sound composable
+const { playDropSuccess } = useSound()
+
+// Handle arrow button clicks with sound
+const handlePrevClick = () => {
+  if (canGoPrev.value) {
+    playDropSuccess() // Same sound as dropping a swatch
+    goToPrevPage()
+  }
+}
+
+const handleNextClick = () => {
+  if (canGoNext.value) {
+    playDropSuccess() // Same sound as dropping a swatch
+    goToNextPage()
+  }
+}
+
 // Handle swipe events from carousel swatches
 const handleSwipeLeft = () => {
   if (canGoNext.value) {
@@ -45,7 +64,7 @@ const handleSwipeRight = () => {
       <div class="carousel-left">
         <div class="carousel-info">{{ currentPage + 1 }} / {{ totalPages }}</div>
         <button 
-          @click="goToPrevPage" 
+          @click="handlePrevClick" 
           class="btn carousel-arrow prev-arrow"
           :disabled="!canGoPrev"
           :class="{ disabled: !canGoPrev }"
@@ -69,7 +88,7 @@ const handleSwipeRight = () => {
       </div>
       
       <button 
-        @click="goToNextPage" 
+        @click="handleNextClick" 
         class="btn carousel-arrow next-arrow"
         :disabled="!canGoNext"
         :class="{ disabled: !canGoNext }"
