@@ -20,7 +20,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['grid-size-change'])
+const emit = defineEmits(['grid-size-change', 'grid-updated'])
 
 // Use palette grid composable
 const {
@@ -33,7 +33,8 @@ const {
   clearGrid,
   findSourceCellIndex,
   swapOrMoveColors,
-  generateRandomPalette
+  generateRandomPalette,
+  getOccupiedCells
 } = usePaletteGrid(computed(() => props.colors))
 
 // Set initial grid size
@@ -65,11 +66,16 @@ const handleCellDrop = ({ index, colorData, isFromGrid }) => {
   
   // Play drop success sound after successful drop
   playDropSuccess()
+  
+  // Emit grid updated event
+  emit('grid-updated')
 }
 
 // Handle cell clearing
 const handleCellClear = (index) => {
   removeCellData(index)
+  // Emit grid updated event
+  emit('grid-updated')
 }
 
 // Handle grid size change
@@ -114,7 +120,8 @@ const gridCells = computed(() => {
 // Expose functions for parent component
 defineExpose({
   clearGrid,
-  generateRandomPalette
+  generateRandomPalette,
+  getOccupiedCells
 })
 </script>
 

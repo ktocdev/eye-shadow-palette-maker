@@ -1,5 +1,12 @@
 <script setup>
-defineEmits(['clear', 'randomize'])
+const props = defineProps({
+  canSave: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const emit = defineEmits(['clear', 'randomize', 'open-save-modal', 'view-saved-palettes'])
 </script>
 
 <template>
@@ -9,6 +16,17 @@ defineEmits(['clear', 'randomize'])
     </button>
     <button @click="$emit('clear')" class="btn btn-compact btn-gradient-red">
       Clear Palette
+    </button>
+    <button 
+      @click="$emit('open-save-modal')"
+      :disabled="!canSave"
+      class="btn btn-compact btn-gradient-green"
+      :class="{ 'btn-disabled': !canSave }"
+    >
+      Save Palette
+    </button>
+    <button @click="$emit('view-saved-palettes')" class="btn btn-compact btn-gradient-gray">
+      View Saved Palettes
     </button>
   </div>
 </template>
@@ -27,4 +45,5 @@ defineEmits(['clear', 'randomize'])
     gap: 28px;
   }
 }
+
 </style>
