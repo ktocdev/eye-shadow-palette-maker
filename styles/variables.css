@@ -108,17 +108,11 @@
   --radius-circle: 50%;
   
   /* Component-specific Border Radius */
-  --radius-button: var(--radius-sm);
-  --radius-swatch: var(--radius-sm);
-  --radius-swatch-mini: var(--radius-xs);
-  --radius-grid-cell: var(--radius-sm);
+  --radius-button: var(--radius-md);
+  --radius-swatch-mini: var(--radius-lg);
+  --radius-grid-cell: var(--radius-lg);
   --radius-container: var(--radius-md);
   --radius-container-large: var(--radius-xl);
-  --radius-palette-lid-bottom: var(--radius-md) var(--radius-md);
-  --radius-palette-lid-bottom-tablet: var(--radius-lg) var(--radius-lg);
-  --radius-palette-lid-bottom-desktop: var(--radius-xl) var(--radius-xl);
-  --radius-grid-container-top: var(--radius-md) var(--radius-md);
-  --radius-grid-container-top-tablet: var(--radius-lg) var(--radius-lg);
   
   /* Text Shadow Variables */
   --text-shadow-light: 0 0 3px rgba(255, 255, 255, 0.8); /* White glow for dark text on light backgrounds */

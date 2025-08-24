@@ -13,10 +13,14 @@
    BASE STYLES & TYPOGRAPHY
    ========================================= */
 
-p, label, select, button {
+p, label, select {
   font-family: var(--font-family-primary);
   font-size: var(--font-size-base);
   color: var(--color-text-primary);
+}
+
+button {
+  font-family: var(--font-family-button);
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -51,17 +55,6 @@ h1 {
   .main-content-layout {
     padding: 10px;
   }
-}
-
-.flex-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.flex-column-mobile {
-  display: flex;
-  flex-direction: column;
 }
 
 /* =========================================
@@ -251,7 +244,7 @@ h1 {
 @media (min-width: 481px) {
   .palette-lid {
     padding: 18px;
-    border-radius: var(--radius-palette-lid-bottom-tablet);
+    border-radius: var(--radius-container-large);
   }
 }
 
@@ -259,6 +252,6 @@ h1 {
 @media (min-width: 973px) {
   .palette-lid {
     padding: 20px;
-    border-radius: var(--radius-palette-lid-bottom-desktop);
+    border-radius: var(--radius-container-large);
   }
 }

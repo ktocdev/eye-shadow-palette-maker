@@ -14,7 +14,7 @@ const handleSizeChange = (event) => {
 </script>
 
 <template>
-  <div class="grid-controls flex-column-mobile flex-center">
+  <div class="grid-controls">
     <label for="gridSize">Palette Grid Size:</label>
     <select 
       id="gridSize" 
@@ -31,6 +31,8 @@ const handleSizeChange = (event) => {
 
 /* Component-specific styles */
 .grid-controls {
+  align-items: center;
+  display: flex;
   gap: 8px;
 }
 
@@ -47,7 +49,6 @@ const handleSizeChange = (event) => {
   min-width: 120px;
 }
 
-/* Responsive adjustments */
 @media (min-width: 481px) {
   .grid-controls {
     flex-direction: row;

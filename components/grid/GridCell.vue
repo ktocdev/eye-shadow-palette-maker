@@ -100,8 +100,8 @@ onMounted(() => {
 
 @media (min-width: 1024px) {
   .grid-cell {
-    height: 128px;
-    width: 128px;
+    height: 124px;
+    width: 124px;
   }
 }
 </style>

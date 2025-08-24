@@ -107,7 +107,7 @@ const onMiniSwatchTouchEnd = (e) => {
 .palette-swatch {
   width: 100%;
   height: 100%;
-  border-radius: var(--radius-swatch-mini);
+  border-radius: var(--radius-md);
   border: var(--border-swatch);
   cursor: grab;
   position: relative;
@@ -127,7 +127,7 @@ const onMiniSwatchTouchEnd = (e) => {
   font-family: var(--font-family-primary);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  color: var(--color-text-black);
+  color: var(--color-text-primary);
   text-align: center;
   padding: 4px;
   pointer-events: none;
@@ -140,10 +140,13 @@ const onMiniSwatchTouchEnd = (e) => {
 }
 
 .palette-swatch-container:has(.palette-swatch.dark-palette-swatch) .palette-color-name {
-  color: var(--color-text-white);
+  color: var(--color-text-light);
 }
 
 @media (min-width: 1024px) {
+  .palette-swatch {
+    border-radius: var(--radius-xl);
+  }
   .palette-color-name {
     font-size: var(--font-size-base);
     padding: 8px;
