@@ -26,14 +26,16 @@ const onMiniSwatchDragStart = (e) => {
 }
 
 const onMiniSwatchDragEnd = (e) => {
+  // Check if this was a failed drop (dragged outside valid drop zones)
+  const wasSuccessfulDrop = e.dataTransfer && e.dataTransfer.dropEffect !== 'none'
+  
   handleMiniDragEnd(e)
-  // Check if the swatch was moved and emit clear event if needed
-  setTimeout(() => {
-    // Check if this component's element still exists in the DOM
-    if (!e.target.closest('.palette-swatch-container')) {
-      emit('clear-swatch')
-    }
-  }, 100)
+  
+  // If drag was not successful (dropped outside grid), remove this swatch
+  if (!wasSuccessfulDrop) {
+    console.log('PaletteSwatch dragged outside grid, removing:', props.colorData.colorName)
+    emit('clear-swatch')
+  }
 }
 
 const onMiniSwatchTouchStart = (e) => {
@@ -45,7 +47,18 @@ const onMiniSwatchTouchMove = (e) => {
 }
 
 const onMiniSwatchTouchEnd = (e) => {
+  // For touch events, check if touch ended over a valid grid cell
+  const touch = e.changedTouches[0]
+  const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY)
+  const gridCell = elementBelow?.closest('.grid-cell')
+  
   handleMiniTouchEnd(e)
+  
+  // If touch ended outside grid, remove this swatch
+  if (!gridCell) {
+    console.log('PaletteSwatch touch ended outside grid, removing:', props.colorData.colorName)
+    emit('clear-swatch')
+  }
 }
 </script>
 
