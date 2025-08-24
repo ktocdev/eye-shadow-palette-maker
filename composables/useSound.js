@@ -150,6 +150,73 @@ export function useSound() {
   }
   
   /**
+   * Play removal sound - a paper crumple effect like Mac recycle bin
+   */
+  const playRemoval = () => {
+    if (!isEnabled.value) return
+    
+    initAudioContext()
+    if (!audioContext.value) return
+    
+    // Create a buffer for the crumple sound
+    const bufferSize = Math.floor(audioContext.value.sampleRate * 0.4) // 400ms
+    const audioBuffer = audioContext.value.createBuffer(1, bufferSize, audioContext.value.sampleRate)
+    const bufferData = audioBuffer.getChannelData(0)
+    
+    // Generate paper crumple sound using filtered noise bursts
+    for (let i = 0; i < bufferData.length; i++) {
+      const t = i / bufferData.length
+      
+      // Create multiple crinkle layers with different characteristics
+      let sample = 0
+      
+      // Primary crumple (high-frequency crackles)
+      const crackle1 = Math.random() * 2 - 1
+      const envelope1 = Math.exp(-t * 6) * Math.sin(t * Math.PI * 40) // Decay with high-freq modulation
+      sample += crackle1 * envelope1 * 0.4
+      
+      // Secondary crumple (mid-frequency texture)
+      if (Math.random() < 0.3) { // Sparse additional crackles
+        const crackle2 = Math.random() * 2 - 1
+        const envelope2 = Math.exp(-t * 4) * (1 - t) // Slower decay
+        sample += crackle2 * envelope2 * 0.3
+      }
+      
+      // Light paper rustle (low-frequency base)
+      const rustle = (Math.random() * 2 - 1) * 0.1
+      const rustleEnv = Math.exp(-t * 2) * Math.sin(t * Math.PI * 8)
+      sample += rustle * rustleEnv * 0.2
+      
+      // Overall envelope - quick start, gradual decay
+      const masterEnv = Math.exp(-t * 5) * (1 - t * 0.7)
+      bufferData[i] = sample * masterEnv * 0.25
+    }
+    
+    const source = audioContext.value.createBufferSource()
+    const filter = audioContext.value.createBiquadFilter()
+    const gainNode = audioContext.value.createGain()
+    
+    source.buffer = audioBuffer
+    
+    // Band-pass filter to emphasize the crinkly frequencies
+    filter.type = 'bandpass'
+    filter.frequency.setValueAtTime(3000, audioContext.value.currentTime)
+    filter.Q.setValueAtTime(2, audioContext.value.currentTime)
+    
+    // Gentle fade in and out
+    gainNode.gain.setValueAtTime(0, audioContext.value.currentTime)
+    gainNode.gain.linearRampToValueAtTime(0.15, audioContext.value.currentTime + 0.02)
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.value.currentTime + 0.35)
+    
+    source.connect(filter)
+    filter.connect(gainNode)
+    gainNode.connect(audioContext.value.destination)
+    
+    source.start(audioContext.value.currentTime)
+    source.stop(audioContext.value.currentTime + 0.4)
+  }
+
+  /**
    * Play a subtle click sound
    */
   const playClick = () => {
@@ -182,6 +249,7 @@ export function useSound() {
     playDragStart,
     playDragOut,
     playDropSuccess,
+    playRemoval,
     playClick,
     createBeep,
     toggleSound,

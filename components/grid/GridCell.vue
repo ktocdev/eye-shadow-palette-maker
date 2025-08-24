@@ -78,14 +78,12 @@ onMounted(() => {
   justify-content: center;
   transition: all 0.2s ease;
   position: relative;
-  height: 64px;
-  width: 64px;
 }
 
 @media (min-width: 480px) {
   .grid-cell {
-    height: 72px;
-    width: 72px;
+    height: 88px;
+    width: 88px;
   }
 }
 
