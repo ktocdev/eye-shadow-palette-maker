@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, computed } from 'vue'
 
 // Components
 import ColorCarousel from './carousel/ColorCarousel.vue'
@@ -29,11 +29,40 @@ const handleGridSizeChange = (newSize) => {
 // Handle palette controls
 const handleClear = () => {
   paletteGridRef.value?.clearGrid()
+  updateGridTracker()
 }
 
 const handleRandomize = () => {
   paletteGridRef.value?.generateRandomPalette()
+  updateGridTracker()
 }
+
+const handleSave = () => {
+  const gridData = paletteGridRef.value?.getOccupiedCells() || []
+  const paletteData = {
+    title: 'My Custom Palette', // Placeholder title for now
+    gridSize: currentGridSize.value,
+    colors: gridData,
+    createdAt: new Date().toISOString()
+  }
+  console.log('Palette data to save:', paletteData)
+}
+
+// Track grid changes for reactivity
+const gridChangeTracker = ref(0)
+const updateGridTracker = () => {
+  gridChangeTracker.value++
+}
+
+// Check if all grid cells are occupied
+const isGridFull = computed(() => {
+  // Access gridChangeTracker to ensure reactivity
+  gridChangeTracker.value
+  if (!paletteGridRef.value) return false
+  const occupiedCells = paletteGridRef.value.getOccupiedCells() || []
+  const totalCells = currentGridSize.value * currentGridSize.value
+  return occupiedCells.length === totalCells
+})
 </script>
 
 <template>
@@ -52,6 +81,7 @@ const handleRandomize = () => {
           :initial-grid-size="4"
           :grid-size="currentGridSize"
           @grid-size-change="handleGridSizeChange"
+          @grid-updated="updateGridTracker"
         />
         
         <div class="palette-hinges">
@@ -74,6 +104,8 @@ const handleRandomize = () => {
             <PaletteControls 
               @clear="handleClear"
               @randomize="handleRandomize"
+              @save="handleSave"
+              :can-save="isGridFull"
             />
           </div>
         </div>

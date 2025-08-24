@@ -83,6 +83,8 @@
   --gradient-button-purple-hover: linear-gradient(135deg, rgba(90, 74, 183, 0.8), rgba(36, 34, 64, 0.9));
   --gradient-button-gray: linear-gradient(135deg, #8a8a8a, #444444);
   --gradient-button-gray-hover: linear-gradient(135deg, #777777, #333333);
+  --gradient-button-green: linear-gradient(135deg, rgba(34, 139, 34, 0.7), rgba(0, 128, 0, 0.8));
+  --gradient-button-green-hover: linear-gradient(135deg, rgba(28, 112, 28, 0.8), rgba(0, 100, 0, 0.9));
   
   /* Container Gradients */
   --gradient-container-primary: linear-gradient(145deg, #e8e4f0, #d6d0e0);
