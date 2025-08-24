@@ -23,6 +23,7 @@ export function useDragDrop(options = {}) {
     dragConfirmThreshold = 20 // pixels of non-sideways movement to confirm drag
   } = options
   
+  
   /**
    * Create standardized color data object
    * @param {Object} color - Color object with various possible structures
@@ -290,14 +291,36 @@ export function useDragDrop(options = {}) {
     
     // If we haven't confirmed this as a drag yet, check what type of gesture this is
     if (!dragConfirmed.value) {
-      // Check if this is primarily a sideways movement (swipe) - use relaxed threshold for early detection
+      // Check if this is primarily a sideways movement (swipe) - but only treat as swipe for carousel items
       if (isPrimarilySideways(startData.x, startData.y, touch.clientX, touch.clientY, false)) {
-        // This looks like a swipe in progress - return early (already prevented default above)
-        return
-      }
-      
-      // Check if we should confirm this as a drag operation
-      if (shouldConfirmDrag(startData.x, startData.y, touch.clientX, touch.clientY)) {
+        // Check if this is a carousel swatch that should handle swipes for navigation
+        const isCarouselSwatch = startData.target.classList.contains('carousel-swatch')
+        
+        if (isCarouselSwatch) {
+          // This looks like a swipe in progress for carousel navigation - return early
+          return
+        }
+        // If this is a grid swatch, treat horizontal movement as a drag immediately
+        // This allows grid items to drag horizontally without waiting for more movement
+        dragConfirmed.value = true
+        
+        // Start drag
+        dragData.value = { ...startData.colorData, isFromGrid: startData.isFromGrid }
+        isDragging.value = true
+        
+        // Add visual feedback to source
+        startData.target.classList.add('dragging')
+        
+        // Create drag preview
+        dragPreview.value = createDragPreview(startData.target, touch)
+        
+        // Play appropriate drag sound based on source
+        if (!startData.isFromGrid) {
+          onDragStart() // Upward sweep for carousel swatches
+        } else {
+          onDragOut() // Downward sweep for grid swatches
+        }
+      } else if (shouldConfirmDrag(startData.x, startData.y, touch.clientX, touch.clientY)) {
         // Confirm this is a drag operation
         dragConfirmed.value = true
         
