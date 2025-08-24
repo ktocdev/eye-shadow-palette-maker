@@ -19,16 +19,20 @@ const tileSize = computed(() => {
 
 // Create grid array with colors placed at their indices
 const gridCells = computed(() => {
+  console.log('MiniPalette paletteData:', props.paletteData)
+  
   const totalCells = props.paletteData.gridSize * props.paletteData.gridSize
   const cells = new Array(totalCells).fill(null)
   
   // Place colors at their saved indices
   props.paletteData.colors.forEach(({ index, colorData }) => {
+    console.log('Processing color at index', index, 'colorData:', colorData)
     if (index < totalCells) {
       cells[index] = colorData
     }
   })
   
+  console.log('Final grid cells:', cells)
   return cells
 })
 
@@ -58,7 +62,7 @@ const gridColumns = computed(() => {
           'effect-sparkly': colorData && colorData.effect === 'sparkly'
         }"
         :style="{ 
-          backgroundColor: colorData ? colorData.hex : 'transparent',
+          backgroundColor: colorData ? (colorData.hex || colorData.hexCode || colorData.backgroundColor) : 'transparent',
           width: tileSize + 'px',
           height: tileSize + 'px'
         }"
