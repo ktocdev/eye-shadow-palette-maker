@@ -279,13 +279,20 @@ export function useDragDrop(options = {}) {
     
     const touch = event.touches[0]
     const startData = touchStartData.value
+    const deltaX = touch.clientX - startData.x
+    const deltaY = touch.clientY - startData.y
+    
+    // Early prevention for mobile pull-to-refresh on any non-trivial vertical movement
+    // This prevents the browser from starting pull-to-refresh while we determine intent
+    if (Math.abs(deltaY) > 5 || Math.abs(deltaX) > 5) {
+      event.preventDefault()
+    }
     
     // If we haven't confirmed this as a drag yet, check what type of gesture this is
     if (!dragConfirmed.value) {
       // Check if this is primarily a sideways movement (swipe) - use relaxed threshold for early detection
       if (isPrimarilySideways(startData.x, startData.y, touch.clientX, touch.clientY, false)) {
-        // This looks like a swipe in progress - prevent drag and return early
-        event.preventDefault()
+        // This looks like a swipe in progress - return early (already prevented default above)
         return
       }
       
@@ -311,13 +318,12 @@ export function useDragDrop(options = {}) {
           onDragOut() // Downward sweep for grid swatches
         }
       } else {
-        // Not enough movement to confirm either gesture yet
+        // Not enough movement to confirm either gesture yet - but we've already prevented default
         return
       }
     }
     
-    // If we get here, we have a confirmed drag operation
-    event.preventDefault()
+    // If we get here, we have a confirmed drag operation (default already prevented)
     
     // Update drag preview position
     updateDragPreview(touch)
