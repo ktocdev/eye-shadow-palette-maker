@@ -15,6 +15,9 @@ export function useDragDrop(options = {}) {
   const {
     onSwipeLeft = () => {},
     onSwipeRight = () => {},
+    onDragStart = () => {},
+    onDragOut = () => {},
+    onDropSuccess = () => {},
     swipeThreshold = 50,
     swipeAngleThreshold = 30, // degrees from horizontal
     dragConfirmThreshold = 20 // pixels of non-sideways movement to confirm drag
@@ -195,6 +198,13 @@ export function useDragDrop(options = {}) {
         clientY: event.clientY 
       }
       dragPreview.value = createDragPreview(event.target, position)
+      
+      // Play appropriate drag sound based on source
+      if (!isFromGrid) {
+        onDragStart() // Upward sweep for carousel swatches
+      } else {
+        onDragOut() // Downward sweep for grid swatches
+      }
     } catch (error) {
       console.error('Error in handleDragStart:', error, { colorData, isFromGrid })
     }
@@ -293,6 +303,13 @@ export function useDragDrop(options = {}) {
         
         // Create drag preview ONLY now that we're confirmed
         dragPreview.value = createDragPreview(startData.target, touch)
+        
+        // Play appropriate drag sound based on source
+        if (!startData.isFromGrid) {
+          onDragStart() // Upward sweep for carousel swatches
+        } else {
+          onDragOut() // Downward sweep for grid swatches
+        }
       } else {
         // Not enough movement to confirm either gesture yet
         return
