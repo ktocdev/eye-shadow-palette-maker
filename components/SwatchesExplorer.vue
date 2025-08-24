@@ -59,8 +59,8 @@ const handleRandomize = () => {
           <div class="hinge right-hinge"></div>
         </div>
         
-        <div class="palette-lid__container">
-          <div class="palette-lid">
+        <div class="palette-lid">
+          <div class="palette-lid__inner">
             <div class="app-info">
               <h1>Eye Shadow Palette Maker</h1>
               <p>Create beautiful eyeshadow combinations</p>

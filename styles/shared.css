@@ -287,7 +287,7 @@ h1 {
    PALETTE CONTAINER COMPONENTS
    ========================================= */
 
-.palette-lid__container {
+.palette-lid {
   background: var(--gradient-container-primary);
   border-radius: var(--radius-container-large);
   box-shadow: var(--shadow-palette-container);
@@ -296,12 +296,13 @@ h1 {
   padding: 30px;
 }
 
-.palette-lid {
+.palette-lid__inner {
   background: var(--gradient-container-primary);
   border-radius: var(--radius-container-large);
   border: 1px solid rgba(139,129,165,0.3);
   border-top: none;
-  padding: 15px;
+  box-shadow: inset -1px 0px 7px #bfbfbf;
+  padding: 100px 15px;
   display: flex;
   flex-direction: column;
   gap: 56px;
