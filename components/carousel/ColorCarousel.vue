@@ -24,6 +24,19 @@ const {
   goToPrevPage, 
   goToNextPage 
 } = useCarousel(computed(() => props.colors))
+
+// Handle swipe events from carousel swatches
+const handleSwipeLeft = () => {
+  if (canGoNext.value) {
+    goToNextPage()
+  }
+}
+
+const handleSwipeRight = () => {
+  if (canGoPrev.value) {
+    goToPrevPage()
+  }
+}
 </script>
 
 <template>
@@ -50,6 +63,8 @@ const {
           :background-color="color.hex"
           :is-dark="color.is_dark"
           :effect="color.effect"
+          @swipe-left="handleSwipeLeft"
+          @swipe-right="handleSwipeRight"
         />
       </div>
       

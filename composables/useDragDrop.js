@@ -4,9 +4,21 @@ import { ref } from 'vue'
  * Composable for handling drag and drop operations
  * @returns {Object} Drag and drop utilities
  */
-export function useDragDrop() {
+export function useDragDrop(options = {}) {
   const isDragging = ref(false)
   const dragData = ref(null)
+  const dragPreview = ref(null)
+  const touchStartData = ref(null)
+  const dragConfirmed = ref(false) // Track when we've confirmed this is a drag, not a swipe
+  
+  // Swipe detection options
+  const {
+    onSwipeLeft = () => {},
+    onSwipeRight = () => {},
+    swipeThreshold = 50,
+    swipeAngleThreshold = 30, // degrees from horizontal
+    dragConfirmThreshold = 20 // pixels of non-sideways movement to confirm drag
+  } = options
   
   /**
    * Create standardized color data object
@@ -26,6 +38,125 @@ export function useDragDrop() {
       hexCode: color.hex,
       bgColor: color.hex,
       isDark: color.is_dark || false
+    }
+  }
+  
+  /**
+   * Calculate angle between two points in degrees
+   * @param {number} x1 - Start X coordinate
+   * @param {number} y1 - Start Y coordinate
+   * @param {number} x2 - End X coordinate
+   * @param {number} y2 - End Y coordinate
+   * @returns {number} Angle in degrees from horizontal
+   */
+  const calculateAngle = (x1, y1, x2, y2) => {
+    const deltaX = x2 - x1
+    const deltaY = y2 - y1
+    const angle = Math.abs(Math.atan2(deltaY, deltaX) * (180 / Math.PI))
+    return Math.min(angle, 180 - angle) // Return acute angle
+  }
+  
+  /**
+   * Check if movement is primarily horizontal (sideways)
+   * @param {number} startX - Start X coordinate
+   * @param {number} startY - Start Y coordinate
+   * @param {number} endX - End X coordinate
+   * @param {number} endY - End Y coordinate
+   * @param {boolean} requireFullDistance - Whether to require full swipe threshold distance
+   * @returns {boolean} True if movement is primarily sideways
+   */
+  const isPrimarilySideways = (startX, startY, endX, endY, requireFullDistance = true) => {
+    const deltaX = Math.abs(endX - startX)
+    const deltaY = Math.abs(endY - startY)
+    
+    // For early detection during touchmove, use a smaller threshold
+    const minDistance = requireFullDistance ? swipeThreshold : dragConfirmThreshold
+    
+    // Must move at least the minimum distance horizontally
+    if (deltaX < minDistance) return false
+    
+    // Must be primarily horizontal (more horizontal than vertical movement)
+    if (deltaX <= deltaY) return false
+    
+    // Calculate angle from horizontal
+    const angle = calculateAngle(startX, startY, endX, endY)
+    
+    // Must be within angle threshold of horizontal
+    return angle <= swipeAngleThreshold
+  }
+  
+  /**
+   * Check if we should confirm this as a drag operation
+   * @param {number} startX - Start X coordinate
+   * @param {number} startY - Start Y coordinate
+   * @param {number} currentX - Current X coordinate
+   * @param {number} currentY - Current Y coordinate
+   * @returns {boolean} True if we should confirm drag
+   */
+  const shouldConfirmDrag = (startX, startY, currentX, currentY) => {
+    const deltaX = Math.abs(currentX - startX)
+    const deltaY = Math.abs(currentY - startY)
+    const totalDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
+    
+    // If we haven't moved enough, don't confirm yet
+    if (totalDistance < dragConfirmThreshold) return false
+    
+    // Movement is sufficient - confirm drag
+    return true
+  }
+  
+  /**
+   * Create drag preview element for both desktop and mobile events
+   * @param {HTMLElement} sourceElement - Element being dragged
+   * @param {Object} position - Position object with clientX and clientY properties
+   * @returns {HTMLElement} Drag preview element
+   */
+  const createDragPreview = (sourceElement, position) => {
+    // Clone the source element
+    const preview = sourceElement.cloneNode(true)
+    
+    // Style the preview
+    preview.classList.add('drag-preview')
+    preview.style.position = 'fixed'
+    preview.style.zIndex = '10000'
+    preview.style.pointerEvents = 'none'
+    preview.style.opacity = '0.7'
+    preview.style.transform = 'scale(0.9)'
+    preview.style.borderRadius = 'var(--radius-swatch-mini, 8px)'
+    preview.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.3)'
+    
+    // Position at cursor/touch location
+    const rect = sourceElement.getBoundingClientRect()
+    preview.style.left = `${position.clientX - rect.width / 2}px`
+    preview.style.top = `${position.clientY - rect.height / 2}px`
+    preview.style.width = `${rect.width}px`
+    preview.style.height = `${rect.height}px`
+    
+    // Add to body
+    document.body.appendChild(preview)
+    
+    return preview
+  }
+  
+  /**
+   * Update drag preview position for both desktop and mobile events
+   * @param {Object} position - Position object with clientX and clientY properties
+   */
+  const updateDragPreview = (position) => {
+    if (dragPreview.value) {
+      const rect = dragPreview.value.getBoundingClientRect()
+      dragPreview.value.style.left = `${position.clientX - rect.width / 2}px`
+      dragPreview.value.style.top = `${position.clientY - rect.height / 2}px`
+    }
+  }
+  
+  /**
+   * Remove drag preview element
+   */
+  const removeDragPreview = () => {
+    if (dragPreview.value) {
+      document.body.removeChild(dragPreview.value)
+      dragPreview.value = null
     }
   }
   
@@ -50,11 +181,38 @@ export function useDragDrop() {
         event.dataTransfer.setData('text/plain', 'grid-item')
       }
       
-      // Add visual feedback
+      // Hide default drag image and use our custom preview
+      const emptyImg = new Image()
+      emptyImg.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs='
+      event.dataTransfer.setDragImage(emptyImg, 0, 0)
+      
+      // Add visual feedback to source
       event.target.classList.add('dragging')
+      
+      // Create custom drag preview for desktop
+      const position = { 
+        clientX: event.clientX, 
+        clientY: event.clientY 
+      }
+      dragPreview.value = createDragPreview(event.target, position)
     } catch (error) {
       console.error('Error in handleDragStart:', error, { colorData, isFromGrid })
     }
+  }
+  
+  /**
+   * Handle drag for desktop/mouse events (to update preview position)
+   * @param {Event} event - Drag event
+   */
+  const handleDrag = (event) => {
+    if (!isDragging.value || !dragPreview.value) return
+    
+    // Update drag preview position for desktop
+    const position = { 
+      clientX: event.clientX, 
+      clientY: event.clientY 
+    }
+    updateDragPreview(position)
   }
   
   /**
@@ -64,6 +222,10 @@ export function useDragDrop() {
   const handleDragEnd = (event) => {
     isDragging.value = false
     dragData.value = null
+    
+    // Remove drag preview
+    removeDragPreview()
+    
     event.target.classList.remove('dragging')
   }
   
@@ -75,13 +237,24 @@ export function useDragDrop() {
    */
   const handleTouchStart = (event, colorData, isFromGrid = false) => {
     try {
+      const touch = event.touches[0]
       const standardizedData = createColorData(colorData)
       
-      dragData.value = { ...standardizedData, isFromGrid }
-      isDragging.value = true
+      // Store initial touch data for swipe detection
+      touchStartData.value = {
+        x: touch.clientX,
+        y: touch.clientY,
+        time: Date.now(),
+        colorData: standardizedData,
+        isFromGrid,
+        target: event.target
+      }
       
-      // Add visual feedback
-      event.target.classList.add('dragging')
+      // Reset drag confirmation
+      dragConfirmed.value = false
+      
+      // Don't immediately start drag - wait to see if it's a swipe
+      // We'll start the actual drag in touchmove if needed
     } catch (error) {
       console.error('Error in handleTouchStart:', error, { colorData, isFromGrid })
     }
@@ -92,10 +265,46 @@ export function useDragDrop() {
    * @param {Event} event - Touch event
    */
   const handleTouchMove = (event) => {
-    if (!isDragging.value) return
+    if (!touchStartData.value) return
     
-    event.preventDefault()
     const touch = event.touches[0]
+    const startData = touchStartData.value
+    
+    // If we haven't confirmed this as a drag yet, check what type of gesture this is
+    if (!dragConfirmed.value) {
+      // Check if this is primarily a sideways movement (swipe) - use relaxed threshold for early detection
+      if (isPrimarilySideways(startData.x, startData.y, touch.clientX, touch.clientY, false)) {
+        // This looks like a swipe in progress - prevent drag and return early
+        event.preventDefault()
+        return
+      }
+      
+      // Check if we should confirm this as a drag operation
+      if (shouldConfirmDrag(startData.x, startData.y, touch.clientX, touch.clientY)) {
+        // Confirm this is a drag operation
+        dragConfirmed.value = true
+        
+        // Start drag
+        dragData.value = { ...startData.colorData, isFromGrid: startData.isFromGrid }
+        isDragging.value = true
+        
+        // Add visual feedback to source
+        startData.target.classList.add('dragging')
+        
+        // Create drag preview ONLY now that we're confirmed
+        dragPreview.value = createDragPreview(startData.target, touch)
+      } else {
+        // Not enough movement to confirm either gesture yet
+        return
+      }
+    }
+    
+    // If we get here, we have a confirmed drag operation
+    event.preventDefault()
+    
+    // Update drag preview position
+    updateDragPreview(touch)
+    
     const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY)
     
     // Remove drag-over class from all grid cells
@@ -115,9 +324,41 @@ export function useDragDrop() {
    * @param {Event} event - Touch event
    */
   const handleTouchEnd = (event) => {
-    if (!isDragging.value) return
+    if (!touchStartData.value) return
     
     const touch = event.changedTouches[0]
+    const startData = touchStartData.value
+    
+    // If drag was never confirmed, check if this was a completed swipe
+    if (!dragConfirmed.value) {
+      // Check if this was a swipe - use full threshold for final confirmation
+      if (isPrimarilySideways(startData.x, startData.y, touch.clientX, touch.clientY, true)) {
+        // Handle swipe
+        const deltaX = touch.clientX - startData.x
+        
+        if (deltaX > 0) {
+          // Swipe right
+          onSwipeRight()
+        } else {
+          // Swipe left
+          onSwipeLeft()
+        }
+      }
+      
+      // Clean up and return (no drag to handle)
+      touchStartData.value = null
+      dragConfirmed.value = false
+      return
+    }
+    
+    // If we get here, it was a confirmed drag operation
+    if (!isDragging.value) {
+      // This shouldn't happen, but clean up just in case
+      touchStartData.value = null
+      dragConfirmed.value = false
+      return
+    }
+    
     const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY)
     const gridCell = elementBelow?.closest('.grid-cell')
     
@@ -138,9 +379,17 @@ export function useDragDrop() {
       cell.classList.remove('drag-over')
     })
     
-    event.target.classList.remove('dragging')
+    // Remove drag preview
+    removeDragPreview()
+    
+    if (startData.target) {
+      startData.target.classList.remove('dragging')
+    }
+    
     isDragging.value = false
     dragData.value = null
+    touchStartData.value = null
+    dragConfirmed.value = false
   }
   
   /**
@@ -203,6 +452,11 @@ export function useDragDrop() {
   const resetDragState = () => {
     isDragging.value = false
     dragData.value = null
+    touchStartData.value = null
+    dragConfirmed.value = false
+    
+    // Remove drag preview
+    removeDragPreview()
     
     // Remove any remaining drag visual feedback
     document.querySelectorAll('.dragging, .drag-over').forEach(element => {
@@ -215,6 +469,7 @@ export function useDragDrop() {
     dragData,
     createColorData,
     handleDragStart,
+    handleDrag,
     handleDragEnd,
     handleTouchStart,
     handleTouchMove,

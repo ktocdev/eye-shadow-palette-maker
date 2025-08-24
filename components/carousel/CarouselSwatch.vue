@@ -25,7 +25,10 @@ const props = defineProps({
   }
 })
 
-// Use drag and drop composable
+// Get carousel navigation from parent (will be injected)
+const emit = defineEmits(['swipe-left', 'swipe-right'])
+
+// Use drag and drop composable with swipe handling
 const { 
   isDragging,
   handleDragStart,
@@ -34,7 +37,12 @@ const {
   handleTouchStart,
   handleTouchMove,
   handleTouchEnd
-} = useDragDrop()
+} = useDragDrop({
+  onSwipeLeft: () => emit('swipe-left'),
+  onSwipeRight: () => emit('swipe-right'),
+  swipeThreshold: 50,
+  swipeAngleThreshold: 30
+})
 
 // Create color data object
 const colorData = computed(() => ({
