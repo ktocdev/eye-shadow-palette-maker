@@ -142,7 +142,7 @@ defineExpose({
   margin-top: 10px;
   padding: 15px;
   background: var(--gradient-container-primary);
-  border-radius: var(--radius-grid-container-top);
+  border-radius: var(--radius-container-large);
   box-shadow: var(--shadow-grid-container);
   border: var(--border-container);
   border-bottom: none;
@@ -153,7 +153,7 @@ defineExpose({
   gap: 8px;
   padding: 15px;
   background: var(--gradient-container-secondary);
-  border-radius: var(--radius-container);
+  border-radius: var(--radius-container-large);
   box-shadow: var(--shadow-grid-inner);
   border: var(--border-container-light);
 }
@@ -162,7 +162,7 @@ defineExpose({
 @media (min-width: 481px) {
   .palette-grid-container {
     padding: 18px;
-    border-radius: var(--radius-grid-container-top-tablet);
+    border-radius: var(--radius-container-large);
   }
 }
 
@@ -170,7 +170,7 @@ defineExpose({
 @media (min-width: 973px) {
   .palette-grid-container {
     margin-top: 0;
-    padding: 20px;
+    padding: 30px;
     box-shadow: var(--shadow-grid-container-desktop);
   }
 }

@@ -152,11 +152,18 @@
         ],
         "greens": [
           {
+            "name": "Ice Queen",
+            "hex": "#e6ffef",
+            "id": "Ice Queen",
+            "is_dark": false,
+            "effect": "matte"
+          },
+          {
             "name": "Botanic Bliss",
             "hex": "#B4F8C8",
             "id": "Botanic-Bliss",
             "is_dark": false,
-            "effect": "matte"
+            "effect": "shimmer"
           },
           {
             "name": "Absinthe",
@@ -169,6 +176,13 @@
             "name": "Covered in Ivy",
             "hex": "#076475",
             "id": "covering-in-Ivy",
+            "is_dark": true,
+            "effect": "sparkly"
+          },
+          {
+            "name": "Moonless Meadow",
+            "hex": "#152c2c",
+            "id": "moonless-meadow",
             "is_dark": true,
             "effect": "matte"
           }

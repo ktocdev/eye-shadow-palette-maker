@@ -3,7 +3,7 @@ defineEmits(['clear', 'randomize'])
 </script>
 
 <template>
-  <div class="palette-controls flex-column-mobile flex-center">
+  <div class="palette-controls">
     <button @click="$emit('randomize')" class="btn btn-compact btn-gradient-purple">
       Random Palette
     </button>
@@ -17,6 +17,7 @@ defineEmits(['clear', 'randomize'])
 
 /* Component-specific responsive layout */
 .palette-controls {
+  display: flex;
   gap: 8px;
 }
 

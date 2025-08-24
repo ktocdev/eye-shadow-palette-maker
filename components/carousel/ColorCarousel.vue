@@ -27,19 +27,19 @@ const {
 } = useCarousel(computed(() => props.colors))
 
 // Use sound composable
-const { playDropSuccess } = useSound()
+const { playNavigation } = useSound()
 
 // Handle arrow button clicks with sound
 const handlePrevClick = () => {
   if (canGoPrev.value) {
-    playDropSuccess() // Same sound as dropping a swatch
+    playNavigation() // Higher-pitched navigation sound
     goToPrevPage()
   }
 }
 
 const handleNextClick = () => {
   if (canGoNext.value) {
-    playDropSuccess() // Same sound as dropping a swatch
+    playNavigation() // Higher-pitched navigation sound
     goToNextPage()
   }
 }
@@ -169,9 +169,7 @@ const handleSwipeRight = () => {
   align-items: flex-start;
 }
 
-
-/* Large Desktop (1440px and up) */
-@container (min-width: 1440px) {
+@container (min-width: 1024px) {
   .color-carousel {
     padding: var(--font-size-2xl);
   }

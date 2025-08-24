@@ -169,7 +169,7 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   }
 }
 
-@container (min-width: 650px) and (max-width: 920px) {
+@container (min-width: 650px) and (max-width: 1024px) {
   .carousel-swatch-block {
     width: 85px;
     height: 115px;
@@ -187,7 +187,7 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   }
 }
 
-@container (min-width: 920px) {
+@container (min-width: 1024px) {
   .carousel-swatch-block {
     width: 90px;
     height: 120px;
@@ -196,7 +196,7 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   .carousel-swatch {
     width: 90px;
     height: 90px;
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-xl);
   }
   
   .carousel-color-name {
@@ -216,7 +216,6 @@ const onTouchEnd = (e) => handleTouchEnd(e)
     width: 110px;
     height: 110px;
     margin-bottom: 5px;
-    border-radius: var(--radius-xl);
   }
   
   .carousel-color-name {

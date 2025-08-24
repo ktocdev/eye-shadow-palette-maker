@@ -217,6 +217,52 @@ export function useSound() {
   }
 
   /**
+   * Play navigation sound - a higher-pitched click for arrow buttons
+   */
+  const playNavigation = () => {
+    if (!isEnabled.value) return
+    
+    initAudioContext()
+    if (!audioContext.value) return
+    
+    // Create a quick, higher-pitched navigation click
+    const audioBuffer = audioContext.value.createBuffer(1, 512, audioContext.value.sampleRate)
+    const bufferData = audioBuffer.getChannelData(0)
+    
+    // Generate a bright, crisp navigation sound
+    for (let i = 0; i < bufferData.length; i++) {
+      const t = i / bufferData.length
+      
+      // Create a short burst of filtered noise for the click
+      const decay = Math.exp(-i * 12 / bufferData.length)
+      bufferData[i] = (Math.random() * 2 - 1) * decay * 0.4
+    }
+    
+    const source = audioContext.value.createBufferSource()
+    const filter = audioContext.value.createBiquadFilter()
+    const gainNode = audioContext.value.createGain()
+    
+    source.buffer = audioBuffer
+    
+    // High-pass filter for bright, crisp navigation sound
+    filter.type = 'highpass'
+    filter.frequency.setValueAtTime(3500, audioContext.value.currentTime) // Higher than drop success
+    filter.Q.setValueAtTime(2, audioContext.value.currentTime)
+    
+    // Quick, snappy envelope for navigation feedback
+    gainNode.gain.setValueAtTime(0, audioContext.value.currentTime)
+    gainNode.gain.linearRampToValueAtTime(0.12, audioContext.value.currentTime + 0.001)
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.value.currentTime + 0.05)
+    
+    source.connect(filter)
+    filter.connect(gainNode)
+    gainNode.connect(audioContext.value.destination)
+    
+    source.start(audioContext.value.currentTime)
+    source.stop(audioContext.value.currentTime + 0.05)
+  }
+
+  /**
    * Play a subtle click sound
    */
   const playClick = () => {
@@ -250,6 +296,7 @@ export function useSound() {
     playDragOut,
     playDropSuccess,
     playRemoval,
+    playNavigation,
     playClick,
     createBeep,
     toggleSound,

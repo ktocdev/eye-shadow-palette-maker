@@ -54,21 +54,28 @@ const handleRandomize = () => {
           @grid-size-change="handleGridSizeChange"
         />
         
+        <div class="palette-hinges">
+          <div class="hinge left-hinge"></div>
+          <div class="hinge right-hinge"></div>
+        </div>
+        
         <div class="palette-lid">
-          <div class="app-info">
-            <h1>Eye Shadow Palette Maker</h1>
-            <p>Create beautiful eyeshadow combinations</p>
+          <div class="palette-lid__inner">
+            <div class="app-info">
+              <h1>Eye Shadow Palette Maker</h1>
+              <p>Create beautiful eyeshadow combinations</p>
+            </div>
+
+            <GridControls
+              :grid-size="currentGridSize"
+              @size-change="handleGridSizeChange"
+            />
+
+            <PaletteControls 
+              @clear="handleClear"
+              @randomize="handleRandomize"
+            />
           </div>
-
-          <GridControls
-            :grid-size="currentGridSize"
-            @size-change="handleGridSizeChange"
-          />
-
-          <PaletteControls 
-            @clear="handleClear"
-            @randomize="handleRandomize"
-          />
         </div>
       </div>
     </div>
@@ -78,23 +85,18 @@ const handleRandomize = () => {
 <style>
 @import '../styles/shared.css';
 
-/* Component-specific styles */
 .swatches-explorer {
   background: var(--gradient-main-background);
 }
 
-/* Responsive adjustments */
+.palette-container {
+  position: relative;
+}
+
 @media (min-width: 769px) {
-  .swatches-explorer {
-    padding: 20px;
-  }
-  
+  .swatches-explorer,
   .main-content {
     padding: 20px;
-  }
-
-  .palette-container {
-    max-width: max-content;
   }
 }
 </style>
