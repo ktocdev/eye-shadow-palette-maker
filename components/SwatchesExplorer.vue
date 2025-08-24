@@ -37,10 +37,10 @@ const handleRandomize = () => {
   updateGridTracker()
 }
 
-const handleSave = () => {
+const handleSave = (customTitle) => {
   const gridData = paletteGridRef.value?.getOccupiedCells() || []
   const paletteData = {
-    title: 'My Custom Palette', // Placeholder title for now
+    title: customTitle || 'My Custom Palette',
     gridSize: currentGridSize.value,
     colors: gridData,
     createdAt: new Date().toISOString()
