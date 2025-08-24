@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useDragDrop } from '../../composables/useDragDrop.js'
+import { useSound } from '../../composables/useSound.js'
 
 const props = defineProps({
   colorName: {
@@ -25,15 +26,28 @@ const props = defineProps({
   }
 })
 
-// Use drag and drop composable
+// Get carousel navigation from parent (will be injected)
+const emit = defineEmits(['swipe-left', 'swipe-right'])
+
+// Use sound composable
+const { playDragStart } = useSound()
+
+// Use drag and drop composable with swipe handling
 const { 
   isDragging,
   handleDragStart,
+  handleDrag,
   handleDragEnd,
   handleTouchStart,
   handleTouchMove,
   handleTouchEnd
-} = useDragDrop()
+} = useDragDrop({
+  onSwipeLeft: () => emit('swipe-left'),
+  onSwipeRight: () => emit('swipe-right'),
+  onDragStart: () => playDragStart(),
+  swipeThreshold: 50,
+  swipeAngleThreshold: 30
+})
 
 // Create color data object
 const colorData = computed(() => ({
@@ -46,6 +60,7 @@ const colorData = computed(() => ({
 
 // Handle events with proper data
 const onDragStart = (e) => handleDragStart(e, colorData.value, false)
+const onDrag = (e) => handleDrag(e)
 const onDragEnd = (e) => handleDragEnd(e)
 const onTouchStart = (e) => handleTouchStart(e, colorData.value, false)
 const onTouchMove = (e) => handleTouchMove(e)
@@ -60,6 +75,7 @@ const onTouchEnd = (e) => handleTouchEnd(e)
       :style="{ backgroundColor: backgroundColor }"
       draggable="true"
       @dragstart="onDragStart"
+      @drag="onDrag"
       @dragend="onDragEnd"
       @touchstart="onTouchStart"
       @touchmove="onTouchMove"
