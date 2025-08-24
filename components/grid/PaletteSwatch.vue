@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useDragDrop } from '../../composables/useDragDrop.js'
+import { useSound } from '../../composables/useSound.js'
 
 const props = defineProps({
   colorData: {
@@ -11,7 +12,10 @@ const props = defineProps({
 
 const emit = defineEmits(['clear-swatch'])
 
-// Use drag and drop composable
+// Use sound composable
+const { playDragOut } = useSound()
+
+// Use drag and drop composable with sound effects
 const { 
   handleDragStart: handleMiniDragStart,
   handleDrag: handleMiniDrag,
@@ -19,7 +23,9 @@ const {
   handleTouchStart: handleMiniTouchStart,
   handleTouchMove: handleMiniTouchMove,
   handleTouchEnd: handleMiniTouchEnd
-} = useDragDrop()
+} = useDragDrop({
+  onDragOut: () => playDragOut()
+})
 
 // Handle drag events with proper data
 const onMiniSwatchDragStart = (e) => {

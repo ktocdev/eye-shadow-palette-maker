@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useDragDrop } from '../../composables/useDragDrop.js'
+import { useSound } from '../../composables/useSound.js'
 
 const props = defineProps({
   colorName: {
@@ -28,6 +29,9 @@ const props = defineProps({
 // Get carousel navigation from parent (will be injected)
 const emit = defineEmits(['swipe-left', 'swipe-right'])
 
+// Use sound composable
+const { playDragStart } = useSound()
+
 // Use drag and drop composable with swipe handling
 const { 
   isDragging,
@@ -40,6 +44,7 @@ const {
 } = useDragDrop({
   onSwipeLeft: () => emit('swipe-left'),
   onSwipeRight: () => emit('swipe-right'),
+  onDragStart: () => playDragStart(),
   swipeThreshold: 50,
   swipeAngleThreshold: 30
 })

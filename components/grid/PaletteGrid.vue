@@ -3,6 +3,7 @@ import { computed, onMounted, onUnmounted, watch } from 'vue'
 import GridCell from './GridCell.vue'
 import { usePaletteGrid } from '../../composables/usePaletteGrid.js'
 import { useEventCleanup } from '../../composables/useEventCleanup.js'
+import { useSound } from '../../composables/useSound.js'
 
 const props = defineProps({
   colors: {
@@ -48,6 +49,9 @@ watch(() => props.gridSize, (newSize) => {
 // Event cleanup composable
 const { addEventListener } = useEventCleanup()
 
+// Sound composable
+const { playDropSuccess } = useSound()
+
 // Handle grid cell drops
 const handleCellDrop = ({ index, colorData, isFromGrid }) => {
   if (isFromGrid) {
@@ -58,6 +62,9 @@ const handleCellDrop = ({ index, colorData, isFromGrid }) => {
     // Handle swatch-to-grid (regular drop from swatch)
     setCellData(index, colorData)
   }
+  
+  // Play drop success sound after successful drop
+  playDropSuccess()
 }
 
 // Handle cell clearing
