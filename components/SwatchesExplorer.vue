@@ -133,7 +133,7 @@ const isGridFull = computed(() => {
           <div class="palette-lid__inner">
             <div class="app-info">
               <h1>Eye Shadow Palette Maker</h1>
-              <p>Create beautiful eyeshadow combinations</p>
+              <p>Drag colors from the top into the palette grid to create beautiful eyeshadow combinations.</p>
             </div>
 
             <GridControls
@@ -180,10 +180,23 @@ const isGridFull = computed(() => {
   position: relative;
 }
 
+.app-info {
+  margin: 0 20px;
+  text-align: center;
+}
+
+.app-info p {
+  margin-bottom: 0;
+}
+
 @media (min-width: 769px) {
   .swatches-explorer,
   .main-content {
     padding: 20px;
+  }
+
+  .app-info {
+    margin: 0 40px;
   }
 }
 </style>

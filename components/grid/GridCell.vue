@@ -94,8 +94,6 @@ onMounted(() => {
 @media (min-width: 1024px) {
   .grid-cell {
     border-radius: var(--radius-xl);
-    height: 124px;
-    width: 124px;
   }
 }
 </style>

@@ -33,7 +33,8 @@ const handleSizeChange = (event) => {
 .grid-controls {
   align-items: center;
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .grid-controls label {

@@ -336,12 +336,14 @@ h1 {
   flex-direction: column;
   gap: 16px;
   align-items: center;
+  max-width: 264px;
 }
 
 @media (min-width: 600px) {
   .palette-lid__inner {
     padding: 40px 15px;
     gap: 32px;
+    max-width: none;
   }
 }
 
