@@ -68,9 +68,9 @@ const gridColumns = computed(() => {
         }"
       />
     </div>
-    <div class="mini-palette-title">
+    <h3 class="mini-palette-title">
       {{ paletteData.title }}
-    </div>
+    </h3>
   </div>
 </template>
 
@@ -95,13 +95,11 @@ const gridColumns = computed(() => {
 
 .mini-palette-title {
   font-family: var(--font-family-primary);
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-s);
   color: var(--color-text-secondary);
   text-align: center;
-  line-height: 1.2;
+  line-height: 1;
   max-width: 120px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: wrap;
 }
 </style>

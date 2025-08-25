@@ -100,7 +100,7 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   width: 50px;
   height: 50px;
   border: var(--border-swatch);
-  border-radius: var(--radius-swatch);
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-swatch);
   margin-bottom: 2px;
   cursor: grab;
@@ -161,7 +161,6 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   .carousel-swatch {
     width: 65px;
     height: 65px;
-    border-radius: var(--radius-sm);
   }
   
   .carousel-color-name {
@@ -178,7 +177,7 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   .carousel-swatch {
     width: 85px;
     height: 85px;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
   }
   
   .carousel-color-name {

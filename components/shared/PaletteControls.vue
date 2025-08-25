@@ -36,13 +36,17 @@ const emit = defineEmits(['clear', 'randomize', 'open-save-modal', 'view-saved-p
 /* Component-specific responsive layout */
 .palette-controls {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-width: 264px;
 }
 
-@media (min-width: 481px) {
+@media (min-width: 600px) {
   .palette-controls {
     flex-direction: row;
-    gap: 28px;
+    gap: 20px;
   }
 }
 

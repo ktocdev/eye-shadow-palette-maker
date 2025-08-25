@@ -25,6 +25,7 @@ const currentGridSize = ref(4)
 // Modal states
 const showSavePaletteModal = ref(false)
 const showSavedPalettesModal = ref(false)
+const savedPaletteData = ref(null)
 
 // Handle grid size changes
 const handleGridSizeChange = (newSize) => {
@@ -70,6 +71,9 @@ const handleSavePalette = (title) => {
     const existing = JSON.parse(localStorage.getItem('eyeshadow-saved-palettes') || '[]')
     existing.push(paletteData)
     localStorage.setItem('eyeshadow-saved-palettes', JSON.stringify(existing))
+    
+    // Store the saved palette data for the modal to display
+    savedPaletteData.value = paletteData
     
     // Clear the grid after successful save
     paletteGridRef.value?.clearGrid()
@@ -129,7 +133,7 @@ const isGridFull = computed(() => {
           <div class="palette-lid__inner">
             <div class="app-info">
               <h1>Eye Shadow Palette Maker</h1>
-              <p>Create beautiful eyeshadow combinations</p>
+              <p>Drag colors from the top into the palette grid to create beautiful eyeshadow combinations.</p>
             </div>
 
             <GridControls
@@ -153,6 +157,7 @@ const isGridFull = computed(() => {
     <SavePaletteModal 
       v-model="showSavePaletteModal"
       :can-save="isGridFull"
+      :saved-palette-data="savedPaletteData"
       @save="handleSavePalette"
       @view-saved-palettes="handleViewSavedPalettes"
     />
@@ -175,10 +180,23 @@ const isGridFull = computed(() => {
   position: relative;
 }
 
+.app-info {
+  margin: 0 20px;
+  text-align: center;
+}
+
+.app-info p {
+  margin-bottom: 0;
+}
+
 @media (min-width: 769px) {
   .swatches-explorer,
   .main-content {
     padding: 20px;
+  }
+
+  .app-info {
+    margin: 0 40px;
   }
 }
 </style>

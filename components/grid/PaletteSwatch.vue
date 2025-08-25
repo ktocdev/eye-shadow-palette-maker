@@ -143,7 +143,7 @@ const onMiniSwatchTouchEnd = (e) => {
   color: #f8f9fa;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 769px) {
   .palette-swatch {
     border-radius: var(--radius-xl);
   }
