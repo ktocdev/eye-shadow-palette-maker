@@ -66,6 +66,7 @@ watch(() => props.modelValue, (isOpen) => {
 </template>
 
 <style>
+/* Mobile first base styles */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -78,14 +79,14 @@ watch(() => props.modelValue, (isOpen) => {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 16px;
+  padding: 8px;
 }
 
 .modal-container {
   width: 100%;
   height: 100%;
-  max-width: 600px;
-  max-height: 80vh;
+  max-width: calc(100% - 16px);
+  max-height: 95vh;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -106,14 +107,14 @@ watch(() => props.modelValue, (isOpen) => {
 
 .modal-close {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 32px;
-  height: 32px;
+  top: 28px;
+  right: 28px;
+  width: 28px;
+  height: 28px;
   border: none;
   background: rgba(0, 0, 0, 0.1);
   border-radius: 50%;
-  font-size: 24px;
+  font-size: 20px;
   line-height: 1;
   cursor: pointer;
   z-index: 1001;
@@ -128,30 +129,59 @@ watch(() => props.modelValue, (isOpen) => {
   background: rgba(0, 0, 0, 0.2);
 }
 
-/* Mobile first - full screen on small devices */
-@media (max-width: 480px) {
-  .modal-overlay {
-    padding: 8px;
-  }
-  
-  .modal-container {
-    max-height: 95vh;
-  }
-  
-  .modal-close {
-    top: 12px;
-    right: 12px;
-    width: 28px;
-    height: 28px;
-    font-size: 20px;
-  }
+.modal-inner-content {
+  padding: 20px;
+  background: var(--gradient-container-secondary);
+  border-radius: var(--radius-container-large);
+  box-shadow: var(--shadow-grid-inner);
+  border: var(--border-container-light);
+  margin: 10px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.modal-inner-content h2 {
+  margin-bottom: 24px;
+  color: var(--color-text-primary);
+}
+
+.modal-inner-content p {
+  margin-bottom: 12px;
+}
+
+/* Dialog variant - mobile first */
+.modal-dialog {
+  max-width: calc(100% - 16px);
+  max-height: none;
+  height: auto;
 }
 
 /* Tablet and up */
 @media (min-width: 481px) {
+  .modal-overlay {
+    padding: 16px;
+  }
+  
   .modal-container {
     max-width: 700px;
     max-height: 85vh;
+  }
+  
+  .modal-close {
+    top: 32px;
+    right: 32px;
+    width: 32px;
+    height: 32px;
+    font-size: 24px;
+  }
+  
+  .modal-inner-content {
+    padding: 30px;
+    margin: 18px;
+  }
+  
+  .modal-dialog {
+    max-width: 600px;
   }
 }
 
@@ -165,61 +195,18 @@ watch(() => props.modelValue, (isOpen) => {
   .modal-content {
     box-shadow: var(--shadow-grid-container-desktop);
   }
-}
-
-/* Modal inner content styling - matches palette grid inner styling */
-.modal-inner-content {
-  padding: 30px;
-  background: var(--gradient-container-secondary);
-  border-radius: var(--radius-container-large);
-  box-shadow: var(--shadow-grid-inner);
-  border: var(--border-container-light);
-  margin: 15px;
-  flex: 1;
-  overflow-y: auto;
-}
-
-.modal-inner-content h2 {
-  margin-bottom: 16px;
-  color: var(--color-text-primary);
-}
-
-.modal-inner-content p {
-  margin-bottom: 12px;
-}
-
-@media (min-width: 481px) {
-  .modal-inner-content {
-    margin: 18px;
+  
+  .modal-close {
+    top: 48px;
+    right: 48px;
+    width: 36px;
+    height: 36px;
   }
-}
-
-@media (min-width: 973px) {
+  
   .modal-inner-content {
     margin: 30px;
   }
-}
-
-/* Dialog variant styles */
-.modal-dialog {
-  max-width: 600px;
-  max-height: none;
-  height: auto;
-}
-
-@media (max-width: 480px) {
-  .modal-dialog {
-    max-width: calc(100% - 16px);
-  }
-}
-
-@media (min-width: 481px) {
-  .modal-dialog {
-    max-width: 600px;
-  }
-}
-
-@media (min-width: 1200px) {
+  
   .modal-dialog {
     max-width: 600px;
   }

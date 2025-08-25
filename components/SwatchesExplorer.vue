@@ -25,6 +25,7 @@ const currentGridSize = ref(4)
 // Modal states
 const showSavePaletteModal = ref(false)
 const showSavedPalettesModal = ref(false)
+const savedPaletteData = ref(null)
 
 // Handle grid size changes
 const handleGridSizeChange = (newSize) => {
@@ -70,6 +71,9 @@ const handleSavePalette = (title) => {
     const existing = JSON.parse(localStorage.getItem('eyeshadow-saved-palettes') || '[]')
     existing.push(paletteData)
     localStorage.setItem('eyeshadow-saved-palettes', JSON.stringify(existing))
+    
+    // Store the saved palette data for the modal to display
+    savedPaletteData.value = paletteData
     
     // Clear the grid after successful save
     paletteGridRef.value?.clearGrid()
@@ -153,6 +157,7 @@ const isGridFull = computed(() => {
     <SavePaletteModal 
       v-model="showSavePaletteModal"
       :can-save="isGridFull"
+      :saved-palette-data="savedPaletteData"
       @save="handleSavePalette"
       @view-saved-palettes="handleViewSavedPalettes"
     />
