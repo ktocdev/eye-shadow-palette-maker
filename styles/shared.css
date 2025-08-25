@@ -73,7 +73,8 @@ h1 {
 .btn-compact {
   padding: 8px 12px;
   border-radius: var(--radius-button);
-  font-size: 14px;
+  font-size: var(--font-size-base);
+  line-height: 1;
 }
 
 /* Button Gradients */
@@ -330,9 +331,23 @@ h1 {
   border: 1px solid rgba(139,129,165,0.3);
   border-top: none;
   box-shadow: inset -1px 0px 7px #bfbfbf;
-  padding: 100px 15px;
+  padding: 25px 15px;
   display: flex;
   flex-direction: column;
-  gap: 56px;
+  gap: 16px;
   align-items: center;
+}
+
+@media (min-width: 600px) {
+  .palette-lid__inner {
+    padding: 40px 15px;
+    gap: 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .palette-lid__inner {
+    padding: 100px 15px;
+    gap: 56px;
+  }
 }

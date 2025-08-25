@@ -43,6 +43,7 @@ const emit = defineEmits(['clear', 'randomize', 'open-save-modal', 'view-saved-p
   .palette-controls {
     flex-direction: row;
     gap: 28px;
+    max-width: 480px;
   }
 }
 

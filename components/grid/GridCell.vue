@@ -80,13 +80,6 @@ onMounted(() => {
   position: relative;
 }
 
-@media (min-width: 480px) {
-  .grid-cell {
-    height: 88px;
-    width: 88px;
-  }
-}
-
 .grid-cell.drag-over {
   background: var(--gradient-container-hover);
   box-shadow: var(--shadow-grid-cell-hover);
