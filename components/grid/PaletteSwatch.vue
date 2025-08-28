@@ -7,6 +7,10 @@ const props = defineProps({
   colorData: {
     type: Object,
     required: true
+  },
+  gridSize: {
+    type: Number,
+    required: true
   }
 })
 
@@ -76,12 +80,13 @@ const onMiniSwatchTouchEnd = (e) => {
 </script>
 
 <template>
-  <div class="palette-swatch-container">
+  <div class="palette-swatch-container" :class="`container-${gridSize}x${gridSize}`">
     <div 
       class="palette-swatch"
       :class="[
         { 'dark-palette-swatch': colorData.isDark },
-        `effect-${colorData.effect || 'matte'}`
+        `effect-${colorData.effect || 'matte'}`,
+        `size-${gridSize}x${gridSize}`
       ]"
       :style="{ backgroundColor: colorData.bgColor }"
       draggable="true"
@@ -93,7 +98,7 @@ const onMiniSwatchTouchEnd = (e) => {
       @touchend="onMiniSwatchTouchEnd"
     >
     </div>
-    <div class="palette-color-name">{{ colorData.colorName }}</div>
+    <div class="palette-color-name" :class="`text-${gridSize}x${gridSize}`">{{ colorData.colorName }}</div>
   </div>
 </template>
 
@@ -143,6 +148,48 @@ const onMiniSwatchTouchEnd = (e) => {
   color: #f8f9fa;
 }
 
+/* Grid size specific swatch styling */
+/* 2x2 Grid - Larger swatches with bigger text */
+.palette-color-name.text-2x2 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  padding: 6px;
+  line-height: 1.1;
+}
+
+/* 3x3 Grid - Medium swatches with standard text */
+.palette-color-name.text-3x3 {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  padding: 5px;
+  line-height: 1.2;
+}
+
+/* 4x4 Grid - Smaller swatches with smaller text (current default) */
+.palette-color-name.text-4x4 {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  padding: 4px;
+  line-height: 1;
+}
+
+@media (max-width: 360px) {
+  .palette-color-name.text-2x2 {
+    font-size: var(--font-size-base);
+    padding: 4px;
+  }
+  
+  .palette-color-name.text-3x3 {
+    font-size: var(--font-size-sm);
+    padding: 3px;
+  }
+  
+  .palette-color-name.text-4x4 {
+    font-size: var(--font-size-xs);
+    padding: 2px;
+  }
+}
+
 @media (min-width: 769px) {
   .palette-swatch {
     border-radius: var(--radius-xl);
@@ -151,6 +198,27 @@ const onMiniSwatchTouchEnd = (e) => {
   .palette-color-name {
     font-size: var(--font-size-base);
     padding: 8px;
+    line-height: 1.2;
+  }
+  
+  .palette-color-name.text-2x2 {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    padding: 8px;
+    line-height: 1.1;
+  }
+  
+  .palette-color-name.text-3x3 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    padding: 6px;
+    line-height: 1.2;
+  }
+  
+  .palette-color-name.text-4x4 {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    padding: 5px;
     line-height: 1.2;
   }
 }

@@ -143,9 +143,10 @@ defineExpose({
 </script>
 
 <template>
-  <div class="palette-grid-container">
+  <div class="palette-grid-container" :class="`container-${gridSize}x${gridSize}`">
     <div 
       class="palette-grid"
+      :class="`grid-${gridSize}x${gridSize}`"
       :style="{ gridTemplateColumns: gridColumns }"
     >
       <GridCell
@@ -153,6 +154,7 @@ defineExpose({
         :key="`cell-${cell.index}`"
         :index="cell.index"
         :color-data="cell.colorData"
+        :grid-size="gridSize"
         @drop="handleCellDrop"
         @clear-cell="handleCellClear"
       />
@@ -182,11 +184,75 @@ defineExpose({
   border: var(--border-container-light);
 }
 
+/* Grid size specific styling */
+/* 2x2 Grid - Compact and focused (30% larger) */
+.palette-grid-container.container-2x2 {
+  max-width: 364px;
+  margin: 10px auto;
+}
+
+.palette-grid.grid-2x2 {
+  gap: 15px;
+  padding: 26px;
+}
+
+/* 3x3 Grid - Balanced (30% larger) */
+.palette-grid-container.container-3x3 {
+  max-width: 442px;
+  margin: 10px auto;
+}
+
+.palette-grid.grid-3x3 {
+  gap: 13px;
+  padding: 23px;
+}
+
+/* 4x4 Grid - Current default behavior (30% larger) */
+.palette-grid-container.container-4x4 {
+  max-width: 520px;
+  margin: 10px auto;
+}
+
+.palette-grid.grid-4x4 {
+  gap: 10px;
+  padding: 20px;
+}
+
 /* Tablet and up */
 @media (min-width: 481px) {
   .palette-grid-container {
     padding: 18px;
     border-radius: var(--radius-container-large);
+  }
+}
+
+/* Very small screens - Optimize grid sizes (30% larger) */
+@media (max-width: 360px) {
+  .palette-grid-container.container-2x2 {
+    max-width: 312px;
+  }
+  
+  .palette-grid-container.container-3x3 {
+    max-width: 390px;
+  }
+  
+  .palette-grid.grid-2x2 {
+    gap: 10px;
+    padding: 16px;
+  }
+  
+  .palette-grid.grid-3x3 {
+    gap: 8px;
+    padding: 13px;
+  }
+  
+  .palette-grid-container.container-4x4 {
+    max-width: 468px;
+  }
+  
+  .palette-grid.grid-4x4 {
+    gap: 8px;
+    padding: 16px;
   }
 }
 
@@ -196,6 +262,33 @@ defineExpose({
     margin-top: 0;
     padding: 30px;
     box-shadow: var(--shadow-grid-container-desktop);
+  }
+  
+  .palette-grid-container.container-2x2 {
+    max-width: 416px;
+  }
+  
+  .palette-grid-container.container-3x3 {
+    max-width: 546px;
+  }
+  
+  .palette-grid.grid-2x2 {
+    gap: 20px;
+    padding: 33px;
+  }
+  
+  .palette-grid.grid-3x3 {
+    gap: 16px;
+    padding: 29px;
+  }
+  
+  .palette-grid-container.container-4x4 {
+    max-width: 676px;
+  }
+  
+  .palette-grid.grid-4x4 {
+    gap: 13px;
+    padding: 26px;
   }
 }
 </style>

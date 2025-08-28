@@ -20,7 +20,7 @@ const { palette, allColors } = useColorData()
 const paletteGridRef = ref(null)
 
 // Track current grid size
-const currentGridSize = ref(4)
+const currentGridSize = ref(2)
 
 // Modal states
 const showSavePaletteModal = ref(false)
@@ -124,7 +124,7 @@ const isGridFull = computed(() => {
         <PaletteGrid
           ref="paletteGridRef"
           :colors="allColors"
-          :initial-grid-size="4"
+          :initial-grid-size="2"
           :grid-size="currentGridSize"
           @grid-size-change="handleGridSizeChange"
           @grid-updated="updateGridTracker"
