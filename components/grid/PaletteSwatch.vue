@@ -148,69 +148,52 @@ const onMiniSwatchTouchEnd = (e) => {
   color: #f8f9fa;
 }
 
-/* 2x2 Grid - Mobile base styles */
+/* Desktop default styles */
 .palette-color-name.text-2x2 {
-  font-size: var(--font-size-sm);
-  padding: 4px;
+  font-size: var(--font-size-base);
+  padding: 8px;
 }
 
-/* 3x3 Grid - Mobile base styles */
 .palette-color-name.text-3x3 {
-  font-size: var(--font-size-xs);
-  padding: 3px;
+  font-size: var(--font-size-sm);
+  padding: 6px;
 }
 
-/* 4x4 Grid - Mobile base styles */
 .palette-color-name.text-4x4 {
-  font-size: var(--font-size-xs);
-  padding: 2px;
+  font-size: var(--font-size-sm);
+  padding: 5px;
 }
 
-/* Tablet and up enhancements */
-@media (min-width: 481px) {
+/* Medium breakpoint - step down at 769px */
+@media (max-width: 768px) {
   .palette-color-name.text-2x2 {
+    font-size: var(--font-size-sm);
     padding: 6px;
   }
   
   .palette-color-name.text-3x3 {
+    font-size: var(--font-size-xs);
     padding: 5px;
-  }
-  
-  .palette-color-name.text-4x4 {
-    font-size: var(--font-size-sm);
-    padding: 4px;
-  }
-}
-
-@media (min-width: 769px) {
-  .palette-color-name.text-2x2 {
-    font-size: var(--font-size-base);
-    padding: 8px;
-  }
-  
-  .palette-color-name.text-3x3 {
-    font-size: var(--font-size-sm);
-    padding: 6px;
   }
   
   .palette-color-name.text-4x4 {
     font-size: var(--font-size-xs);
-    padding: 5px;
+    padding: 4px;
   }
 }
 
-@media (min-width: 1024px) {
+/* Mobile breakpoint - smallest sizes at 480px */
+@media (max-width: 480px) {
   .palette-color-name.text-2x2 {
-    padding: 8px;
+    padding: 4px;
   }
   
   .palette-color-name.text-3x3 {
-    padding: 6px;
+    padding: 3px;
   }
   
   .palette-color-name.text-4x4 {
-    font-size: var(--font-size-sm);
-    padding: 5px;
+    padding: 2px;
   }
 }
 </style>

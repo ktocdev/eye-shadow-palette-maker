@@ -68,7 +68,7 @@
   --shadow-controls-inner: inset 0 2px 6px rgba(139,129,165,0.2), inset 0 1px 2px rgba(100,85,130,0.25), inset 0 -1px 2px rgba(255,255,255,0.5);
   
   /* Cell Shadows */
-  --shadow-grid-cell: inset 0 1px 2px rgba(0,0,0,0.08), inset 0 -1px 2px rgba(255,255,255,0.5), inset 1px 0 2px rgba(0,0,0,0.05), inset -1px 0 2px rgba(255,255,255,0.3);
+  --shadow-grid-cell: inset 0 1px 2px rgba(0,0,0,0.14), inset 0 -1px 2px rgba(255,255,255,0.5), inset 1px 0 2px rgba(0,0,0,0.05), inset -1px 0 2px rgba(255,255,255,0.3);
   --shadow-grid-cell-hover: inset 0 1px 2px rgba(0,123,255,0.12), inset 0 -1px 2px rgba(255,255,255,0.6), inset 1px 0 2px rgba(0,123,255,0.08), inset -1px 0 2px rgba(255,255,255,0.4);
   
   /* Effect Shadows */

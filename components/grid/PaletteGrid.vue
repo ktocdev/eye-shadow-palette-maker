@@ -161,7 +161,7 @@ defineExpose({
 </template>
 
 <style>
-/* Palette grid - now contained within palette-grid-wrapper */
+/* Palette grid - now contained within palette-grid-wrapper - Mobile first */
 .palette-grid {
   display: grid;
   gap: 8px;
@@ -174,58 +174,56 @@ defineExpose({
   z-index: 2;
 }
 
-/* Grid size specific styling */
-/* 2x2 Grid - Compact and focused (30% larger) */
+/* Grid size specific styling - Desktop first */
+/* Desktop defaults */
 .palette-grid.grid-2x2 {
-  gap: 15px;
+  gap: 20px;
+  padding: 33px;
+}
+
+.palette-grid.grid-3x3 {
+  gap: 16px;
+  padding: 29px;
+}
+
+.palette-grid.grid-4x4 {
+  gap: 13px;
   padding: 26px;
 }
 
-/* 3x3 Grid - Balanced (30% larger) */
-.palette-grid.grid-3x3 {
-  gap: 13px;
-  padding: 23px;
+/* Medium breakpoint - step down at 769px */
+@media (max-width: 768px) {
+  .palette-grid.grid-2x2 {
+    gap: 15px;
+    padding: 26px;
+  }
+  
+  .palette-grid.grid-3x3 {
+    gap: 13px;
+    padding: 23px;
+  }
+  
+  .palette-grid.grid-4x4 {
+    gap: 10px;
+    padding: 20px;
+  }
 }
 
-/* 4x4 Grid - Current default behavior (30% larger) */
-.palette-grid.grid-4x4 {
-  gap: 10px;
-  padding: 20px;
-}
-
-/* Very small screens - Optimize grid sizes (30% larger) */
-@media (max-width: 360px) {
+/* Mobile breakpoint - smallest sizes at 480px */
+@media (max-width: 480px) {
   .palette-grid.grid-2x2 {
     gap: 10px;
     padding: 16px;
   }
-  
+
   .palette-grid.grid-3x3 {
     gap: 8px;
     padding: 13px;
   }
-  
+
   .palette-grid.grid-4x4 {
     gap: 8px;
     padding: 16px;
-  }
-}
-
-/* Desktop and up */
-@media (min-width: 973px) {
-  .palette-grid.grid-2x2 {
-    gap: 20px;
-    padding: 33px;
-  }
-  
-  .palette-grid.grid-3x3 {
-    gap: 16px;
-    padding: 29px;
-  }
-  
-  .palette-grid.grid-4x4 {
-    gap: 13px;
-    padding: 26px;
   }
 }
 </style>

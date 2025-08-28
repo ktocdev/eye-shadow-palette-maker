@@ -99,26 +99,33 @@ onMounted(() => {
   background: transparent;
 }
 
-/* Grid size specific cell styling - Mobile first */
-/* 2x2 Grid - Mobile base sizes */
+/* Grid size specific cell styling - Desktop first */
+.grid-cell {
+  border-radius: var(--radius-xl);
+}
+
+/* Desktop default sizes */
 .grid-cell.size-2x2 {
-  min-height: 78px;
-  max-height: 117px;
+  min-height: 130px;
+  max-height: 182px;
 }
 
-/* 3x3 Grid - Mobile base sizes */  
 .grid-cell.size-3x3 {
-  min-height: 59px;
-  max-height: 91px;
+  min-height: 104px;
+  max-height: 143px;
 }
 
-/* 4x4 Grid - Mobile base sizes */
 .grid-cell.size-4x4 {
-  min-height: 46px;
-  max-height: 78px;
+  min-height: 85px;
+  max-height: 124px;
 }
 
-@media (min-width: 361px) {
+/* Medium breakpoint - step down at 769px */
+@media (max-width: 768px) {
+  .grid-cell {
+    border-radius: var(--radius-lg);
+  }
+  
   .grid-cell.size-2x2 {
     min-height: 104px;
     max-height: 156px;
@@ -135,24 +142,21 @@ onMounted(() => {
   }
 }
 
-@media (min-width: 1024px) {
-  .grid-cell {
-    border-radius: var(--radius-xl);
-  }
-  
+/* Mobile breakpoint - smallest sizes at 480px */
+@media (max-width: 480px) {
   .grid-cell.size-2x2 {
-    min-height: 130px;
-    max-height: 182px;
+    min-height: 78px;
+    max-height: 117px;
   }
-  
+
   .grid-cell.size-3x3 {
-    min-height: 104px;
-    max-height: 143px;
+    min-height: 59px;
+    max-height: 91px;
   }
-  
+
   .grid-cell.size-4x4 {
-    min-height: 85px;
-    max-height: 124px;
+    min-height: 46px;
+    max-height: 78px;
   }
 }
 </style>

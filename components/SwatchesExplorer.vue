@@ -211,7 +211,7 @@ const isGridFull = computed(() => {
   }
 
   .app-info {
-    margin: 0 20px;
+    margin: 0 10px;
   }
 }
 </style>

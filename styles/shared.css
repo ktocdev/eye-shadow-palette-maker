@@ -154,18 +154,29 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: var(--shadow-button-hover);
 }
 
-.btn-disabled {
-  background: var(--gradient-button-gray) !important;
+/* Disabled button states - use higher specificity to override gradients */
+.btn.btn-disabled,
+.btn-gradient-green.btn-disabled,
+.btn-gradient-red.btn-disabled,
+.btn-gradient-purple.btn-disabled,
+.btn-gradient-blue.btn-disabled,
+.btn-gradient-gray.btn-disabled {
+  background: var(--gradient-button-gray);
   cursor: not-allowed;
   pointer-events: none;
   opacity: 0.4;
   filter: grayscale(20%);
-  color: rgba(255, 255, 255, 0.6) !important;
+  color: rgba(255, 255, 255, 0.6);
 }
 
-.btn-disabled:hover {
-  background: var(--gradient-button-gray) !important;
-  box-shadow: var(--shadow-button) !important;
+.btn.btn-disabled:hover,
+.btn-gradient-green.btn-disabled:hover,
+.btn-gradient-red.btn-disabled:hover,
+.btn-gradient-purple.btn-disabled:hover,
+.btn-gradient-blue.btn-disabled:hover,
+.btn-gradient-gray.btn-disabled:hover {
+  background: var(--gradient-button-gray);
+  box-shadow: var(--shadow-button);
 }
 
 /* Save button enabled state with vibrant animation */
@@ -450,22 +461,22 @@ h1, h2, h3, h4, h5, h6 {
   border: var(--border-container);
   position: relative;
   margin: auto;
-  padding: 12px;
+  padding: 30px; /* Desktop default padding */
   min-width: 310px; /* Never shrink below this width */
-  max-width: 374px; /* Mobile-first - very small screens */
+  box-shadow: var(--shadow-grid-container-desktop);
 }
 
-/* Grid size specific wrapper sizing - Mobile first */
+/* Grid size specific wrapper sizing - Desktop first */
 .palette-container .palette-grid-wrapper {
-  max-width: 374px; /* 2x2 mobile - min 310px enforced */
+  max-width: 499px; /* 2x2 desktop default */
 }
 
 .palette-container:has(.grid-3x3) .palette-grid-wrapper {
-  max-width: 468px; /* 3x3 mobile - min 310px enforced */
+  max-width: 655px; /* 3x3 desktop default */
 }
 
 .palette-container:has(.grid-4x4) .palette-grid-wrapper {
-  max-width: 562px; /* 4x4 mobile - min 310px enforced */
+  max-width: 811px; /* 4x4 desktop default */
 }
 
 .palette-controls-segment {
@@ -473,7 +484,7 @@ h1, h2, h3, h4, h5, h6 {
   border-top: var(--border-ornate-light);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-controls-inner);
-  padding: 20px;
+  padding: 35px; /* Desktop default padding */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -483,63 +494,48 @@ h1, h2, h3, h4, h5, h6 {
   z-index: 2;
 }
 
-@media (min-width: 481px) {
+/* Medium breakpoint - step down from desktop sizes at 769px */
+@media (max-width: 768px) {
+  .palette-grid-wrapper {
+    padding: 18px;
+  }
+  
+  .palette-container .palette-grid-wrapper {
+    max-width: 437px; /* 2x2 medium */
+  }
+  
+  .palette-container:has(.grid-3x3) .palette-grid-wrapper {
+    max-width: 530px; /* 3x3 medium */
+  }
+  
+  .palette-container:has(.grid-4x4) .palette-grid-wrapper {
+    max-width: 624px; /* 4x4 medium */
+  }
+  
   .palette-controls-segment {
     padding: 25px;
   }
 }
 
-@media (min-width: 600px) {
-  .palette-controls-segment {
-    padding: 30px;
-  }
-}
-
-@media (min-width: 361px) {
+/* Mobile breakpoint - smallest sizes */
+@media (max-width: 480px) {
   .palette-grid-wrapper {
-    padding: 15px;
-    max-width: 437px; /* 20% larger */
+    padding: 12px;
   }
   
   .palette-container .palette-grid-wrapper {
-    max-width: 437px; /* 2x2 small tablets - 20% larger */
+    max-width: 374px; /* 2x2 mobile */
   }
   
   .palette-container:has(.grid-3x3) .palette-grid-wrapper {
-    max-width: 530px; /* 3x3 small tablets - 20% larger */
+    max-width: 468px; /* 3x3 mobile */
   }
   
   .palette-container:has(.grid-4x4) .palette-grid-wrapper {
-    max-width: 624px; /* 4x4 small tablets - 20% larger */
-  }
-}
-
-@media (min-width: 481px) {
-  .palette-grid-wrapper {
-    padding: 18px;
-  }
-}
-
-@media (min-width: 973px) {
-  .palette-grid-wrapper {
-    margin-top: 0;
-    padding: 30px;
-    box-shadow: var(--shadow-grid-container-desktop);
-  }
-  
-  .palette-container .palette-grid-wrapper {
-    max-width: 499px; /* 2x2 desktop - 20% larger */
-  }
-  
-  .palette-container:has(.grid-3x3) .palette-grid-wrapper {
-    max-width: 655px; /* 3x3 desktop - 20% larger */
-  }
-  
-  .palette-container:has(.grid-4x4) .palette-grid-wrapper {
-    max-width: 811px; /* 4x4 desktop - 20% larger */
+    max-width: 562px; /* 4x4 mobile */
   }
   
   .palette-controls-segment {
-    padding: 35px;
+    padding: 20px;
   }
 }
