@@ -180,6 +180,22 @@ export function usePaletteGrid(colors) {
       }
     })
   }
+
+  /**
+   * Find the first empty cell index (left-to-right, top-to-bottom)
+   * @returns {number} First empty cell index or -1 if grid is full
+   */
+  const findFirstEmptyCell = () => {
+    // Access trigger to ensure reactivity
+    gridDataTrigger.value
+    
+    for (let i = 0; i < totalCells.value; i++) {
+      if (!gridData.has(i)) {
+        return i
+      }
+    }
+    return -1 // Grid is full
+  }
   
   return {
     gridSize,
@@ -197,6 +213,7 @@ export function usePaletteGrid(colors) {
     findSourceCellIndex,
     generateRandomPalette,
     exportGridData,
-    importGridData
+    importGridData,
+    findFirstEmptyCell
   }
 }

@@ -27,7 +27,7 @@ const props = defineProps({
 })
 
 // Get carousel navigation from parent (will be injected)
-const emit = defineEmits(['swipe-left', 'swipe-right'])
+const emit = defineEmits(['swipe-left', 'swipe-right', 'click'])
 
 // Use sound composable
 const { playDragStart } = useSound()
@@ -58,6 +58,13 @@ const colorData = computed(() => ({
   effect: props.effect
 }))
 
+// Handle click event
+const handleClick = (e) => {
+  // Only emit click if it's not a drag operation
+  // We check if the drag started but there was minimal movement
+  emit('click', colorData.value)
+}
+
 // Handle events with proper data
 const onDragStart = (e) => handleDragStart(e, colorData.value, false)
 const onDrag = (e) => handleDrag(e)
@@ -74,6 +81,7 @@ const onTouchEnd = (e) => handleTouchEnd(e)
       :class="`effect-${effect}`"
       :style="{ backgroundColor: backgroundColor }"
       draggable="true"
+      @click="handleClick"
       @dragstart="onDragStart"
       @drag="onDrag"
       @dragend="onDragEnd"

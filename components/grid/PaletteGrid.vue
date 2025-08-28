@@ -34,7 +34,8 @@ const {
   findSourceCellIndex,
   swapOrMoveColors,
   generateRandomPalette,
-  getOccupiedCells
+  getOccupiedCells,
+  findFirstEmptyCell
 } = usePaletteGrid(computed(() => props.colors))
 
 // Set initial grid size
@@ -102,6 +103,21 @@ onMounted(() => {
   addEventListener(document, 'touchdrop', handleTouchDrop)
 })
 
+// Add color to first empty cell
+const addColorToFirstEmpty = (colorData) => {
+  const emptyIndex = findFirstEmptyCell()
+  
+  if (emptyIndex !== -1) {
+    setCellData(emptyIndex, colorData)
+    // Play drop success sound
+    playDropSuccess()
+    // Emit grid updated event
+    emit('grid-updated')
+    return true
+  }
+  return false // Grid is full
+}
+
 // Generate grid cells array
 const gridCells = computed(() => {
   const cells = []
@@ -121,7 +137,8 @@ const gridCells = computed(() => {
 defineExpose({
   clearGrid,
   generateRandomPalette,
-  getOccupiedCells
+  getOccupiedCells,
+  addColorToFirstEmpty
 })
 </script>
 

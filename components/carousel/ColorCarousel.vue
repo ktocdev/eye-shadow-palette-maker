@@ -15,6 +15,8 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['swatch-click'])
+
 // Use carousel composable
 const { 
   currentPage, 
@@ -56,6 +58,11 @@ const handleSwipeRight = () => {
     goToPrevPage()
   }
 }
+
+// Handle swatch click from CarouselSwatch
+const handleSwatchClick = (colorData) => {
+  emit('swatch-click', colorData)
+}
 </script>
 
 <template>
@@ -84,6 +91,7 @@ const handleSwipeRight = () => {
           :effect="color.effect"
           @swipe-left="handleSwipeLeft"
           @swipe-right="handleSwipeRight"
+          @click="handleSwatchClick"
         />
       </div>
       

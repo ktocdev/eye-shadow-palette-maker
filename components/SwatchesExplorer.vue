@@ -88,6 +88,11 @@ const handleViewSavedPalettes = () => {
   showSavedPalettesModal.value = true
 }
 
+// Handle carousel swatch click
+const handleSwatchClick = (colorData) => {
+  paletteGridRef.value?.addColorToFirstEmpty(colorData)
+}
+
 // Track grid changes for reactivity
 const gridChangeTracker = ref(0)
 const updateGridTracker = () => {
@@ -111,6 +116,7 @@ const isGridFull = computed(() => {
     <ColorCarousel
       :colors="allColors"
       :palette-name="palette.name"
+      @swatch-click="handleSwatchClick"
     />
     
     <div class="main-content main-content-layout">
