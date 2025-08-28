@@ -35,12 +35,6 @@ h1, h2, h3, h4, h5, h6 {
   min-height: 100vh;
 }
 
-h1 {
-  font-size: var(--font-size-3xl);
-  line-height: 1;
-  margin-block-end: 4px;
-}
-
 /* =========================================
    LAYOUT UTILITIES
    ========================================= */
@@ -143,15 +137,66 @@ h1 {
   box-shadow: var(--shadow-button-hover);
 }
 
-.btn-disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
+.btn-gradient-blue {
+  background: var(--gradient-button-blue);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  touch-action: manipulation;
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-button);
 }
 
-.btn-disabled:hover {
-  background: var(--gradient-button-green) !important;
-  box-shadow: var(--shadow-button) !important;
+.btn-gradient-blue:hover {
+  background: var(--gradient-button-blue-hover);
+  box-shadow: var(--shadow-button-hover);
+}
+
+/* Disabled button states - use higher specificity to override gradients */
+.btn.btn-disabled,
+.btn-gradient-green.btn-disabled,
+.btn-gradient-red.btn-disabled,
+.btn-gradient-purple.btn-disabled,
+.btn-gradient-blue.btn-disabled,
+.btn-gradient-gray.btn-disabled {
+  background: var(--gradient-button-gray);
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.4;
+  filter: grayscale(20%);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.btn.btn-disabled:hover,
+.btn-gradient-green.btn-disabled:hover,
+.btn-gradient-red.btn-disabled:hover,
+.btn-gradient-purple.btn-disabled:hover,
+.btn-gradient-blue.btn-disabled:hover,
+.btn-gradient-gray.btn-disabled:hover {
+  background: var(--gradient-button-gray);
+  box-shadow: var(--shadow-button);
+}
+
+/* Save button enabled state with vibrant animation */
+.btn-gradient-green:not(.btn-disabled) {
+  animation: saveButtonPulse 2s ease-in-out infinite;
+}
+
+@keyframes saveButtonPulse {
+  0% {
+    box-shadow: var(--shadow-button), 0 0 0 0 rgba(34, 139, 34, 0.7);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: var(--shadow-button-hover), 0 0 20px 5px rgba(34, 139, 34, 0.3);
+    transform: scale(1.02);
+  }
+  100% {
+    box-shadow: var(--shadow-button), 0 0 0 0 rgba(34, 139, 34, 0.7);
+    transform: scale(1);
+  }
 }
 
 /* =========================================
@@ -248,7 +293,8 @@ h1 {
   height: 16px;
   background: transparent;
   z-index: 10;
-  margin: -2px 0;
+  top: -8px;
+  left: 0;
   width: 100%;
 }
 
@@ -336,7 +382,6 @@ h1 {
   flex-direction: column;
   gap: 16px;
   align-items: center;
-  max-width: 264px;
 }
 
 @media (min-width: 600px) {
@@ -351,5 +396,146 @@ h1 {
   .palette-lid__inner {
     padding: 100px 15px;
     gap: 56px;
+  }
+}
+
+/* =========================================
+   APP HEADER CONTAINER
+   ========================================= */
+
+.app-header-container {
+  padding: 20px;
+  background: var(--gradient-controls-container);
+  border-radius: var(--radius-container-large);
+  box-shadow: var(--shadow-controls-container);
+  border: var(--border-ornate);
+  position: relative;
+  overflow: hidden;
+}
+
+.app-header-container__inner {
+  background: var(--gradient-controls-inner);
+  border-radius: calc(var(--radius-container-large) - 8px);
+  border: var(--border-container-light);
+  box-shadow: var(--shadow-controls-inner);
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+@media (min-width: 481px) {
+  .app-header-container {
+    padding: 25px;
+  }
+}
+
+@media (min-width: 600px) {
+  .app-header-container__inner {
+    gap: 24px;
+    max-width: none;
+  }
+}
+
+@media (min-width: 973px) {
+  .app-header-container {
+    padding: 35px;
+  }
+  
+  .app-header-container__inner {
+      gap: 16px;
+  }
+}
+
+/* =========================================
+   PALETTE GRID WRAPPER & CONTROLS SEGMENT
+   ========================================= */
+
+.palette-grid-wrapper {
+  background: var(--gradient-container-primary);
+  border-radius: var(--radius-container-large);
+  box-shadow: var(--shadow-palette-container);
+  border: var(--border-container);
+  position: relative;
+  margin: auto;
+  padding: 30px; /* Desktop default padding */
+  min-width: 310px; /* Never shrink below this width */
+  box-shadow: var(--shadow-grid-container-desktop);
+}
+
+/* Grid size specific wrapper sizing - Desktop first */
+.palette-container .palette-grid-wrapper {
+  max-width: 499px; /* 2x2 desktop default */
+}
+
+.palette-container:has(.grid-3x3) .palette-grid-wrapper {
+  max-width: 655px; /* 3x3 desktop default */
+}
+
+.palette-container:has(.grid-4x4) .palette-grid-wrapper {
+  max-width: 811px; /* 4x4 desktop default */
+}
+
+.palette-controls-segment {
+  background: var(--gradient-controls-inner);
+  border-top: var(--border-ornate-light);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-controls-inner);
+  padding: 35px; /* Desktop default padding */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Medium breakpoint - step down from desktop sizes at 769px */
+@media (max-width: 768px) {
+  .palette-grid-wrapper {
+    padding: 18px;
+  }
+  
+  .palette-container .palette-grid-wrapper {
+    max-width: 437px; /* 2x2 medium */
+  }
+  
+  .palette-container:has(.grid-3x3) .palette-grid-wrapper {
+    max-width: 530px; /* 3x3 medium */
+  }
+  
+  .palette-container:has(.grid-4x4) .palette-grid-wrapper {
+    max-width: 624px; /* 4x4 medium */
+  }
+  
+  .palette-controls-segment {
+    padding: 25px;
+  }
+}
+
+/* Mobile breakpoint - smallest sizes */
+@media (max-width: 480px) {
+  .palette-grid-wrapper {
+    padding: 12px;
+  }
+  
+  .palette-container .palette-grid-wrapper {
+    max-width: 374px; /* 2x2 mobile */
+  }
+  
+  .palette-container:has(.grid-3x3) .palette-grid-wrapper {
+    max-width: 468px; /* 3x3 mobile */
+  }
+  
+  .palette-container:has(.grid-4x4) .palette-grid-wrapper {
+    max-width: 562px; /* 4x4 mobile */
+  }
+  
+  .palette-controls-segment {
+    padding: 20px;
   }
 }

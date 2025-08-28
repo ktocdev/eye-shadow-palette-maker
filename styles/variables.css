@@ -12,7 +12,7 @@
   /* Font Sizes */
   --font-size-xxs: 8px;
   --font-size-xs: 9px;
-  --font-size-sm: 10px;
+  --font-size-sm: 12px;
   --font-size-base: 16px;
   --font-size-md: 18px;
   --font-size-lg: 20px;
@@ -64,9 +64,11 @@
   --shadow-grid-container: 0 4px 16px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.6), inset 0 2px 6px rgba(139,129,165,0.2);
   --shadow-grid-container-desktop: 0 8px 32px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.8);
   --shadow-grid-inner: inset 0 3px 8px rgba(139,129,165,0.25), inset 0 1px 2px rgba(100,85,130,0.3), inset 0 -1px 2px rgba(255,255,255,0.4);
+  --shadow-controls-container: 0 6px 20px rgba(0,0,0,0.12), inset 0 2px 0 rgba(255,255,255,0.7), inset 0 3px 8px rgba(188,179,222,0.15);
+  --shadow-controls-inner: inset 0 2px 6px rgba(139,129,165,0.2), inset 0 1px 2px rgba(100,85,130,0.25), inset 0 -1px 2px rgba(255,255,255,0.5);
   
   /* Cell Shadows */
-  --shadow-grid-cell: inset 0 1px 2px rgba(0,0,0,0.08), inset 0 -1px 2px rgba(255,255,255,0.5), inset 1px 0 2px rgba(0,0,0,0.05), inset -1px 0 2px rgba(255,255,255,0.3);
+  --shadow-grid-cell: inset 0 1px 2px rgba(0,0,0,0.14), inset 0 -1px 2px rgba(255,255,255,0.5), inset 1px 0 2px rgba(0,0,0,0.05), inset -1px 0 2px rgba(255,255,255,0.3);
   --shadow-grid-cell-hover: inset 0 1px 2px rgba(0,123,255,0.12), inset 0 -1px 2px rgba(255,255,255,0.6), inset 1px 0 2px rgba(0,123,255,0.08), inset -1px 0 2px rgba(255,255,255,0.4);
   
   /* Effect Shadows */
@@ -85,12 +87,16 @@
   --gradient-button-gray-hover: linear-gradient(135deg, #777777, #333333);
   --gradient-button-green: linear-gradient(135deg, rgba(34, 139, 34, 0.7), rgba(0, 128, 0, 0.8));
   --gradient-button-green-hover: linear-gradient(135deg, rgba(28, 112, 28, 0.8), rgba(0, 100, 0, 0.9));
+  --gradient-button-blue: linear-gradient(135deg, rgba(0, 123, 255, 0.7), rgba(0, 86, 179, 0.8));
+  --gradient-button-blue-hover: linear-gradient(135deg, rgba(0, 105, 217, 0.8), rgba(0, 72, 153, 0.9));
   
   /* Container Gradients */
   --gradient-container-primary: linear-gradient(145deg, #e8e4f0, #d6d0e0);
   --gradient-container-secondary: linear-gradient(145deg, #f0ecf8, #e4dced);
   --gradient-container-neutral: linear-gradient(145deg, #f0f0f0, #e8e8e8);
   --gradient-container-hover: linear-gradient(145deg, #e8f2ff, #dae8ff);
+  --gradient-controls-container: linear-gradient(145deg, #f2eef8, #e0dae8);
+  --gradient-controls-inner: linear-gradient(145deg, #feffff, #eae4f0);
   
   /* Arrow Button Gradients */
   --gradient-arrow: linear-gradient(135deg, #6A5ACD, #2C2A4A);
@@ -135,4 +141,6 @@
   --border-container: var(--border-width-thin) solid var(--border-color-medium);
   --border-container-light: var(--border-width-thin) solid rgba(139, 129, 165, 0.2);
   --border-swatch: var(--border-width-thin) solid var(--border-color-dark);
+  --border-ornate: var(--border-width-medium) solid rgba(188, 179, 222, 0.4);
+  --border-ornate-light: var(--border-width-thin) solid rgba(188, 179, 222, 0.3);
 }

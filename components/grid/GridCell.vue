@@ -12,6 +12,10 @@ const props = defineProps({
   colorData: {
     type: Object,
     default: null
+  },
+  gridSize: {
+    type: Number,
+    required: true
   }
 })
 
@@ -55,12 +59,16 @@ onMounted(() => {
   <div 
     ref="cellRef"
     class="grid-cell"
-    :class="{ occupied: !!colorData }"
+    :class="[
+      { occupied: !!colorData },
+      `size-${gridSize}x${gridSize}`
+    ]"
     :data-index="index"
   >
     <PaletteSwatch 
       v-if="colorData"
       :color-data="colorData"
+      :grid-size="gridSize"
       @clear-swatch="emit('clear-cell', props.index)"
     />
   </div>
@@ -91,9 +99,64 @@ onMounted(() => {
   background: transparent;
 }
 
-@media (min-width: 1024px) {
+/* Grid size specific cell styling - Desktop first */
+.grid-cell {
+  border-radius: var(--radius-xl);
+}
+
+/* Desktop default sizes */
+.grid-cell.size-2x2 {
+  min-height: 130px;
+  max-height: 182px;
+}
+
+.grid-cell.size-3x3 {
+  min-height: 104px;
+  max-height: 143px;
+}
+
+.grid-cell.size-4x4 {
+  min-height: 85px;
+  max-height: 124px;
+}
+
+/* Medium breakpoint - step down at 769px */
+@media (max-width: 768px) {
   .grid-cell {
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-lg);
+  }
+  
+  .grid-cell.size-2x2 {
+    min-height: 104px;
+    max-height: 156px;
+  }
+  
+  .grid-cell.size-3x3 {
+    min-height: 78px;
+    max-height: 117px;
+  }
+  
+  .grid-cell.size-4x4 {
+    min-height: 65px;
+    max-height: 104px;
+  }
+}
+
+/* Mobile breakpoint - smallest sizes at 480px */
+@media (max-width: 480px) {
+  .grid-cell.size-2x2 {
+    min-height: 78px;
+    max-height: 117px;
+  }
+
+  .grid-cell.size-3x3 {
+    min-height: 59px;
+    max-height: 91px;
+  }
+
+  .grid-cell.size-4x4 {
+    min-height: 46px;
+    max-height: 78px;
   }
 }
 </style>

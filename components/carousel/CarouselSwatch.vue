@@ -27,7 +27,7 @@ const props = defineProps({
 })
 
 // Get carousel navigation from parent (will be injected)
-const emit = defineEmits(['swipe-left', 'swipe-right'])
+const emit = defineEmits(['swipe-left', 'swipe-right', 'click'])
 
 // Use sound composable
 const { playDragStart } = useSound()
@@ -58,6 +58,13 @@ const colorData = computed(() => ({
   effect: props.effect
 }))
 
+// Handle click event
+const handleClick = (e) => {
+  // Only emit click if it's not a drag operation
+  // We check if the drag started but there was minimal movement
+  emit('click', colorData.value)
+}
+
 // Handle events with proper data
 const onDragStart = (e) => handleDragStart(e, colorData.value, false)
 const onDrag = (e) => handleDrag(e)
@@ -74,6 +81,7 @@ const onTouchEnd = (e) => handleTouchEnd(e)
       :class="`effect-${effect}`"
       :style="{ backgroundColor: backgroundColor }"
       draggable="true"
+      @click="handleClick"
       @dragstart="onDragStart"
       @drag="onDrag"
       @dragend="onDragEnd"
@@ -119,7 +127,7 @@ const onTouchEnd = (e) => handleTouchEnd(e)
 
 .carousel-color-name {
   font-family: var(--font-family-primary);
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
   line-height: 1;
@@ -146,10 +154,6 @@ const onTouchEnd = (e) => handleTouchEnd(e)
     width: 55px;
     height: 55px;
   }
-  
-  .carousel-color-name {
-    min-height: 13px;
-  }
 }
 
 @container (min-width: 540px) and (max-width: 650px) {
@@ -161,10 +165,6 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   .carousel-swatch {
     width: 65px;
     height: 65px;
-  }
-  
-  .carousel-color-name {
-    min-height: 14px;
   }
 }
 
@@ -179,10 +179,9 @@ const onTouchEnd = (e) => handleTouchEnd(e)
     height: 85px;
     border-radius: var(--radius-lg);
   }
-  
-  .carousel-color-name {
+
+  .carousel-hex-code {
     font-size: var(--font-size-sm);
-    min-height: 15px;
   }
 }
 
@@ -199,8 +198,11 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   }
   
   .carousel-color-name {
+    font-size: var(--font-size-base);
+  }
+
+  .carousel-hex-code {
     font-size: var(--font-size-sm);
-    min-height: 16px;
   }
 }
 
@@ -219,12 +221,10 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   
   .carousel-color-name {
     font-size: var(--font-size-base);
-    min-height: 18px;
   }
   
   .carousel-hex-code {
     font-size: var(--font-size-sm);
-    height: 14px;
   }
 }
 </style>

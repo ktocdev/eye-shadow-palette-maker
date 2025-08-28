@@ -7,6 +7,10 @@ const props = defineProps({
   colorData: {
     type: Object,
     required: true
+  },
+  gridSize: {
+    type: Number,
+    required: true
   }
 })
 
@@ -76,12 +80,13 @@ const onMiniSwatchTouchEnd = (e) => {
 </script>
 
 <template>
-  <div class="palette-swatch-container">
+  <div class="palette-swatch-container" :class="`container-${gridSize}x${gridSize}`">
     <div 
       class="palette-swatch"
       :class="[
         { 'dark-palette-swatch': colorData.isDark },
-        `effect-${colorData.effect || 'matte'}`
+        `effect-${colorData.effect || 'matte'}`,
+        `size-${gridSize}x${gridSize}`
       ]"
       :style="{ backgroundColor: colorData.bgColor }"
       draggable="true"
@@ -93,7 +98,7 @@ const onMiniSwatchTouchEnd = (e) => {
       @touchend="onMiniSwatchTouchEnd"
     >
     </div>
-    <div class="palette-color-name">{{ colorData.colorName }}</div>
+    <div class="palette-color-name" :class="`text-${gridSize}x${gridSize}`">{{ colorData.colorName }}</div>
   </div>
 </template>
 
@@ -126,7 +131,7 @@ const onMiniSwatchTouchEnd = (e) => {
 .palette-color-name {
   font-family: var(--font-family-primary);
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-normal);
   color: var(--color-text-primary);
   text-align: center;
   padding: 4px;
@@ -143,15 +148,52 @@ const onMiniSwatchTouchEnd = (e) => {
   color: #f8f9fa;
 }
 
-@media (min-width: 769px) {
-  .palette-swatch {
-    border-radius: var(--radius-xl);
-  }
+/* Desktop default styles */
+.palette-color-name.text-2x2 {
+  font-size: var(--font-size-base);
+  padding: 8px;
+}
 
-  .palette-color-name {
-    font-size: var(--font-size-base);
-    padding: 8px;
-    line-height: 1.2;
+.palette-color-name.text-3x3 {
+  font-size: var(--font-size-sm);
+  padding: 6px;
+}
+
+.palette-color-name.text-4x4 {
+  font-size: var(--font-size-sm);
+  padding: 5px;
+}
+
+/* Medium breakpoint - step down at 769px */
+@media (max-width: 768px) {
+  .palette-color-name.text-2x2 {
+    font-size: var(--font-size-sm);
+    padding: 6px;
+  }
+  
+  .palette-color-name.text-3x3 {
+    font-size: var(--font-size-xs);
+    padding: 5px;
+  }
+  
+  .palette-color-name.text-4x4 {
+    font-size: var(--font-size-xs);
+    padding: 4px;
+  }
+}
+
+/* Mobile breakpoint - smallest sizes at 480px */
+@media (max-width: 480px) {
+  .palette-color-name.text-2x2 {
+    padding: 4px;
+  }
+  
+  .palette-color-name.text-3x3 {
+    padding: 3px;
+  }
+  
+  .palette-color-name.text-4x4 {
+    padding: 2px;
   }
 }
 </style>

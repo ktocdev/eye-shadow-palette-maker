@@ -165,7 +165,8 @@ watch(() => props.modelValue, (isOpen) => {
 
 .dialog-actions {
   display: flex; 
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 24px;
@@ -183,10 +184,4 @@ watch(() => props.modelValue, (isOpen) => {
   color: rgba(106, 90, 205, 0.8);
 }
 
-@media (max-width: 480px) {
-  .dialog-actions {
-    flex-direction: column;
-    gap: 8px;
-  }
-}
 </style>

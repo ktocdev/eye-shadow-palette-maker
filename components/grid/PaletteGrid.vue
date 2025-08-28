@@ -34,7 +34,8 @@ const {
   findSourceCellIndex,
   swapOrMoveColors,
   generateRandomPalette,
-  getOccupiedCells
+  getOccupiedCells,
+  findFirstEmptyCell
 } = usePaletteGrid(computed(() => props.colors))
 
 // Set initial grid size
@@ -102,6 +103,21 @@ onMounted(() => {
   addEventListener(document, 'touchdrop', handleTouchDrop)
 })
 
+// Add color to first empty cell
+const addColorToFirstEmpty = (colorData) => {
+  const emptyIndex = findFirstEmptyCell()
+  
+  if (emptyIndex !== -1) {
+    setCellData(emptyIndex, colorData)
+    // Play drop success sound
+    playDropSuccess()
+    // Emit grid updated event
+    emit('grid-updated')
+    return true
+  }
+  return false // Grid is full
+}
+
 // Generate grid cells array
 const gridCells = computed(() => {
   const cells = []
@@ -121,40 +137,31 @@ const gridCells = computed(() => {
 defineExpose({
   clearGrid,
   generateRandomPalette,
-  getOccupiedCells
+  getOccupiedCells,
+  addColorToFirstEmpty
 })
 </script>
 
 <template>
-  <div class="palette-grid-container">
-    <div 
-      class="palette-grid"
-      :style="{ gridTemplateColumns: gridColumns }"
-    >
-      <GridCell
-        v-for="cell in gridCells"
-        :key="`cell-${cell.index}`"
-        :index="cell.index"
-        :color-data="cell.colorData"
-        @drop="handleCellDrop"
-        @clear-cell="handleCellClear"
-      />
-    </div>
+  <div 
+    class="palette-grid"
+    :class="`grid-${gridSize}x${gridSize}`"
+    :style="{ gridTemplateColumns: gridColumns }"
+  >
+    <GridCell
+      v-for="cell in gridCells"
+      :key="`cell-${cell.index}`"
+      :index="cell.index"
+      :color-data="cell.colorData"
+      :grid-size="gridSize"
+      @drop="handleCellDrop"
+      @clear-cell="handleCellClear"
+    />
   </div>
 </template>
 
 <style>
-/* Mobile-first palette grid container */
-.palette-grid-container {
-  margin-top: 10px;
-  padding: 15px;
-  background: var(--gradient-container-primary);
-  border-radius: var(--radius-container-large);
-  box-shadow: var(--shadow-grid-container);
-  border: var(--border-container);
-  border-bottom: none;
-}
-
+/* Palette grid - now contained within palette-grid-wrapper - Mobile first */
 .palette-grid {
   display: grid;
   gap: 8px;
@@ -163,22 +170,60 @@ defineExpose({
   border-radius: var(--radius-container-large);
   box-shadow: var(--shadow-grid-inner);
   border: var(--border-container-light);
+  position: relative;
+  z-index: 2;
 }
 
-/* Tablet and up */
-@media (min-width: 481px) {
-  .palette-grid-container {
-    padding: 18px;
-    border-radius: var(--radius-container-large);
+/* Grid size specific styling - Desktop first */
+/* Desktop defaults */
+.palette-grid.grid-2x2 {
+  gap: 20px;
+  padding: 33px;
+}
+
+.palette-grid.grid-3x3 {
+  gap: 16px;
+  padding: 29px;
+}
+
+.palette-grid.grid-4x4 {
+  gap: 13px;
+  padding: 26px;
+}
+
+/* Medium breakpoint - step down at 769px */
+@media (max-width: 768px) {
+  .palette-grid.grid-2x2 {
+    gap: 15px;
+    padding: 26px;
+  }
+  
+  .palette-grid.grid-3x3 {
+    gap: 13px;
+    padding: 23px;
+  }
+  
+  .palette-grid.grid-4x4 {
+    gap: 10px;
+    padding: 20px;
   }
 }
 
-/* Desktop and up */
-@media (min-width: 973px) {
-  .palette-grid-container {
-    margin-top: 0;
-    padding: 30px;
-    box-shadow: var(--shadow-grid-container-desktop);
+/* Mobile breakpoint - smallest sizes at 480px */
+@media (max-width: 480px) {
+  .palette-grid.grid-2x2 {
+    gap: 10px;
+    padding: 16px;
+  }
+
+  .palette-grid.grid-3x3 {
+    gap: 8px;
+    padding: 13px;
+  }
+
+  .palette-grid.grid-4x4 {
+    gap: 8px;
+    padding: 16px;
   }
 }
 </style>
