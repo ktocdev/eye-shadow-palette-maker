@@ -39,16 +39,15 @@ const handleSizeChange = (event) => {
 }
 
 .grid-controls label {
-  font-weight: bold;
-  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+  font-size: 13px;
 }
 
 .grid-controls select {
-  padding: 8px 12px;
-  font-size: 16px;
+  padding: 8px;
+  font-size: 14px;
   border: var(--border-standard);
   border-radius: var(--radius-xs);
-  min-width: 120px;
 }
 
 @media (min-width: 481px) {

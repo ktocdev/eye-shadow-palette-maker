@@ -11,22 +11,22 @@ const emit = defineEmits(['clear', 'randomize', 'open-save-modal', 'view-saved-p
 
 <template>
   <div class="palette-controls">
-    <button @click="$emit('randomize')" class="btn btn-compact btn-gradient-purple">
-      Random Palette
-    </button>
-    <button @click="$emit('clear')" class="btn btn-compact btn-gradient-red">
-      Clear Palette
-    </button>
     <button 
       @click="$emit('open-save-modal')"
       :disabled="!canSave"
-      class="btn btn-compact btn-gradient-green"
+      class="btn btn-standard btn-gradient-green"
       :class="{ 'btn-disabled': !canSave }"
     >
       Save Palette
     </button>
-    <button @click="$emit('view-saved-palettes')" class="btn btn-compact btn-gradient-gray">
+    <button @click="$emit('view-saved-palettes')" class="btn btn-standard btn-gradient-blue">
       View Saved Palettes
+    </button>
+    <button @click="$emit('randomize')" class="btn btn-standard btn-gradient-purple">
+      Random Palette
+    </button>
+    <button @click="$emit('clear')" class="btn btn-standard btn-gradient-red">
+      Clear Palette
     </button>
   </div>
 </template>
@@ -40,7 +40,6 @@ const emit = defineEmits(['clear', 'randomize', 'open-save-modal', 'view-saved-p
   justify-content: center;
   flex-wrap: wrap;
   gap: 10px;
-  max-width: 264px;
 }
 
 @media (min-width: 600px) {

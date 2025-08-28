@@ -131,7 +131,7 @@ const onMiniSwatchTouchEnd = (e) => {
 .palette-color-name {
   font-family: var(--font-family-primary);
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-normal);
   color: var(--color-text-primary);
   text-align: center;
   padding: 4px;
@@ -148,78 +148,69 @@ const onMiniSwatchTouchEnd = (e) => {
   color: #f8f9fa;
 }
 
-/* Grid size specific swatch styling */
-/* 2x2 Grid - Larger swatches with bigger text */
+/* 2x2 Grid - Mobile base styles */
 .palette-color-name.text-2x2 {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
-  padding: 6px;
-  line-height: 1.1;
-}
-
-/* 3x3 Grid - Medium swatches with standard text */
-.palette-color-name.text-3x3 {
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-medium);
-  padding: 5px;
-  line-height: 1.2;
-}
-
-/* 4x4 Grid - Smaller swatches with smaller text (current default) */
-.palette-color-name.text-4x4 {
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
   padding: 4px;
-  line-height: 1;
 }
 
-@media (max-width: 360px) {
+/* 3x3 Grid - Mobile base styles */
+.palette-color-name.text-3x3 {
+  font-size: var(--font-size-xs);
+  padding: 3px;
+}
+
+/* 4x4 Grid - Mobile base styles */
+.palette-color-name.text-4x4 {
+  font-size: var(--font-size-xs);
+  padding: 2px;
+}
+
+/* Tablet and up enhancements */
+@media (min-width: 481px) {
   .palette-color-name.text-2x2 {
-    font-size: var(--font-size-base);
-    padding: 4px;
+    padding: 6px;
   }
   
   .palette-color-name.text-3x3 {
-    font-size: var(--font-size-sm);
-    padding: 3px;
+    padding: 5px;
   }
   
   .palette-color-name.text-4x4 {
-    font-size: var(--font-size-xs);
-    padding: 2px;
+    font-size: var(--font-size-sm);
+    padding: 4px;
   }
 }
 
 @media (min-width: 769px) {
-  .palette-swatch {
-    border-radius: var(--radius-xl);
-  }
-
-  .palette-color-name {
+  .palette-color-name.text-2x2 {
     font-size: var(--font-size-base);
     padding: 8px;
-    line-height: 1.2;
-  }
-  
-  .palette-color-name.text-2x2 {
-    font-size: var(--font-size-xl);
-    font-weight: var(--font-weight-bold);
-    padding: 8px;
-    line-height: 1.1;
   }
   
   .palette-color-name.text-3x3 {
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-sm);
     padding: 6px;
-    line-height: 1.2;
   }
   
   .palette-color-name.text-4x4 {
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-xs);
     padding: 5px;
-    line-height: 1.2;
+  }
+}
+
+@media (min-width: 1024px) {
+  .palette-color-name.text-2x2 {
+    padding: 8px;
+  }
+  
+  .palette-color-name.text-3x3 {
+    padding: 6px;
+  }
+  
+  .palette-color-name.text-4x4 {
+    font-size: var(--font-size-sm);
+    padding: 5px;
   }
 }
 </style>

@@ -127,7 +127,7 @@ const onTouchEnd = (e) => handleTouchEnd(e)
 
 .carousel-color-name {
   font-family: var(--font-family-primary);
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
   line-height: 1;
@@ -154,10 +154,6 @@ const onTouchEnd = (e) => handleTouchEnd(e)
     width: 55px;
     height: 55px;
   }
-  
-  .carousel-color-name {
-    min-height: 13px;
-  }
 }
 
 @container (min-width: 540px) and (max-width: 650px) {
@@ -169,10 +165,6 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   .carousel-swatch {
     width: 65px;
     height: 65px;
-  }
-  
-  .carousel-color-name {
-    min-height: 14px;
   }
 }
 
@@ -187,10 +179,9 @@ const onTouchEnd = (e) => handleTouchEnd(e)
     height: 85px;
     border-radius: var(--radius-lg);
   }
-  
-  .carousel-color-name {
+
+  .carousel-hex-code {
     font-size: var(--font-size-sm);
-    min-height: 15px;
   }
 }
 
@@ -207,8 +198,11 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   }
   
   .carousel-color-name {
+    font-size: var(--font-size-base);
+  }
+
+  .carousel-hex-code {
     font-size: var(--font-size-sm);
-    min-height: 16px;
   }
 }
 
@@ -227,12 +221,10 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   
   .carousel-color-name {
     font-size: var(--font-size-base);
-    min-height: 18px;
   }
   
   .carousel-hex-code {
     font-size: var(--font-size-sm);
-    height: 14px;
   }
 }
 </style>

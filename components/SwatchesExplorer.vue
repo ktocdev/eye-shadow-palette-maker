@@ -8,6 +8,7 @@ import PaletteGrid from './grid/PaletteGrid.vue'
 import PaletteControls from './shared/PaletteControls.vue'
 import SavePaletteModal from './shared/SavePaletteModal.vue'
 import SavedPalettesModal from './shared/SavedPalettesModal.vue'
+import CollapsibleText from './shared/CollapsibleText.vue'
 
 // Composables
 import { useColorData } from '../composables/useColorData.js'
@@ -121,32 +122,38 @@ const isGridFull = computed(() => {
     
     <div class="main-content main-content-layout">
       <div class="palette-container">
-        <PaletteGrid
-          ref="paletteGridRef"
-          :colors="allColors"
-          :initial-grid-size="2"
-          :grid-size="currentGridSize"
-          @grid-size-change="handleGridSizeChange"
-          @grid-updated="updateGridTracker"
-        />
-        
-        <div class="palette-hinges">
-          <div class="hinge left-hinge"></div>
-          <div class="hinge right-hinge"></div>
-        </div>
-        
-        <div class="palette-lid">
-          <div class="palette-lid__inner">
+        <div class="controls-container">
+          <div class="controls-container__inner">
             <div class="app-info">
-              <h1>Eye Shadow Palette Maker</h1>
-              <p>Drag colors from the top into the palette grid to create beautiful eyeshadow combinations.</p>
+              <CollapsibleText 
+                title="Eye Shadow Palette Maker"
+                text="Click, touch, or drag colors into the palette grid to create beautiful eyeshadow combinations. Use the Save button to keep palettes in your collection."
+                :initially-open="true"
+              />
             </div>
+          </div>
+        </div>
 
+        <div class="palette-grid-wrapper">    
+          <div class="palette-hinges">
+            <div class="hinge left-hinge"></div>
+            <div class="hinge right-hinge"></div>
+          </div>
+          <PaletteGrid
+            ref="paletteGridRef"
+            :colors="allColors"
+            :initial-grid-size="2"
+            :grid-size="currentGridSize"
+            @grid-size-change="handleGridSizeChange"
+            @grid-updated="updateGridTracker"
+          />
+          
+          <div class="palette-controls-segment">
             <GridControls
               :grid-size="currentGridSize"
               @size-change="handleGridSizeChange"
             />
-
+            
             <PaletteControls 
               @clear="handleClear"
               @randomize="handleRandomize"
@@ -184,15 +191,17 @@ const isGridFull = computed(() => {
 
 .palette-container {
   position: relative;
+  width: min-content;
 }
 
 .app-info {
-  margin: 0 20px;
   text-align: center;
 }
 
 .app-info p {
+  font-size: 14px;
   margin-bottom: 0;
+  max-width: 600px;
 }
 
 @media (min-width: 769px) {
@@ -202,7 +211,7 @@ const isGridFull = computed(() => {
   }
 
   .app-info {
-    margin: 0 40px;
+    margin: 0 20px;
   }
 }
 </style>
