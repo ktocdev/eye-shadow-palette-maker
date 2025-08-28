@@ -122,8 +122,8 @@ const isGridFull = computed(() => {
     
     <div class="main-content main-content-layout">
       <div class="palette-container">
-        <div class="controls-container">
-          <div class="controls-container__inner">
+        <div class="app-header-container">
+          <div class="app-header-container__inner">
             <div class="app-info">
               <CollapsibleText 
                 title="Eye Shadow Palette Maker"

@@ -389,10 +389,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* =========================================
-   ORNATE CONTROLS CONTAINER
+   APP HEADER CONTAINER
    ========================================= */
 
-.controls-container {
+.app-header-container {
   padding: 20px;
   background: var(--gradient-controls-container);
   border-radius: var(--radius-container-large);
@@ -402,7 +402,7 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
 }
 
-.controls-container__inner {
+.app-header-container__inner {
   background: var(--gradient-controls-inner);
   border-radius: calc(var(--radius-container-large) - 8px);
   border: var(--border-container-light);
@@ -417,24 +417,24 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @media (min-width: 481px) {
-  .controls-container {
+  .app-header-container {
     padding: 25px;
   }
 }
 
 @media (min-width: 600px) {
-  .controls-container__inner {
+  .app-header-container__inner {
     gap: 24px;
     max-width: none;
   }
 }
 
 @media (min-width: 973px) {
-  .controls-container {
+  .app-header-container {
     padding: 35px;
   }
   
-  .controls-container__inner {
+  .app-header-container__inner {
       gap: 16px;
   }
 }

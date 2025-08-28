@@ -99,39 +99,39 @@ onMounted(() => {
   background: transparent;
 }
 
-/* Grid size specific cell styling */
-/* 2x2 Grid - Larger cells (30% increase) */
+/* Grid size specific cell styling - Mobile first */
+/* 2x2 Grid - Mobile base sizes */
 .grid-cell.size-2x2 {
-  min-height: 104px;
-  max-height: 156px;
-}
-
-/* 3x3 Grid - Medium cells (30% increase) */  
-.grid-cell.size-3x3 {
   min-height: 78px;
   max-height: 117px;
 }
 
-/* 4x4 Grid - Smaller cells (30% increase) */
-.grid-cell.size-4x4 {
-  min-height: 65px;
-  max-height: 104px;
+/* 3x3 Grid - Mobile base sizes */  
+.grid-cell.size-3x3 {
+  min-height: 59px;
+  max-height: 91px;
 }
 
-@media (max-width: 360px) {
+/* 4x4 Grid - Mobile base sizes */
+.grid-cell.size-4x4 {
+  min-height: 46px;
+  max-height: 78px;
+}
+
+@media (min-width: 361px) {
   .grid-cell.size-2x2 {
+    min-height: 104px;
+    max-height: 156px;
+  }
+  
+  .grid-cell.size-3x3 {
     min-height: 78px;
     max-height: 117px;
   }
   
-  .grid-cell.size-3x3 {
-    min-height: 59px;
-    max-height: 91px;
-  }
-  
   .grid-cell.size-4x4 {
-    min-height: 46px;
-    max-height: 78px;
+    min-height: 65px;
+    max-height: 104px;
   }
 }
 
