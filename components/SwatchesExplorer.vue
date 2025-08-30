@@ -216,10 +216,14 @@ const hasColors = computed(() => {
         <div class="app-header-container">
           <div class="app-header-container__inner">
             <div class="app-info">
+              <div v-if="loadedPaletteTitle && !loadedPaletteModified" class="loaded-palette-title">
+                <h1>{{ loadedPaletteTitle }}</h1>
+              </div>
               <CollapsibleText 
-                :title="(loadedPaletteTitle && !loadedPaletteModified) ? loadedPaletteTitle : 'Eye Shadow Palette Maker'"
+                v-else
+                title="Eye Shadow Palette Maker"
                 text="Build custom eyeshadow palettes by dragging or clicking colors from the carousel and adding them to the palette. Drag colors out of the grid to remove them."
-                :initially-open="!shouldCollapseAppInfo"
+                :initially-open="!loadedPaletteModified"
               />
             </div>
           </div>
@@ -316,5 +320,19 @@ const hasColors = computed(() => {
   .app-info {
     margin: 0 10px;
   }
+}
+
+/* Loaded palette title styles */
+.loaded-palette-title {
+  text-align: center;
+}
+
+.loaded-palette-title h1 {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: 1.2;
 }
 </style>
