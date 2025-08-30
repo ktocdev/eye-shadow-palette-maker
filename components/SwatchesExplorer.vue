@@ -132,6 +132,19 @@ const handleCancelTitleEdit = () => {
   cancelTitleEdit()
 }
 
+// Inline title handlers
+const handleSaveInlineTitle = () => {
+  // Trigger save palette functionality
+  if (inlinePaletteTitle.value.trim()) {
+    handleSavePalette(inlinePaletteTitle.value)
+  }
+}
+
+const handleCancelInlineTitle = () => {
+  // Clear the inline title
+  inlinePaletteTitle.value = ''
+}
+
 // Grid data computed property
 const gridData = computed(() => {
   // Access gridChangeTracker to ensure reactivity
@@ -272,6 +285,7 @@ onMounted(() => {
               :inline-palette-title="inlinePaletteTitle"
               :loaded-palette-title="loadedPaletteTitle"
               :loaded-palette-modified="loadedPaletteModified"
+              :is-grid-full="isGridFull"
               :is-editing-title="isEditingTitle"
               :edited-title="editedTitle"
               @update:inline-palette-title="(value) => inlinePaletteTitle = value"
@@ -279,6 +293,8 @@ onMounted(() => {
               @start-title-edit="handleStartTitleEdit"
               @save-title-edit="handleSaveTitleEdit"
               @cancel-title-edit="handleCancelTitleEdit"
+              @save-inline-title="handleSaveInlineTitle"
+              @cancel-inline-title="handleCancelInlineTitle"
             />
           </div>
         </div>
