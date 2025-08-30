@@ -1,22 +1,58 @@
 <script setup>
-import { onMounted, onUnmounted, computed } from 'vue'
+import { onMounted, computed, nextTick, ref } from 'vue'
 
 // Components
 import ColorCarousel from './carousel/ColorCarousel.vue'
 import GridControls from './grid/GridControls.vue'
 import PaletteGrid from './grid/PaletteGrid.vue'
 import PaletteControls from './shared/PaletteControls.vue'
+import AppHeader from './AppHeader.vue'
 import SavePaletteModal from './shared/SavePaletteModal.vue'
 import SavedPalettesModal from './shared/SavedPalettesModal.vue'
 import AboutModal from './shared/AboutModal.vue'
-import CollapsibleText from './shared/CollapsibleText.vue'
 
 // Composables
 import { useColorData } from '../composables/useColorData.js'
-import { ref } from 'vue'
+import { usePaletteState } from '../composables/usePaletteState.js'
+import { usePaletteStorage } from '../composables/usePaletteStorage.js'
+import { useTitleEditing } from '../composables/useTitleEditing.js'
 
-// Use color data composable
+// Use composables
 const { palette, allColors } = useColorData()
+const {
+  loadedPaletteTitle,
+  loadedPaletteModified,
+  hasUserInteracted,
+  shouldCollapseAppInfo,
+  inlinePaletteTitle,
+  showInlineTitleInput,
+  showLoadedPaletteTitle,
+  showAppInfo,
+  appInfoInitiallyOpen,
+  canSavePalette,
+  triggerUserInteraction,
+  loadPalette,
+  modifyPalette,
+  clearPalette,
+  updateLoadedPaletteTitle
+} = usePaletteState()
+
+const {
+  savedPalettes,
+  hasSavedPalettes,
+  loadSavedPalettes,
+  savePalette,
+  deletePalette,
+  updatePaletteTitle
+} = usePaletteStorage()
+
+const {
+  isEditingTitle,
+  editedTitle,
+  startTitleEdit,
+  saveTitleEdit,
+  cancelTitleEdit
+} = useTitleEditing()
 
 // Reference to PaletteGrid component
 const paletteGridRef = ref(null)
@@ -39,19 +75,13 @@ const handleGridSizeChange = (newSize) => {
 // Handle palette controls
 const handleClear = () => {
   paletteGridRef.value?.clearGrid()
-  loadedPaletteTitle.value = null // Clear loaded palette title
-  loadedPaletteModified.value = false // Reset modified flag
-  shouldCollapseAppInfo.value = false // Reset collapsed state
-  inlinePaletteTitle.value = '' // Clear inline title
+  clearPalette()
   updateGridTracker()
 }
 
 const handleRandomize = () => {
   paletteGridRef.value?.generateRandomPalette()
-  loadedPaletteTitle.value = null // Clear loaded palette title
-  loadedPaletteModified.value = false // Reset modified flag
-  shouldCollapseAppInfo.value = false // Reset collapsed state
-  inlinePaletteTitle.value = '' // Clear inline title
+  clearPalette()
   updateGridTracker()
 }
 
@@ -66,52 +96,6 @@ const handleOpenSaveModal = () => {
   }
 }
 
-const handleOpenSavedPalettesModal = () => {
-  showSavedPalettesModal.value = true
-}
-
-// Handle save palette modal events
-const handleSavePalette = (title = '') => {
-  const gridData = paletteGridRef.value?.getOccupiedCells() || []
-  console.log('Raw grid data from getOccupiedCells:', gridData)
-  
-  // Use inline title if available, otherwise use provided title
-  const finalTitle = inlinePaletteTitle.value.trim() || title || 'My Custom Palette'
-  
-  const paletteData = {
-    title: finalTitle,
-    gridSize: currentGridSize.value,
-    colors: gridData,
-    createdAt: new Date().toISOString()
-  }
-  console.log('Palette data to save:', paletteData)
-  
-  // Save to localStorage
-  try {
-    const existing = JSON.parse(localStorage.getItem('eyeshadow-saved-palettes') || '[]')
-    existing.push(paletteData)
-    localStorage.setItem('eyeshadow-saved-palettes', JSON.stringify(existing))
-    
-    // Store the saved palette data for the modal to display
-    savedPaletteData.value = paletteData
-    
-    // If this was called from inline title, show the success modal
-    if (inlinePaletteTitle.value.trim()) {
-      showSavePaletteModal.value = true
-    }
-    
-    // Clear the grid after successful save
-    paletteGridRef.value?.clearGrid()
-    loadedPaletteTitle.value = null // Clear loaded palette title
-    loadedPaletteModified.value = false // Reset modified flag
-    shouldCollapseAppInfo.value = false // Reset collapsed state
-    inlinePaletteTitle.value = '' // Clear inline title
-    updateGridTracker()
-  } catch (error) {
-    console.error('Error saving palette:', error)
-  }
-}
-
 const handleViewSavedPalettes = () => {
   showSavePaletteModal.value = false
   showSavedPalettesModal.value = true
@@ -121,15 +105,75 @@ const handleOpenAboutModal = () => {
   showAboutModal.value = true
 }
 
+// Title editing handlers
+const handleStartTitleEdit = async (currentTitle) => {
+  startTitleEdit(currentTitle)
+  // Focus the input after DOM update
+  await nextTick()
+  const input = document.querySelector('.palette-title-input')
+  input?.focus()
+  input?.select()
+}
+
+const handleSaveTitleEdit = () => {
+  const result = saveTitleEdit()
+  if (result.success && result.hasChanged) {
+    const oldTitle = loadedPaletteTitle.value
+    updateLoadedPaletteTitle(result.newTitle)
+    // Find the palette by old title and update it
+    const paletteToUpdate = savedPalettes.value.find(p => p.title === oldTitle)
+    if (paletteToUpdate) {
+      updatePaletteTitle(paletteToUpdate.id, result.newTitle)
+    }
+  }
+}
+
+const handleCancelTitleEdit = () => {
+  cancelTitleEdit()
+}
+
+// Grid data computed property
+const gridData = computed(() => {
+  // Access gridChangeTracker to ensure reactivity
+  gridChangeTracker.value
+  if (!paletteGridRef.value || typeof paletteGridRef.value.getOccupiedCells !== 'function') {
+    return []
+  }
+  return paletteGridRef.value.getOccupiedCells() || []
+})
+
+// Handle save palette modal events
+const handleSavePalette = (title = '') => {
+  const gridData = paletteGridRef.value?.getOccupiedCells() || []
+  console.log('Raw grid data from getOccupiedCells:', gridData)
+  
+  // Use inline title if available, otherwise use provided title
+  const finalTitle = inlinePaletteTitle.value.trim() || title || 'My Custom Palette'
+  
+  // Save using the composable
+  const savedPalette = savePalette(gridData, finalTitle, currentGridSize.value)
+  
+  // Store the saved palette data for the modal to display
+  savedPaletteData.value = savedPalette
+  
+  // If this was called from inline title, show the success modal
+  if (inlinePaletteTitle.value.trim()) {
+    showSavePaletteModal.value = true
+  }
+  
+  // Clear the grid after successful save
+  paletteGridRef.value?.clearGrid()
+  clearPalette()
+  updateGridTracker()
+}
+
 // Handle loading a saved palette into the main grid
 const handleLoadPalette = (paletteData) => {
   // Close the modal first
   showSavedPalettesModal.value = false
   
-  // Set the loaded palette title and reset modified flag
-  loadedPaletteTitle.value = paletteData.title
-  loadedPaletteModified.value = false
-  shouldCollapseAppInfo.value = true
+  // Use composable to load palette state
+  loadPalette(paletteData)
   
   // Change grid size to match the saved palette
   if (paletteData.gridSize !== currentGridSize.value) {
@@ -169,69 +213,47 @@ const handleSwatchClick = (colorData) => {
 const gridChangeTracker = ref(0)
 const updateGridTracker = () => {
   gridChangeTracker.value++
-  // Mark loaded palette as modified when grid changes
-  if (loadedPaletteTitle.value) {
-    loadedPaletteModified.value = true
-  }
+  triggerUserInteraction()
+  modifyPalette()
 }
-
-// Track loaded palette title
-const loadedPaletteTitle = ref(null)
-
-// Track if loaded palette has been modified
-const loadedPaletteModified = ref(false)
-
-// Track if app-info should be collapsed (when palette is loaded)
-const shouldCollapseAppInfo = ref(false)
-
-// Track inline palette title when grid is full
-const inlinePaletteTitle = ref('')
-
-// Check if all grid cells are occupied
-const isGridFull = computed(() => {
-  // Access gridChangeTracker to ensure reactivity
-  gridChangeTracker.value
-  if (!paletteGridRef.value) return false
-  const occupiedCells = paletteGridRef.value.getOccupiedCells() || []
-  const totalCells = currentGridSize.value * currentGridSize.value
-  return occupiedCells.length === totalCells
-})
-
-// Show inline title input when grid is full and (no palette loaded or palette modified)
-const showInlineTitleInput = computed(() => {
-  return isGridFull.value && (!loadedPaletteTitle.value || loadedPaletteModified.value)
-})
-
-// Check if palette can be saved (grid is full and either no palette loaded or palette has been modified)
-const canSavePalette = computed(() => {
-  // Access inlinePaletteTitle to ensure reactivity
-  const hasInlineTitle = inlinePaletteTitle.value.trim()
-  return isGridFull.value && (!loadedPaletteTitle.value || loadedPaletteModified.value) && hasInlineTitle
-})
-
-// Check if there are saved palettes
-const hasSavedPalettes = computed(() => {
-  try {
-    const saved = localStorage.getItem('eyeshadow-saved-palettes')
-    return saved && JSON.parse(saved).length > 0
-  } catch (error) {
-    return false
-  }
-})
 
 // Check if grid has any colors
 const hasColors = computed(() => {
   // Access gridChangeTracker to ensure reactivity
   gridChangeTracker.value
-  if (!paletteGridRef.value) return false
+  if (!paletteGridRef.value || typeof paletteGridRef.value.getOccupiedCells !== 'function') {
+    return false
+  }
   const occupiedCells = paletteGridRef.value.getOccupiedCells() || []
   return occupiedCells.length > 0
+})
+
+// Check if all grid cells are occupied
+const isGridFull = computed(() => {
+  // Access gridChangeTracker to ensure reactivity
+  gridChangeTracker.value
+  if (!paletteGridRef.value || typeof paletteGridRef.value.getOccupiedCells !== 'function') {
+    return false
+  }
+  const occupiedCells = paletteGridRef.value.getOccupiedCells() || []
+  const totalCells = currentGridSize.value * currentGridSize.value
+  return occupiedCells.length === totalCells
+})
+
+// Override canSavePalette to also require full grid
+const canSavePaletteWithFullGrid = computed(() => {
+  if (!isGridFull.value) return false
+  return canSavePalette.value
+})
+
+// Load saved palettes on mount
+onMounted(() => {
+  loadSavedPalettes()
 })
 </script>
 
 <template>
   <div class="swatches-explorer page-container typography-base">
-    
     <ColorCarousel
       :colors="allColors"
       :palette-name="palette.name"
@@ -242,25 +264,22 @@ const hasColors = computed(() => {
       <div class="palette-container">
         <div class="app-header-container">
           <div class="app-header-container__inner">
-            <div class="app-info">
-              <div v-if="showInlineTitleInput" class="inline-title-input">
-                <input 
-                  v-model="inlinePaletteTitle"
-                  type="text"
-                  placeholder="New Palette Title"
-                  class="palette-title-input"
-                />
-              </div>
-              <div v-else-if="loadedPaletteTitle && !loadedPaletteModified" class="loaded-palette-title">
-                <h1>{{ loadedPaletteTitle }}</h1>
-              </div>
-              <CollapsibleText 
-                v-else
-                title="Eye Shadow Palette Maker"
-                text="Build custom eyeshadow palettes by dragging or clicking colors from the carousel and adding them to the palette. Drag colors out of the grid to remove them."
-                :initially-open="!loadedPaletteModified"
-              />
-            </div>
+            <AppHeader
+              :show-app-info="showAppInfo"
+              :app-info-initially-open="appInfoInitiallyOpen"
+              :show-inline-title-input="showInlineTitleInput"
+              :show-loaded-palette-title="showLoadedPaletteTitle"
+              :inline-palette-title="inlinePaletteTitle"
+              :loaded-palette-title="loadedPaletteTitle"
+              :loaded-palette-modified="loadedPaletteModified"
+              :is-editing-title="isEditingTitle"
+              :edited-title="editedTitle"
+              @update:inline-palette-title="(value) => inlinePaletteTitle = value"
+              @update:edited-title="(value) => editedTitle = value"
+              @start-title-edit="handleStartTitleEdit"
+              @save-title-edit="handleSaveTitleEdit"
+              @cancel-title-edit="handleCancelTitleEdit"
+            />
           </div>
         </div>
 
@@ -269,6 +288,7 @@ const hasColors = computed(() => {
             <div class="hinge left-hinge"></div>
             <div class="hinge right-hinge"></div>
           </div>
+        
           <PaletteGrid
             ref="paletteGridRef"
             :colors="allColors"
@@ -277,33 +297,32 @@ const hasColors = computed(() => {
             @grid-size-change="handleGridSizeChange"
             @grid-updated="updateGridTracker"
           />
-          
+        
           <div class="palette-controls-segment">
             <GridControls
               :grid-size="currentGridSize"
               @size-change="handleGridSizeChange"
             />
             
-            <PaletteControls 
+            <PaletteControls
+              :can-save="canSavePaletteWithFullGrid"
+              :has-saved-palettes="hasSavedPalettes"
+              :has-colors="hasColors"
+              :is-modal-open="showSavePaletteModal || showSavedPalettesModal || showAboutModal"
               @clear="handleClear"
               @randomize="handleRandomize"
               @open-save-modal="handleOpenSaveModal"
               @view-saved-palettes="handleViewSavedPalettes"
               @open-about-modal="handleOpenAboutModal"
-              :can-save="canSavePalette"
-              :has-saved-palettes="hasSavedPalettes"
-              :has-colors="hasColors"
-              :is-modal-open="showSavePaletteModal || showSavedPalettesModal || showAboutModal"
             />
           </div>
         </div>
       </div>
     </div>
-    
     <!-- Save Palette Modal -->
     <SavePaletteModal 
       v-model="showSavePaletteModal"
-      :can-save="canSavePalette"
+      :can-save="canSavePaletteWithFullGrid"
       :saved-palette-data="savedPaletteData"
       @save="handleSavePalette"
       @view-saved-palettes="handleViewSavedPalettes"
@@ -406,5 +425,48 @@ const hasColors = computed(() => {
   color: var(--color-text-primary);
   margin: 0;
   line-height: 1.2;
+}
+
+.title-display {
+  position: relative;
+  display: inline-block;
+}
+
+.title-display:hover .edit-title-btn {
+  opacity: 1;
+}
+
+.edit-title-btn {
+  position: absolute;
+  top: 50%;
+  right: -35px;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(139, 129, 165, 0.3);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(5px);
+}
+
+.edit-title-btn:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(106, 90, 205, 0.4);
+  box-shadow: 0 2px 4px rgba(139, 129, 165, 0.2);
+}
+
+.title-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 12px;
 }
 </style>

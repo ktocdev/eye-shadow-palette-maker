@@ -39,14 +39,22 @@ const handleAction = (action) => {
 
 // Calculate tile size based on overall size
 const tileSize = computed(() => {
-  return Math.floor(props.size / props.paletteData.gridSize)
+  const gridSize = props.paletteData?.gridSize || 2
+  return Math.floor(props.size / gridSize)
 })
 
 // Create grid array with colors placed at their indices
 const gridCells = computed(() => {
   console.log('MiniPalette paletteData:', props.paletteData)
   
-  const totalCells = props.paletteData.gridSize * props.paletteData.gridSize
+  // Safety check for gridSize
+  const gridSize = props.paletteData?.gridSize || 2
+  if (gridSize <= 0 || !Number.isInteger(gridSize)) {
+    console.warn('Invalid gridSize in paletteData:', gridSize, 'using default of 2')
+    gridSize = 2
+  }
+  
+  const totalCells = gridSize * gridSize
   const cells = new Array(totalCells).fill(null)
   
   // Place colors at their saved indices
