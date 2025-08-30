@@ -8,6 +8,7 @@ import PaletteGrid from './grid/PaletteGrid.vue'
 import PaletteControls from './shared/PaletteControls.vue'
 import SavePaletteModal from './shared/SavePaletteModal.vue'
 import SavedPalettesModal from './shared/SavedPalettesModal.vue'
+import AboutModal from './shared/AboutModal.vue'
 import CollapsibleText from './shared/CollapsibleText.vue'
 
 // Composables
@@ -26,6 +27,7 @@ const currentGridSize = ref(2)
 // Modal states
 const showSavePaletteModal = ref(false)
 const showSavedPalettesModal = ref(false)
+const showAboutModal = ref(false)
 const savedPaletteData = ref(null)
 
 // Handle grid size changes
@@ -89,11 +91,47 @@ const handleViewSavedPalettes = () => {
   showSavedPalettesModal.value = true
 }
 
-// Handle carousel swatch click - now uses selection instead of direct placement
+const handleOpenAboutModal = () => {
+  showAboutModal.value = true
+}
+
+// Handle loading a saved palette into the main grid
+const handleLoadPalette = (paletteData) => {
+  // Close the modal first
+  showSavedPalettesModal.value = false
+  
+  // Change grid size to match the saved palette
+  if (paletteData.gridSize !== currentGridSize.value) {
+    currentGridSize.value = paletteData.gridSize
+    paletteGridRef.value?.changeGridSize(paletteData.gridSize)
+  }
+  
+  // Transform the palette data format for importGridData
+  // savedPalette.colors format: [{ index: 0, colorData: {...} }, ...]
+  // importGridData expects: [colorData, colorData, ...]
+  const totalCells = paletteData.gridSize * paletteData.gridSize
+  const gridData = new Array(totalCells).fill(null)
+  
+  paletteData.colors.forEach(({ index, colorData }) => {
+    if (index < totalCells) {
+      // All palette data now uses standard format: {colorName, hexCode, bgColor, isDark, effect}
+      console.log('Loading palette color at index', index, 'colorData:', colorData)
+      gridData[index] = colorData
+    }
+  })
+  
+  console.log('Final gridData for import:', gridData)
+  
+  // Import the data into the grid
+  paletteGridRef.value?.importGridData(gridData)
+  
+  // Update the grid tracker to trigger reactivity
+  updateGridTracker()
+}
+
+// Handle carousel swatch click - selection is handled by CarouselSwatch directly
 const handleSwatchClick = (colorData) => {
-  // The color selection is now handled by CarouselSwatch directly
-  // This maintains the event flow but the actual selection happens in CarouselSwatch
-  // We can keep this for any additional logic if needed in the future
+  // No action needed - selection is handled in CarouselSwatch component
 }
 
 // Track grid changes for reactivity
@@ -110,6 +148,25 @@ const isGridFull = computed(() => {
   const occupiedCells = paletteGridRef.value.getOccupiedCells() || []
   const totalCells = currentGridSize.value * currentGridSize.value
   return occupiedCells.length === totalCells
+})
+
+// Check if there are saved palettes
+const hasSavedPalettes = computed(() => {
+  try {
+    const saved = localStorage.getItem('eyeshadow-saved-palettes')
+    return saved && JSON.parse(saved).length > 0
+  } catch (error) {
+    return false
+  }
+})
+
+// Check if grid has any colors
+const hasColors = computed(() => {
+  // Access gridChangeTracker to ensure reactivity
+  gridChangeTracker.value
+  if (!paletteGridRef.value) return false
+  const occupiedCells = paletteGridRef.value.getOccupiedCells() || []
+  return occupiedCells.length > 0
 })
 </script>
 
@@ -160,8 +217,11 @@ const isGridFull = computed(() => {
               @clear="handleClear"
               @randomize="handleRandomize"
               @open-save-modal="handleOpenSaveModal"
-              @view-saved-palettes="handleOpenSavedPalettesModal"
+              @view-saved-palettes="handleViewSavedPalettes"
+              @open-about-modal="handleOpenAboutModal"
               :can-save="isGridFull"
+              :has-saved-palettes="hasSavedPalettes"
+              :has-colors="hasColors"
             />
           </div>
         </div>
@@ -180,6 +240,13 @@ const isGridFull = computed(() => {
     <!-- Saved Palettes Modal -->
     <SavedPalettesModal 
       v-model="showSavedPalettesModal"
+      @load-palette="handleLoadPalette"
+    />
+    
+    <!-- About Modal -->
+    <AboutModal 
+      v-model="showAboutModal"
+      @load-palette="handleLoadPalette"
     />
   </div>
 </template>

@@ -1,0 +1,51 @@
+{
+  "palettes": [
+    {
+      "title": "Golden Hour",
+      "gridSize": 2,
+      "colors": [
+        { "index": 0, "colorName": "Marmalade Madness" },
+        { "index": 1, "colorName": "Well Kept" },
+        { "index": 2, "colorName": "Lava Cream" },
+        { "index": 3, "colorName": "Twilight Bark" }
+      ]
+    },
+    {
+      "title": "Midnight Carnival",
+      "gridSize": 3,
+      "colors": [
+        { "index": 0, "colorName": "Royal Riddle" },
+        { "index": 1, "colorName": "Heavenly Virtue" },
+        { "index": 2, "colorName": "Teacup Tumble" },
+        { "index": 3, "colorName": "Marmalade Madness" },
+        { "index": 4, "colorName": "Twilight Bark" },
+        { "index": 5, "colorName": "Blood Orange Cider" },
+        { "index": 6, "colorName": "Lava Cream" },
+        { "index": 7, "colorName": "Flamingo Fizz" },
+        { "index": 8, "colorName": "Moonlit Pawn" }
+      ]
+    },
+    {
+      "title": "Forgotten Sunsets",
+      "gridSize": 4,
+      "colors": [
+        { "index": 0, "colorName": "Ivory Pop" },
+        { "index": 1, "colorName": "Crumbly Pie Crust" },
+        { "index": 2, "colorName": "Dice Cream" },
+        { "index": 3, "colorName": "Marmalade Madness" },
+        { "index": 4, "colorName": "Well Kept" },
+        { "index": 5, "colorName": "Spiced Soda" },
+        { "index": 6, "colorName": "Lava Cream" },
+        { "index": 7, "colorName": "Boardwalk Maple" },
+        { "index": 8, "colorName": "Twilight Bark" },
+        { "index": 9, "colorName": "Blood Orange Cider" },
+        { "index": 10, "colorName": "Laser Apple" },
+        { "index": 11, "colorName": "Flamingo Fizz" },
+        { "index": 12, "colorName": "Burlesque Bubblegum" },
+        { "index": 13, "colorName": "Glamour Glitch" },
+        { "index": 14, "colorName": "Moonlit Pawn" },
+        { "index": 15, "colorName": "Foggy Velvet" }
+      ]
+    }
+  ]
+}

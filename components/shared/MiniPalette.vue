@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue'
+import Dropdown from './Dropdown.vue'
 
 const props = defineProps({
   paletteData: {
@@ -9,8 +10,32 @@ const props = defineProps({
   size: {
     type: Number,
     default: 100
+  },
+  showDelete: {
+    type: Boolean,
+    default: true
   }
 })
+
+const emit = defineEmits(['palette-action'])
+
+// Dropdown menu items - conditionally include delete based on prop
+const dropdownItems = computed(() => {
+  const items = [
+    { label: 'Load Palette', icon: '', action: 'load' }
+  ]
+  
+  if (props.showDelete) {
+    items.push({ label: 'Delete', icon: '', action: 'delete' })
+  }
+  
+  return items
+})
+
+// Handle dropdown actions
+const handleAction = (action) => {
+  emit('palette-action', action, props.paletteData)
+}
 
 // Calculate tile size based on overall size
 const tileSize = computed(() => {
@@ -44,14 +69,15 @@ const gridColumns = computed(() => {
 
 <template>
   <div class="mini-palette">
-    <div 
-      class="mini-palette-grid"
-      :style="{ 
-        gridTemplateColumns: gridColumns,
-        width: size + 'px',
-        height: size + 'px'
-      }"
-    >
+    <div class="mini-palette-container">
+      <div 
+        class="mini-palette-grid"
+        :style="{ 
+          gridTemplateColumns: gridColumns,
+          width: size + 'px',
+          height: size + 'px'
+        }"
+      >
       <div 
         v-for="(colorData, index) in gridCells"
         :key="`mini-cell-${index}`"
@@ -62,11 +88,19 @@ const gridColumns = computed(() => {
           'effect-sparkly': colorData && colorData.effect === 'sparkly'
         }"
         :style="{ 
-          backgroundColor: colorData ? (colorData.hex || colorData.hexCode || colorData.backgroundColor) : 'transparent',
+          backgroundColor: colorData ? colorData.bgColor : 'transparent',
           width: tileSize + 'px',
           height: tileSize + 'px'
         }"
-      />
+        />
+      </div>
+      <div class="mini-palette-actions">
+        <Dropdown 
+          :items="dropdownItems" 
+          position="bottom-right"
+          @action="handleAction"
+        />
+      </div>
     </div>
     <h3 class="mini-palette-title">
       {{ paletteData.title }}
@@ -82,6 +116,10 @@ const gridColumns = computed(() => {
   gap: 8px;
 }
 
+.mini-palette-container {
+  position: relative;
+}
+
 .mini-palette-grid {
   display: grid;
   gap: 0;
@@ -91,6 +129,13 @@ const gridColumns = computed(() => {
 .mini-palette-tile {
   position: relative;
   border: none;
+}
+
+.mini-palette-actions {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 10;
 }
 
 .mini-palette-title {

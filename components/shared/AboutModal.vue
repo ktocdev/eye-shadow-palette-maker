@@ -1,0 +1,222 @@
+<script setup>
+import { ref, onMounted } from 'vue'
+import MiniPalette from './MiniPalette.vue'
+import Modal from './Modal.vue'
+import { useColorData } from '../../composables/useColorData.js'
+import demoPalettesData from '../../data/demoPalettes.json'
+
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const emit = defineEmits(['update:modelValue', 'load-palette'])
+
+// Use color data composable to get real colors
+const { findColorByName, convertToColorData } = useColorData()
+
+// Create demo palettes from predefined JSON data
+const createDemoPalettes = () => {
+  return demoPalettesData.palettes.map(paletteTemplate => {
+    const colors = paletteTemplate.colors.map(colorRef => {
+      const foundColor = findColorByName(colorRef.colorName)
+      if (foundColor) {
+        return {
+          index: colorRef.index,
+          colorData: convertToColorData(foundColor)
+        }
+      } else {
+        console.warn(`Color not found: ${colorRef.colorName}`)
+        return null
+      }
+    }).filter(Boolean) // Remove null entries
+    
+    return {
+      title: paletteTemplate.title,
+      gridSize: paletteTemplate.gridSize,
+      colors,
+      createdAt: new Date().toISOString()
+    }
+  })
+}
+
+// Get the demo palettes
+const demoPalettes = createDemoPalettes()
+
+// Handle palette actions from MiniPalette
+const handlePaletteAction = (action, paletteData) => {
+  if (action === 'load') {
+    // Emit to parent to load palette
+    emit('load-palette', paletteData)
+    // Close the about modal
+    emit('update:modelValue', false)
+  }
+}
+</script>
+
+<template>
+  <Modal :model-value="modelValue" @update:model-value="$emit('update:modelValue', $event)">
+    <h2>About Eyeshadow Palette Maker</h2>
+    
+    <div class="app-description">
+      <h3>Create Your Perfect Eyeshadow Palette</h3>
+      <p class="description-text">
+        Build custom eyeshadow palettes by selecting colors from the carousel and placing them precisely where you want. 
+        Choose from 2x2, 3x3, or 4x4 grid sizes to create anything from a compact travel palette to an extensive collection.
+      </p>
+      
+      <div class="how-to-use">
+        <h4>How to Use:</h4>
+        <ol class="instructions-list">
+          <li><strong>Select Colors:</strong> Click any eyeshadow in the color carousel to select it</li>
+          <li><strong>Place Precisely:</strong> Click on any grid cell to place your selected color exactly where you want it</li>
+          <li><strong>Drag & Drop:</strong> Alternatively, drag colors directly from the carousel to the grid</li>
+          <li><strong>Rearrange:</strong> Drag colors within the grid to swap positions or move to empty cells</li>
+          <li><strong>Save Your Work:</strong> Click "Save Palette" to store your creation with a custom name</li>
+          <li><strong>Load Examples:</strong> Try the demo palettes below by clicking the ⋯ menu and selecting "Load Palette"</li>
+        </ol>
+      </div>
+    </div>
+    
+    <div class="mini-palette-demo">
+      <h4>Example Palettes:</h4>
+      <div class="demo-palettes-container">
+        <div class="palette-example">
+          <h5>2x2 Compact</h5>
+          <MiniPalette 
+            :palette-data="demoPalettes[0]" 
+            :size="120" 
+            :show-delete="false"
+            @palette-action="handlePaletteAction"
+          />
+        </div>
+        
+        <div class="palette-example">
+          <h5>3x3 Standard</h5>
+          <MiniPalette 
+            :palette-data="demoPalettes[1]" 
+            :size="120" 
+            :show-delete="false"
+            @palette-action="handlePaletteAction"
+          />
+        </div>
+        
+        <div class="palette-example">
+          <h5>4x4 Extended</h5>
+          <MiniPalette 
+            :palette-data="demoPalettes[2]" 
+            :size="120" 
+            :show-delete="false"
+            @palette-action="handlePaletteAction"
+          />
+        </div>
+      </div>
+    </div>
+  </Modal>
+</template>
+
+<style>
+/* App description section */
+.app-description {
+  margin: 20px 0;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(139, 129, 165, 0.15);
+}
+
+.app-description h3 {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.description-text {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.how-to-use h4 {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: 12px;
+}
+
+.instructions-list {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.instructions-list li {
+  margin-bottom: 8px;
+}
+
+.instructions-list strong {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+/* Mini palette demo styles - Mobile first */
+.mini-palette-demo {
+  margin: 20px 0;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(139, 129, 165, 0.2);
+}
+
+.mini-palette-demo h4 {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.demo-palettes-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.palette-example {
+  text-align: center;
+}
+
+.palette-example h5 {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  margin-bottom: 12px;
+}
+
+@media (min-width: 768px) {
+  .demo-palettes-container {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  
+  .palette-example {
+    flex: 1;
+  }
+}
+</style>
