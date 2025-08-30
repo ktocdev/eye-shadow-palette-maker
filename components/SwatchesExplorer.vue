@@ -39,11 +39,17 @@ const handleGridSizeChange = (newSize) => {
 // Handle palette controls
 const handleClear = () => {
   paletteGridRef.value?.clearGrid()
+  loadedPaletteTitle.value = null // Clear loaded palette title
+  loadedPaletteModified.value = false // Reset modified flag
+  shouldCollapseAppInfo.value = false // Reset collapsed state
   updateGridTracker()
 }
 
 const handleRandomize = () => {
   paletteGridRef.value?.generateRandomPalette()
+  loadedPaletteTitle.value = null // Clear loaded palette title
+  loadedPaletteModified.value = false // Reset modified flag
+  shouldCollapseAppInfo.value = false // Reset collapsed state
   updateGridTracker()
 }
 
@@ -80,6 +86,9 @@ const handleSavePalette = (title) => {
     
     // Clear the grid after successful save
     paletteGridRef.value?.clearGrid()
+    loadedPaletteTitle.value = null // Clear loaded palette title
+    loadedPaletteModified.value = false // Reset modified flag
+    shouldCollapseAppInfo.value = false // Reset collapsed state
     updateGridTracker()
   } catch (error) {
     console.error('Error saving palette:', error)
@@ -99,6 +108,11 @@ const handleOpenAboutModal = () => {
 const handleLoadPalette = (paletteData) => {
   // Close the modal first
   showSavedPalettesModal.value = false
+  
+  // Set the loaded palette title and reset modified flag
+  loadedPaletteTitle.value = paletteData.title
+  loadedPaletteModified.value = false
+  shouldCollapseAppInfo.value = true
   
   // Change grid size to match the saved palette
   if (paletteData.gridSize !== currentGridSize.value) {
@@ -125,8 +139,8 @@ const handleLoadPalette = (paletteData) => {
   // Import the data into the grid
   paletteGridRef.value?.importGridData(gridData)
   
-  // Update the grid tracker to trigger reactivity
-  updateGridTracker()
+  // Update the grid tracker WITHOUT marking as modified (skip the modification logic)
+  gridChangeTracker.value++
 }
 
 // Handle carousel swatch click - selection is handled by CarouselSwatch directly
@@ -138,7 +152,20 @@ const handleSwatchClick = (colorData) => {
 const gridChangeTracker = ref(0)
 const updateGridTracker = () => {
   gridChangeTracker.value++
+  // Mark loaded palette as modified when grid changes
+  if (loadedPaletteTitle.value) {
+    loadedPaletteModified.value = true
+  }
 }
+
+// Track loaded palette title
+const loadedPaletteTitle = ref(null)
+
+// Track if loaded palette has been modified
+const loadedPaletteModified = ref(false)
+
+// Track if app-info should be collapsed (when palette is loaded)
+const shouldCollapseAppInfo = ref(false)
 
 // Check if all grid cells are occupied
 const isGridFull = computed(() => {
@@ -148,6 +175,11 @@ const isGridFull = computed(() => {
   const occupiedCells = paletteGridRef.value.getOccupiedCells() || []
   const totalCells = currentGridSize.value * currentGridSize.value
   return occupiedCells.length === totalCells
+})
+
+// Check if palette can be saved (grid is full and either no palette loaded or palette has been modified)
+const canSavePalette = computed(() => {
+  return isGridFull.value && (!loadedPaletteTitle.value || loadedPaletteModified.value)
 })
 
 // Check if there are saved palettes
@@ -185,9 +217,9 @@ const hasColors = computed(() => {
           <div class="app-header-container__inner">
             <div class="app-info">
               <CollapsibleText 
-                title="Eye Shadow Palette Maker"
-                text="Click, touch, or drag colors into the palette grid to create beautiful eyeshadow combinations. Use the Save button to keep palettes in your collection."
-                :initially-open="true"
+                :title="(loadedPaletteTitle && !loadedPaletteModified) ? loadedPaletteTitle : 'Eye Shadow Palette Maker'"
+                text="Build custom eyeshadow palettes by dragging or clicking colors from the carousel and adding them to the palette. Drag colors out of the grid to remove them."
+                :initially-open="!shouldCollapseAppInfo"
               />
             </div>
           </div>
@@ -219,9 +251,10 @@ const hasColors = computed(() => {
               @open-save-modal="handleOpenSaveModal"
               @view-saved-palettes="handleViewSavedPalettes"
               @open-about-modal="handleOpenAboutModal"
-              :can-save="isGridFull"
+              :can-save="canSavePalette"
               :has-saved-palettes="hasSavedPalettes"
               :has-colors="hasColors"
+              :is-modal-open="showSavePaletteModal || showSavedPalettesModal || showAboutModal"
             />
           </div>
         </div>
@@ -231,10 +264,11 @@ const hasColors = computed(() => {
     <!-- Save Palette Modal -->
     <SavePaletteModal 
       v-model="showSavePaletteModal"
-      :can-save="isGridFull"
+      :can-save="canSavePalette"
       :saved-palette-data="savedPaletteData"
       @save="handleSavePalette"
       @view-saved-palettes="handleViewSavedPalettes"
+      @load-palette="handleLoadPalette"
     />
     
     <!-- Saved Palettes Modal -->

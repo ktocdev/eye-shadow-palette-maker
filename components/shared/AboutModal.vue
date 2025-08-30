@@ -63,8 +63,8 @@ const handlePaletteAction = (action, paletteData) => {
     <div class="app-description">
       <h3>Create Your Perfect Eyeshadow Palette</h3>
       <p class="description-text">
-        Build custom eyeshadow palettes by selecting colors from the carousel and placing them precisely where you want. 
-        Choose from 2x2, 3x3, or 4x4 grid sizes to create anything from a compact travel palette to an extensive collection.
+        Build custom eyeshadow palettes by selecting colors from the carousel and dragging or clicking to place them precisely where you want. 
+        Drag colors out of the grid to remove them. Choose from 2x2, 3x3, or 4x4 grid sizes to create anything from a compact travel palette to an extensive collection.
       </p>
       
       <div class="how-to-use">

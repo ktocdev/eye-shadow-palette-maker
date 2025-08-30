@@ -144,7 +144,6 @@ const gridColumns = computed(() => {
   color: var(--color-text-secondary);
   text-align: center;
   line-height: 1;
-  max-width: 120px;
-  white-space: wrap;
+  white-space: nowrap;
 }
 </style>

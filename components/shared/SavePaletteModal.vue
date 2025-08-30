@@ -18,7 +18,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue', 'save', 'view-saved-palettes'])
+const emit = defineEmits(['update:modelValue', 'save', 'view-saved-palettes', 'load-palette'])
 
 const paletteTitle = ref('')
 const showSuccessMessage = ref(false)
@@ -37,6 +37,16 @@ const openSavedPalettes = () => {
   emit('view-saved-palettes')
   // Reset success message
   showSuccessMessage.value = false
+}
+
+// Handle palette actions from MiniPalette
+const handlePaletteAction = (action, paletteData) => {
+  if (action === 'load') {
+    // Emit to parent to load palette
+    emit('load-palette', paletteData)
+    // Close the modal
+    emit('update:modelValue', false)
+  }
 }
 
 // Reset success message when modal closes
@@ -74,7 +84,12 @@ watch(() => props.modelValue, (isOpen) => {
     </div>
     <div v-if="showSuccessMessage">
       <div v-if="savedPaletteData" class="saved-palette-preview">
-        <MiniPalette :palette-data="savedPaletteData" :size="120" />
+        <MiniPalette 
+          :palette-data="savedPaletteData" 
+          :size="120" 
+          :show-delete="false"
+          @palette-action="handlePaletteAction"
+        />
       </div>
       <div v-if="showSuccessMessage" class="success-message">
         <p>

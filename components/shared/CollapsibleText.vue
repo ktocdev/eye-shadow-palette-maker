@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 const props = defineProps({
   title: {
@@ -17,6 +17,11 @@ const props = defineProps({
 })
 
 const isOpen = ref(props.initiallyOpen)
+
+// Watch for changes to initiallyOpen prop and update isOpen accordingly
+watch(() => props.initiallyOpen, (newValue) => {
+  isOpen.value = newValue
+})
 
 const toggleCollapse = () => {
   isOpen.value = !isOpen.value

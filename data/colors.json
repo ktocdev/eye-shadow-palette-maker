@@ -51,9 +51,9 @@
         ],
         "browns": [
           {
-            "name": "Lava Cream",
+            "name": "Caramel Baklava",
             "hex": "#A65C3A",
-            "id": "lava-cream",
+            "id": "caramel-baklava",
             "is_dark": true,
             "effect": "sparkly"
           },

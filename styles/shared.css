@@ -198,12 +198,12 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: var(--shadow-button);
 }
 
-/* Save button enabled state with vibrant animation */
-.btn-gradient-green:not(.btn-disabled) {
-  animation: saveButtonPulse 2s ease-in-out infinite;
+/* Button green pulse animation - additive utility class */
+.btn-animate-pulse-green {
+  animation: buttonPulseGreen 2s ease-in-out infinite;
 }
 
-@keyframes saveButtonPulse {
+@keyframes buttonPulseGreen {
   0% {
     box-shadow: var(--shadow-button), 0 0 0 0 rgba(34, 139, 34, 0.7);
     transform: scale(1);

@@ -11,6 +11,10 @@ const props = defineProps({
   hasColors: {
     type: Boolean,
     default: false
+  },
+  isModalOpen: {
+    type: Boolean,
+    default: false
   }
 })
 
