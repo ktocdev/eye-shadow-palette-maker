@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useDragDrop } from '../../composables/useDragDrop.js'
 import { useEventCleanup } from '../../composables/useEventCleanup.js'
+import { useColorSelection } from '../../composables/useColorSelection.js'
 import PaletteSwatch from './PaletteSwatch.vue'
 
 const props = defineProps({
@@ -19,10 +20,25 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['drop', 'clear-cell'])
+const emit = defineEmits(['drop', 'clear-cell', 'cell-click'])
 
 const cellRef = ref(null)
 const { addEventListener } = useEventCleanup()
+
+// Color selection composable  
+const { hasSelection } = useColorSelection()
+
+// Check if this cell can receive a selected color
+const canReceiveColor = computed(() => {
+  return hasSelection.value // Allow replacing both empty and occupied cells
+})
+
+// Handle cell click
+const handleCellClick = () => {
+  if (canReceiveColor.value) {
+    emit('cell-click', props.index)
+  }
+}
 
 // Single instance of drag drop composable
 const { 
@@ -60,10 +76,14 @@ onMounted(() => {
     ref="cellRef"
     class="grid-cell"
     :class="[
-      { occupied: !!colorData },
+      { 
+        occupied: !!colorData,
+        'can-receive': canReceiveColor
+      },
       `size-${gridSize}x${gridSize}`
     ]"
     :data-index="index"
+    @click="handleCellClick"
   >
     <PaletteSwatch 
       v-if="colorData"
@@ -97,6 +117,21 @@ onMounted(() => {
 .grid-cell.occupied {
   border: none;
   background: transparent;
+}
+
+.grid-cell.can-receive {
+  cursor: pointer;
+  border: 2px dashed rgba(188, 179, 222, 0.5);
+}
+
+.grid-cell.can-receive:not(.occupied) {
+  background: var(--gradient-container-hover);
+  box-shadow: var(--shadow-grid-cell-hover);
+}
+
+.grid-cell.can-receive.occupied {
+  opacity: 0.8;
+  transform: scale(0.98);
 }
 
 /* Grid size specific cell styling - Desktop first */

@@ -89,9 +89,11 @@ const handleViewSavedPalettes = () => {
   showSavedPalettesModal.value = true
 }
 
-// Handle carousel swatch click
+// Handle carousel swatch click - now uses selection instead of direct placement
 const handleSwatchClick = (colorData) => {
-  paletteGridRef.value?.addColorToFirstEmpty(colorData)
+  // The color selection is now handled by CarouselSwatch directly
+  // This maintains the event flow but the actual selection happens in CarouselSwatch
+  // We can keep this for any additional logic if needed in the future
 }
 
 // Track grid changes for reactivity

@@ -4,6 +4,7 @@ import GridCell from './GridCell.vue'
 import { usePaletteGrid } from '../../composables/usePaletteGrid.js'
 import { useEventCleanup } from '../../composables/useEventCleanup.js'
 import { useSound } from '../../composables/useSound.js'
+import { useColorSelection } from '../../composables/useColorSelection.js'
 
 const props = defineProps({
   colors: {
@@ -54,6 +55,9 @@ const { addEventListener } = useEventCleanup()
 // Sound composable
 const { playDropSuccess } = useSound()
 
+// Color selection composable
+const { selectedColor, hasSelection, clearSelection } = useColorSelection()
+
 // Handle grid cell drops
 const handleCellDrop = ({ index, colorData, isFromGrid }) => {
   if (isFromGrid) {
@@ -83,6 +87,17 @@ const handleCellClear = (index) => {
 const handleGridSizeChange = (newSize) => {
   changeGridSize(newSize)
   emit('grid-size-change', newSize)
+}
+
+// Handle cell click for placing selected colors
+const handleCellClick = (index) => {
+  if (!hasSelection.value) return
+  
+  // Place the selected color in the clicked cell (allow replacing existing colors)
+  setCellData(index, selectedColor.value)
+  playDropSuccess()
+  clearSelection()
+  emit('grid-updated')
 }
 
 
@@ -156,6 +171,7 @@ defineExpose({
       :grid-size="gridSize"
       @drop="handleCellDrop"
       @clear-cell="handleCellClear"
+      @cell-click="handleCellClick"
     />
   </div>
 </template>
