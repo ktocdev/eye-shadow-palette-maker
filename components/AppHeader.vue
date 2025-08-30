@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from 'vue'
 import CollapsibleText from './shared/CollapsibleText.vue'
 
 const props = defineProps({
@@ -37,6 +38,10 @@ const props = defineProps({
   loadedPaletteModified: {
     type: Boolean,
     default: false
+  },
+  isGridFull: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -45,7 +50,9 @@ const emit = defineEmits([
   'update:edited-title',
   'start-title-edit',
   'save-title-edit',
-  'cancel-title-edit'
+  'cancel-title-edit',
+  'save-inline-title',
+  'cancel-inline-title'
 ])
 
 const appTitle = "Eyeshadow Palette Maker"
@@ -70,6 +77,34 @@ const handleSaveEdit = () => {
 const handleCancelEdit = () => {
   emit('cancel-title-edit')
 }
+
+// Inline title input focus state
+const isInlineTitleFocused = ref(false)
+
+const handleInlineTitleFocus = () => {
+  isInlineTitleFocused.value = true
+}
+
+const handleInlineTitleBlur = (event) => {
+  // Check if the blur is moving to one of our action buttons
+  const relatedTarget = event.relatedTarget
+  if (relatedTarget && (relatedTarget.classList.contains('save-btn') || relatedTarget.classList.contains('cancel-btn'))) {
+    return // Keep focused state when moving to action buttons
+  }
+  isInlineTitleFocused.value = false
+}
+
+const handleSaveInlineTitle = () => {
+  if (props.inlinePaletteTitle.trim() && props.isGridFull) {
+    emit('save-inline-title')
+    isInlineTitleFocused.value = false
+  }
+}
+
+const handleCancelInlineTitle = () => {
+  emit('cancel-inline-title')
+  isInlineTitleFocused.value = false
+}
 </script>
 
 <template>
@@ -86,13 +121,32 @@ const handleCancelEdit = () => {
     <!-- Inline Title Input -->
     <div v-else-if="showInlineTitleInput" class="inline-title-section">
       <h1 v-if="!loadedPaletteModified" class="app-title">{{ appTitle }}</h1>
-      <input
-        :value="inlinePaletteTitle"
-        @input="updateInlineTitle"
-        type="text"
-        :placeholder="loadedPaletteModified ? 'Add Palette Title' : 'New Palette Title'"
-        class="inline-title-input"
-      />
+      <div class="inline-title-input-container">
+        <input
+          :value="inlinePaletteTitle"
+          @input="updateInlineTitle"
+          @focus="handleInlineTitleFocus"
+          @blur="handleInlineTitleBlur"
+          type="text"
+          :placeholder="loadedPaletteModified ? 'Add Palette Title' : 'New Palette Title'"
+          class="inline-title-input"
+          @keyup.enter="handleSaveInlineTitle"
+          @keyup.escape="handleCancelInlineTitle"
+        />
+        <Transition name="inline-actions">
+          <div v-if="isInlineTitleFocused || inlinePaletteTitle.trim()" class="edit-actions">
+            <button 
+              @click="handleSaveInlineTitle" 
+              :disabled="!inlinePaletteTitle.trim() || !isGridFull"
+              class="save-btn"
+              :class="{ 'btn-disabled': !inlinePaletteTitle.trim() || !isGridFull }"
+            >
+              ✓
+            </button>
+            <button @click="handleCancelInlineTitle" class="cancel-btn">✕</button>
+          </div>
+        </Transition>
+      </div>
     </div>
 
     <!-- Loaded Palette Title -->
@@ -184,6 +238,33 @@ const handleCancelEdit = () => {
   color: var(--color-text-muted);
 }
 
+.inline-title-input-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Transition for inline actions */
+.inline-actions-enter-active,
+.inline-actions-leave-active {
+  transition: all 0.3s ease;
+}
+
+.inline-actions-enter-from,
+.inline-actions-leave-to {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+.inline-actions-enter-to,
+.inline-actions-leave-from {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 .palette-title-display {
   display: flex;
   align-items: center;
@@ -269,9 +350,17 @@ const handleCancelEdit = () => {
   border-color: rgba(34, 139, 34, 0.3);
 }
 
-.save-btn:hover {
+.save-btn:hover:not(:disabled) {
   background: rgba(34, 139, 34, 0.1);
   border-color: rgba(34, 139, 34, 0.5);
+}
+
+.save-btn:disabled,
+.save-btn.btn-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  color: #999;
+  border-color: rgba(153, 153, 153, 0.3);
 }
 
 .cancel-btn {

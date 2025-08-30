@@ -240,7 +240,13 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
   height: 100%;
   background: var(--gradient-shimmer-effect);
+  border-radius: var(--radius-xl);
   pointer-events: none;
+}
+
+/* Override border-radius for shimmer effects outside of mini palettes */
+:not(.mini-palette) .effect-shimmer::before {
+  border-radius: 0;
 }
 
 .effect-sparkly {
