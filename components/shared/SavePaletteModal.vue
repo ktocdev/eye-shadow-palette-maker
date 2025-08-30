@@ -49,10 +49,13 @@ const handlePaletteAction = (action, paletteData) => {
   }
 }
 
-// Reset success message when modal closes
+// Reset success message when modal closes, or show success if savedPaletteData exists
 watch(() => props.modelValue, (isOpen) => {
   if (!isOpen) {
     showSuccessMessage.value = false
+  } else if (isOpen && props.savedPaletteData) {
+    // If modal opened with saved palette data, show success immediately
+    showSuccessMessage.value = true
   }
 })
 </script>
