@@ -3,10 +3,22 @@ const props = defineProps({
   canSave: {
     type: Boolean,
     default: false
+  },
+  hasSavedPalettes: {
+    type: Boolean,
+    default: false
+  },
+  hasColors: {
+    type: Boolean,
+    default: false
+  },
+  isModalOpen: {
+    type: Boolean,
+    default: false
   }
 })
 
-const emit = defineEmits(['clear', 'randomize', 'open-save-modal', 'view-saved-palettes'])
+const emit = defineEmits(['clear', 'randomize', 'open-save-modal', 'view-saved-palettes', 'open-about-modal'])
 </script>
 
 <template>
@@ -19,14 +31,27 @@ const emit = defineEmits(['clear', 'randomize', 'open-save-modal', 'view-saved-p
     >
       Save Palette
     </button>
-    <button @click="$emit('view-saved-palettes')" class="btn btn-standard btn-gradient-blue">
+    <button 
+      @click="$emit('view-saved-palettes')"
+      :disabled="!hasSavedPalettes"
+      class="btn btn-standard btn-gradient-blue"
+      :class="{ 'btn-disabled': !hasSavedPalettes }"
+    >
       View Saved Palettes
     </button>
     <button @click="$emit('randomize')" class="btn btn-standard btn-gradient-purple">
       Random Palette
     </button>
-    <button @click="$emit('clear')" class="btn btn-standard btn-gradient-red">
+    <button 
+      @click="$emit('clear')"
+      :disabled="!hasColors"
+      class="btn btn-standard btn-gradient-red"
+      :class="{ 'btn-disabled': !hasColors }"
+    >
       Clear Palette
+    </button>
+    <button @click="$emit('open-about-modal')" class="btn btn-standard btn-gradient-orange">
+      About
     </button>
   </div>
 </template>

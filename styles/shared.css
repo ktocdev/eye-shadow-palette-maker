@@ -154,12 +154,30 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: var(--shadow-button-hover);
 }
 
+.btn-gradient-orange {
+  background: var(--gradient-button-orange);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  touch-action: manipulation;
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-button);
+}
+
+.btn-gradient-orange:hover {
+  background: var(--gradient-button-orange-hover);
+  box-shadow: var(--shadow-button-hover);
+}
+
 /* Disabled button states - use higher specificity to override gradients */
 .btn.btn-disabled,
 .btn-gradient-green.btn-disabled,
 .btn-gradient-red.btn-disabled,
 .btn-gradient-purple.btn-disabled,
 .btn-gradient-blue.btn-disabled,
+.btn-gradient-orange.btn-disabled,
 .btn-gradient-gray.btn-disabled {
   background: var(--gradient-button-gray);
   cursor: not-allowed;
@@ -174,17 +192,18 @@ h1, h2, h3, h4, h5, h6 {
 .btn-gradient-red.btn-disabled:hover,
 .btn-gradient-purple.btn-disabled:hover,
 .btn-gradient-blue.btn-disabled:hover,
+.btn-gradient-orange.btn-disabled:hover,
 .btn-gradient-gray.btn-disabled:hover {
   background: var(--gradient-button-gray);
   box-shadow: var(--shadow-button);
 }
 
-/* Save button enabled state with vibrant animation */
-.btn-gradient-green:not(.btn-disabled) {
-  animation: saveButtonPulse 2s ease-in-out infinite;
+/* Button green pulse animation - additive utility class */
+.btn-animate-pulse-green {
+  animation: buttonPulseGreen 2s ease-in-out infinite;
 }
 
-@keyframes saveButtonPulse {
+@keyframes buttonPulseGreen {
   0% {
     box-shadow: var(--shadow-button), 0 0 0 0 rgba(34, 139, 34, 0.7);
     transform: scale(1);

@@ -8,6 +8,7 @@ import PaletteGrid from './grid/PaletteGrid.vue'
 import PaletteControls from './shared/PaletteControls.vue'
 import SavePaletteModal from './shared/SavePaletteModal.vue'
 import SavedPalettesModal from './shared/SavedPalettesModal.vue'
+import AboutModal from './shared/AboutModal.vue'
 import CollapsibleText from './shared/CollapsibleText.vue'
 
 // Composables
@@ -26,6 +27,7 @@ const currentGridSize = ref(2)
 // Modal states
 const showSavePaletteModal = ref(false)
 const showSavedPalettesModal = ref(false)
+const showAboutModal = ref(false)
 const savedPaletteData = ref(null)
 
 // Handle grid size changes
@@ -37,17 +39,31 @@ const handleGridSizeChange = (newSize) => {
 // Handle palette controls
 const handleClear = () => {
   paletteGridRef.value?.clearGrid()
+  loadedPaletteTitle.value = null // Clear loaded palette title
+  loadedPaletteModified.value = false // Reset modified flag
+  shouldCollapseAppInfo.value = false // Reset collapsed state
+  inlinePaletteTitle.value = '' // Clear inline title
   updateGridTracker()
 }
 
 const handleRandomize = () => {
   paletteGridRef.value?.generateRandomPalette()
+  loadedPaletteTitle.value = null // Clear loaded palette title
+  loadedPaletteModified.value = false // Reset modified flag
+  shouldCollapseAppInfo.value = false // Reset collapsed state
+  inlinePaletteTitle.value = '' // Clear inline title
   updateGridTracker()
 }
 
 // Handle palette controls events
 const handleOpenSaveModal = () => {
-  showSavePaletteModal.value = true
+  // If we have an inline title, save directly and then show success modal
+  if (inlinePaletteTitle.value.trim()) {
+    handleSavePalette()
+    // Modal will be shown from within handleSavePalette after save is complete
+  } else {
+    showSavePaletteModal.value = true
+  }
 }
 
 const handleOpenSavedPalettesModal = () => {
@@ -55,12 +71,15 @@ const handleOpenSavedPalettesModal = () => {
 }
 
 // Handle save palette modal events
-const handleSavePalette = (title) => {
+const handleSavePalette = (title = '') => {
   const gridData = paletteGridRef.value?.getOccupiedCells() || []
   console.log('Raw grid data from getOccupiedCells:', gridData)
   
+  // Use inline title if available, otherwise use provided title
+  const finalTitle = inlinePaletteTitle.value.trim() || title || 'My Custom Palette'
+  
   const paletteData = {
-    title: title || 'My Custom Palette',
+    title: finalTitle,
     gridSize: currentGridSize.value,
     colors: gridData,
     createdAt: new Date().toISOString()
@@ -76,8 +95,17 @@ const handleSavePalette = (title) => {
     // Store the saved palette data for the modal to display
     savedPaletteData.value = paletteData
     
+    // If this was called from inline title, show the success modal
+    if (inlinePaletteTitle.value.trim()) {
+      showSavePaletteModal.value = true
+    }
+    
     // Clear the grid after successful save
     paletteGridRef.value?.clearGrid()
+    loadedPaletteTitle.value = null // Clear loaded palette title
+    loadedPaletteModified.value = false // Reset modified flag
+    shouldCollapseAppInfo.value = false // Reset collapsed state
+    inlinePaletteTitle.value = '' // Clear inline title
     updateGridTracker()
   } catch (error) {
     console.error('Error saving palette:', error)
@@ -89,16 +117,75 @@ const handleViewSavedPalettes = () => {
   showSavedPalettesModal.value = true
 }
 
-// Handle carousel swatch click
+const handleOpenAboutModal = () => {
+  showAboutModal.value = true
+}
+
+// Handle loading a saved palette into the main grid
+const handleLoadPalette = (paletteData) => {
+  // Close the modal first
+  showSavedPalettesModal.value = false
+  
+  // Set the loaded palette title and reset modified flag
+  loadedPaletteTitle.value = paletteData.title
+  loadedPaletteModified.value = false
+  shouldCollapseAppInfo.value = true
+  
+  // Change grid size to match the saved palette
+  if (paletteData.gridSize !== currentGridSize.value) {
+    currentGridSize.value = paletteData.gridSize
+    paletteGridRef.value?.changeGridSize(paletteData.gridSize)
+  }
+  
+  // Transform the palette data format for importGridData
+  // savedPalette.colors format: [{ index: 0, colorData: {...} }, ...]
+  // importGridData expects: [colorData, colorData, ...]
+  const totalCells = paletteData.gridSize * paletteData.gridSize
+  const gridData = new Array(totalCells).fill(null)
+  
+  paletteData.colors.forEach(({ index, colorData }) => {
+    if (index < totalCells) {
+      // All palette data now uses standard format: {colorName, hexCode, bgColor, isDark, effect}
+      console.log('Loading palette color at index', index, 'colorData:', colorData)
+      gridData[index] = colorData
+    }
+  })
+  
+  console.log('Final gridData for import:', gridData)
+  
+  // Import the data into the grid
+  paletteGridRef.value?.importGridData(gridData)
+  
+  // Update the grid tracker WITHOUT marking as modified (skip the modification logic)
+  gridChangeTracker.value++
+}
+
+// Handle carousel swatch click - selection is handled by CarouselSwatch directly
 const handleSwatchClick = (colorData) => {
-  paletteGridRef.value?.addColorToFirstEmpty(colorData)
+  // No action needed - selection is handled in CarouselSwatch component
 }
 
 // Track grid changes for reactivity
 const gridChangeTracker = ref(0)
 const updateGridTracker = () => {
   gridChangeTracker.value++
+  // Mark loaded palette as modified when grid changes
+  if (loadedPaletteTitle.value) {
+    loadedPaletteModified.value = true
+  }
 }
+
+// Track loaded palette title
+const loadedPaletteTitle = ref(null)
+
+// Track if loaded palette has been modified
+const loadedPaletteModified = ref(false)
+
+// Track if app-info should be collapsed (when palette is loaded)
+const shouldCollapseAppInfo = ref(false)
+
+// Track inline palette title when grid is full
+const inlinePaletteTitle = ref('')
 
 // Check if all grid cells are occupied
 const isGridFull = computed(() => {
@@ -108,6 +195,37 @@ const isGridFull = computed(() => {
   const occupiedCells = paletteGridRef.value.getOccupiedCells() || []
   const totalCells = currentGridSize.value * currentGridSize.value
   return occupiedCells.length === totalCells
+})
+
+// Show inline title input when grid is full and (no palette loaded or palette modified)
+const showInlineTitleInput = computed(() => {
+  return isGridFull.value && (!loadedPaletteTitle.value || loadedPaletteModified.value)
+})
+
+// Check if palette can be saved (grid is full and either no palette loaded or palette has been modified)
+const canSavePalette = computed(() => {
+  // Access inlinePaletteTitle to ensure reactivity
+  const hasInlineTitle = inlinePaletteTitle.value.trim()
+  return isGridFull.value && (!loadedPaletteTitle.value || loadedPaletteModified.value) && hasInlineTitle
+})
+
+// Check if there are saved palettes
+const hasSavedPalettes = computed(() => {
+  try {
+    const saved = localStorage.getItem('eyeshadow-saved-palettes')
+    return saved && JSON.parse(saved).length > 0
+  } catch (error) {
+    return false
+  }
+})
+
+// Check if grid has any colors
+const hasColors = computed(() => {
+  // Access gridChangeTracker to ensure reactivity
+  gridChangeTracker.value
+  if (!paletteGridRef.value) return false
+  const occupiedCells = paletteGridRef.value.getOccupiedCells() || []
+  return occupiedCells.length > 0
 })
 </script>
 
@@ -125,10 +243,22 @@ const isGridFull = computed(() => {
         <div class="app-header-container">
           <div class="app-header-container__inner">
             <div class="app-info">
+              <div v-if="showInlineTitleInput" class="inline-title-input">
+                <input 
+                  v-model="inlinePaletteTitle"
+                  type="text"
+                  placeholder="New Palette Title"
+                  class="palette-title-input"
+                />
+              </div>
+              <div v-else-if="loadedPaletteTitle && !loadedPaletteModified" class="loaded-palette-title">
+                <h1>{{ loadedPaletteTitle }}</h1>
+              </div>
               <CollapsibleText 
+                v-else
                 title="Eye Shadow Palette Maker"
-                text="Click, touch, or drag colors into the palette grid to create beautiful eyeshadow combinations. Use the Save button to keep palettes in your collection."
-                :initially-open="true"
+                text="Build custom eyeshadow palettes by dragging or clicking colors from the carousel and adding them to the palette. Drag colors out of the grid to remove them."
+                :initially-open="!loadedPaletteModified"
               />
             </div>
           </div>
@@ -158,8 +288,12 @@ const isGridFull = computed(() => {
               @clear="handleClear"
               @randomize="handleRandomize"
               @open-save-modal="handleOpenSaveModal"
-              @view-saved-palettes="handleOpenSavedPalettesModal"
-              :can-save="isGridFull"
+              @view-saved-palettes="handleViewSavedPalettes"
+              @open-about-modal="handleOpenAboutModal"
+              :can-save="canSavePalette"
+              :has-saved-palettes="hasSavedPalettes"
+              :has-colors="hasColors"
+              :is-modal-open="showSavePaletteModal || showSavedPalettesModal || showAboutModal"
             />
           </div>
         </div>
@@ -169,15 +303,23 @@ const isGridFull = computed(() => {
     <!-- Save Palette Modal -->
     <SavePaletteModal 
       v-model="showSavePaletteModal"
-      :can-save="isGridFull"
+      :can-save="canSavePalette"
       :saved-palette-data="savedPaletteData"
       @save="handleSavePalette"
       @view-saved-palettes="handleViewSavedPalettes"
+      @load-palette="handleLoadPalette"
     />
     
     <!-- Saved Palettes Modal -->
     <SavedPalettesModal 
       v-model="showSavedPalettesModal"
+      @load-palette="handleLoadPalette"
+    />
+    
+    <!-- About Modal -->
+    <AboutModal 
+      v-model="showAboutModal"
+      @load-palette="handleLoadPalette"
     />
   </div>
 </template>
@@ -213,5 +355,56 @@ const isGridFull = computed(() => {
   .app-info {
     margin: 0 10px;
   }
+}
+
+/* Inline title input styles */
+.inline-title-input {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.palette-title-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 16px 20px;
+  border: 2px solid rgba(139, 129, 165, 0.3);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.95);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(139, 129, 165, 0.1);
+}
+
+.palette-title-input:focus {
+  outline: none;
+  border-color: rgba(106, 90, 205, 0.6);
+  box-shadow: 0 0 0 4px rgba(106, 90, 205, 0.15), 0 4px 12px rgba(139, 129, 165, 0.2);
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-1px);
+}
+
+.palette-title-input::placeholder {
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-normal);
+  opacity: 0.7;
+}
+
+/* Loaded palette title styles */
+.loaded-palette-title {
+  text-align: center;
+}
+
+.loaded-palette-title h1 {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: 1.2;
 }
 </style>

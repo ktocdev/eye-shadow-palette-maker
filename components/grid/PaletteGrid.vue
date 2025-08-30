@@ -4,6 +4,7 @@ import GridCell from './GridCell.vue'
 import { usePaletteGrid } from '../../composables/usePaletteGrid.js'
 import { useEventCleanup } from '../../composables/useEventCleanup.js'
 import { useSound } from '../../composables/useSound.js'
+import { useColorSelection } from '../../composables/useColorSelection.js'
 
 const props = defineProps({
   colors: {
@@ -35,7 +36,8 @@ const {
   swapOrMoveColors,
   generateRandomPalette,
   getOccupiedCells,
-  findFirstEmptyCell
+  findFirstEmptyCell,
+  importGridData
 } = usePaletteGrid(computed(() => props.colors))
 
 // Set initial grid size
@@ -53,6 +55,9 @@ const { addEventListener } = useEventCleanup()
 
 // Sound composable
 const { playDropSuccess } = useSound()
+
+// Color selection composable
+const { selectedColor, hasSelection, clearSelection } = useColorSelection()
 
 // Handle grid cell drops
 const handleCellDrop = ({ index, colorData, isFromGrid }) => {
@@ -85,6 +90,17 @@ const handleGridSizeChange = (newSize) => {
   emit('grid-size-change', newSize)
 }
 
+// Handle cell click for placing selected colors
+const handleCellClick = (index) => {
+  if (!hasSelection.value) return
+  
+  // Place the selected color in the clicked cell (allow replacing existing colors)
+  setCellData(index, selectedColor.value)
+  playDropSuccess()
+  clearSelection()
+  emit('grid-updated')
+}
+
 
 // Handle touch drop events
 const handleTouchDrop = (e) => {
@@ -103,20 +119,6 @@ onMounted(() => {
   addEventListener(document, 'touchdrop', handleTouchDrop)
 })
 
-// Add color to first empty cell
-const addColorToFirstEmpty = (colorData) => {
-  const emptyIndex = findFirstEmptyCell()
-  
-  if (emptyIndex !== -1) {
-    setCellData(emptyIndex, colorData)
-    // Play drop success sound
-    playDropSuccess()
-    // Emit grid updated event
-    emit('grid-updated')
-    return true
-  }
-  return false // Grid is full
-}
 
 // Generate grid cells array
 const gridCells = computed(() => {
@@ -138,7 +140,8 @@ defineExpose({
   clearGrid,
   generateRandomPalette,
   getOccupiedCells,
-  addColorToFirstEmpty
+  importGridData,
+  changeGridSize
 })
 </script>
 
@@ -156,6 +159,7 @@ defineExpose({
       :grid-size="gridSize"
       @drop="handleCellDrop"
       @clear-cell="handleCellClear"
+      @cell-click="handleCellClick"
     />
   </div>
 </template>

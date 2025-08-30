@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useDragDrop } from '../../composables/useDragDrop.js'
 import { useSound } from '../../composables/useSound.js'
+import { useColorSelection } from '../../composables/useColorSelection.js'
 
 const props = defineProps({
   colorName: {
@@ -32,6 +33,9 @@ const emit = defineEmits(['swipe-left', 'swipe-right', 'click'])
 // Use sound composable
 const { playDragStart } = useSound()
 
+// Use color selection composable
+const { selectColor, isColorSelected } = useColorSelection()
+
 // Use drag and drop composable with swipe handling
 const { 
   isDragging,
@@ -61,7 +65,8 @@ const colorData = computed(() => ({
 // Handle click event
 const handleClick = (e) => {
   // Only emit click if it's not a drag operation
-  // We check if the drag started but there was minimal movement
+  // Select the color instead of immediately placing it
+  selectColor(colorData.value)
   emit('click', colorData.value)
 }
 
@@ -78,7 +83,7 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   <div class="carousel-swatch-block">
     <div 
       class="carousel-swatch" 
-      :class="`effect-${effect}`"
+      :class="[`effect-${effect}`, { selected: isColorSelected(colorData) }]"
       :style="{ backgroundColor: backgroundColor }"
       draggable="true"
       @click="handleClick"
@@ -123,6 +128,11 @@ const onTouchEnd = (e) => handleTouchEnd(e)
 .carousel-swatch.dragging {
   opacity: 0.5;
   transform: rotate(5deg) scale(0.95);
+}
+
+.carousel-swatch.selected {
+  border: var(--border-ornate);
+  box-shadow: var(--shadow-swatch), 0 0 0 2px rgba(188, 179, 222, 0.3);
 }
 
 .carousel-color-name {
