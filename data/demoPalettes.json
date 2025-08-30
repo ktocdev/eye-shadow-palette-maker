@@ -4,47 +4,47 @@
       "title": "Golden Hour",
       "gridSize": 2,
       "colors": [
-        { "index": 0, "colorName": "Marmalade Madness" },
-        { "index": 1, "colorName": "Well Kept" },
-        { "index": 2, "colorName": "Lava Cream" },
-        { "index": 3, "colorName": "Twilight Bark" }
+        { "index": 0, "hex": "#FFD700" },
+        { "index": 1, "hex": "#D9A441" },
+        { "index": 2, "hex": "#A65C3A" },
+        { "index": 3, "hex": "#3E1F0F" }
       ]
     },
     {
       "title": "Midnight Carnival",
       "gridSize": 3,
       "colors": [
-        { "index": 0, "colorName": "Royal Riddle" },
-        { "index": 1, "colorName": "Heavenly Virtue" },
-        { "index": 2, "colorName": "Teacup Tumble" },
-        { "index": 3, "colorName": "Marmalade Madness" },
-        { "index": 4, "colorName": "Twilight Bark" },
-        { "index": 5, "colorName": "Blood Orange Cider" },
-        { "index": 6, "colorName": "Lava Cream" },
-        { "index": 7, "colorName": "Flamingo Fizz" },
-        { "index": 8, "colorName": "Moonlit Pawn" }
+        { "index": 0, "hex": "#6A5ACD" },
+        { "index": 1, "hex": "#00CED1" },
+        { "index": 2, "hex": "#A0E7E5" },
+        { "index": 3, "hex": "#FFD700" },
+        { "index": 4, "hex": "#3E1F0F" },
+        { "index": 5, "hex": "#6B0F1A" },
+        { "index": 6, "hex": "#A65C3A" },
+        { "index": 7, "hex": "#FF69B4" },
+        { "index": 8, "hex": "#2C2A4A" }
       ]
     },
     {
       "title": "Forgotten Sunsets",
       "gridSize": 4,
       "colors": [
-        { "index": 0, "colorName": "Ivory Pop" },
-        { "index": 1, "colorName": "Crumbly Pie Crust" },
-        { "index": 2, "colorName": "Dice Cream" },
-        { "index": 3, "colorName": "Marmalade Madness" },
-        { "index": 4, "colorName": "Well Kept" },
-        { "index": 5, "colorName": "Spiced Soda" },
-        { "index": 6, "colorName": "Lava Cream" },
-        { "index": 7, "colorName": "Boardwalk Maple" },
-        { "index": 8, "colorName": "Twilight Bark" },
-        { "index": 9, "colorName": "Blood Orange Cider" },
-        { "index": 10, "colorName": "Laser Apple" },
-        { "index": 11, "colorName": "Flamingo Fizz" },
-        { "index": 12, "colorName": "Burlesque Bubblegum" },
-        { "index": 13, "colorName": "Glamour Glitch" },
-        { "index": 14, "colorName": "Moonlit Pawn" },
-        { "index": 15, "colorName": "Foggy Velvet" }
+        { "index": 0, "hex": "#FFF3E0" },
+        { "index": 1, "hex": "#FBE7C6" },
+        { "index": 2, "hex": "#F2E3C6" },
+        { "index": 3, "hex": "#FFD700" },
+        { "index": 4, "hex": "#D9A441" },
+        { "index": 5, "hex": "#FFB000" },
+        { "index": 6, "hex": "#A65C3A" },
+        { "index": 7, "hex": "#6E4B2F" },
+        { "index": 8, "hex": "#3E1F0F" },
+        { "index": 9, "hex": "#6B0F1A" },
+        { "index": 10, "hex": "#FF0055" },
+        { "index": 11, "hex": "#FF6F91" },
+        { "index": 12, "hex": "#FF69B4" },
+        { "index": 13, "hex": "#FF00FF" },
+        { "index": 14, "hex": "#2C2A4A" },
+        { "index": 15, "hex": "#4B3B47" }
       ]
     }
   ]

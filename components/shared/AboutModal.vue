@@ -15,20 +15,20 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'load-palette'])
 
 // Use color data composable to get real colors
-const { findColorByName, convertToColorData } = useColorData()
+const { findColorByHex, convertToColorData } = useColorData()
 
 // Create demo palettes from predefined JSON data
 const createDemoPalettes = () => {
   return demoPalettesData.palettes.map(paletteTemplate => {
     const colors = paletteTemplate.colors.map(colorRef => {
-      const foundColor = findColorByName(colorRef.colorName)
+      const foundColor = findColorByHex(colorRef.hex)
       if (foundColor) {
         return {
           index: colorRef.index,
           colorData: convertToColorData(foundColor)
         }
       } else {
-        console.warn(`Color not found: ${colorRef.colorName}`)
+        console.warn(`Color not found: ${colorRef.hex}`)
         return null
       }
     }).filter(Boolean) // Remove null entries
