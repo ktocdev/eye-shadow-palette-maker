@@ -5,147 +5,434 @@
       "categories": {
         "creams": [
           {
+            "name": "Oat Milk Fixation",
+            "hex": "#F6F6F0",
+            "is_dark": false,
+            "effect": "matte"
+          },
+          {
+            "name": "Buttercup Kiss",
+            "hex": "#FDF6E3",
+            "is_dark": false,
+            "effect": "shimmer"
+          },
+          {
             "name": "Ivory Pop",
             "hex": "#FFF3E0",
-            "id": "ivory-pop",
             "is_dark": false,
-            "effect": "matter"
+            "effect": "matte"
           },
           {
             "name": "Crumbly Pie Crust",
             "hex": "#FBE7C6",
-            "id": "crumbly-pie-crust",
             "is_dark": false,
             "effect": "shimmer"
           },
           {
             "name": "Dice Cream",
             "hex": "#F2E3C6",
-            "id": "dice-cream",
             "is_dark": false,
             "effect": "sparkly"
+          },
+          {
+            "name": "Vanilla Whisper",
+            "hex": "#FFEFD5",
+            "is_dark": false,
+            "effect": "matte"
+          },
+          {
+            "name": "Porcelain Doll",
+            "hex": "#F5F5DC",
+            "is_dark": false,
+            "effect": "sparkly"
+          },
+          {
+            "name": "Angel Food Anarchy",
+            "hex": "#FFFACD",
+            "is_dark": false,
+            "effect": "shimmer"
           }
         ],
         "goldenTones": [
           {
-            "name": "Marmalade Madness",
-            "hex": "#FFD700",
-            "id": "marmalade-madness",
+            "name": "Liquid Sunbeam",
+            "hex": "#FFCC33",
             "is_dark": false,
             "effect": "sparkly"
           },
           {
-            "name": "Well Kept",
-            "hex": "#D9A441",
-            "id": "well-kept",
+            "name": "Marmalade Mania",
+            "hex": "#FFD700",
             "is_dark": false,
-            "effect": "shimmer"
+            "effect": "sparkly"
           },
           {
             "name": "Spiced Soda",
             "hex": "#FFB000",
-            "id": "spiced-soda",
             "is_dark": false,
             "effect": "sparkly"
+          },
+          {
+            "name": "Honey Riot",
+            "hex": "#F0C814",
+            "is_dark": false,
+            "effect": "matte"
+          },
+          {
+            "name": "Midas Touch",
+            "hex": "#E6AC27",
+            "is_dark": false,
+            "effect": "shimmer"
+          },
+          {
+            "name": "Well Kept",
+            "hex": "#D9A441",
+            "is_dark": false,
+            "effect": "shimmer"
           }
         ],
         "browns": [
           {
             "name": "Caramel Baklava",
             "hex": "#A65C3A",
-            "id": "caramel-baklava",
             "is_dark": true,
             "effect": "sparkly"
           },
           {
             "name": "Boardwalk Maple",
             "hex": "#6E4B2F",
-            "id": "boardwalk-maple",
             "is_dark": true,
             "effect": "matte"
           },
           {
-            "name": "Twilight Bark",
-            "hex": "#3E1F0F",
-            "id": "twilight-bark",
+            "name": "Espresso Noir",
+            "hex": "#362D1C",
             "is_dark": true,
             "effect": "sparkly"
+          },
+          {
+            "name": "Twilight Bark",
+            "hex": "#3E1F0F",
+            "is_dark": true,
+            "effect": "sparkly"
+          },
+          {
+            "name": "Coffee Bean Dreams",
+            "hex": "#5D4037",
+            "is_dark": true,
+            "effect": "matte"
+          },
+          {
+            "name": "Chocolate Revolt",
+            "hex": "#8B4513",
+            "is_dark": true,
+            "effect": "matte"
+          },
+          {
+            "name": "Burnt Sienna Secrets",
+            "hex": "#A0522D",
+            "is_dark": true,
+            "effect": "sparkly"
+          },
+          {
+            "name": "Mocha Meltdown",
+            "hex": "#7B3F00",
+            "is_dark": true,
+            "effect": "shimmer"
+          },
+          {
+            "name": "Cinnamon Sin",
+            "hex": "#D2691E",
+            "is_dark": true,
+            "effect": "matte"
+          },
+          {
+            "name": "Mahogany Uprising",
+            "hex": "#C04000",
+            "is_dark": true,
+            "effect": "matte"
+          },
+          {
+            "name": "Toffee Temptation",
+            "hex": "#C65D07",
+            "is_dark": false,
+            "effect": "shimmer"
+          },
+          {
+            "name": "Chestnut Rampage",
+            "hex": "#954535",
+            "is_dark": true,
+            "effect": "sparkly"
+          },
+          {
+            "name": "Hazelnut Havoc",
+            "hex": "#8B7355",
+            "is_dark": true,
+            "effect": "sparkly"
+          },
+          {
+            "name": "Cocoa Intrigue",
+            "hex": "#4A2C2A",
+            "is_dark": true,
+            "effect": "matte"
           }
         ],
         "reds": [
           {
             "name": "Blood Orange Cider",
             "hex": "#6B0F1A",
-            "id": "blood-orange-cider",
             "is_dark": true,
             "effect": "matte"
+          },
+          {
+            "name": "Cherry Bomb Velvet",
+            "hex": "#B22222",
+            "is_dark": true,
+            "effect": "shimmer"
           },
           {
             "name": "Laser Apple",
             "hex": "#FF0055",
-            "id": "laser-apple",
             "is_dark": true,
             "effect": "matte"
           },
           {
+            "name": "Scarlet Wrath",
+            "hex": "#DC143C",
+            "is_dark": true,
+            "effect": "shimmer"
+          },
+          {
+            "name": "Firecracker Pop",
+            "hex": "#FF4500",
+            "is_dark": false,
+            "effect": "sparkly"
+          },
+          {
             "name": "Flamingo Fizz",
             "hex": "#FF6F91",
-            "id": "flamingo-fizz",
             "is_dark": false,
             "effect": "sparkly"
           }
         ],
         "pinks": [
           {
-            "name": "Burlesque Bubblegum",
-            "hex": "#FF69B4",
-            "id": "burlesque-bubblegum",
+            "name": "Rosé All Day",
+            "hex": "#F08080",
             "is_dark": false,
             "effect": "shimmer"
           },
           {
+            "name": "Cotton Candy Frenzy",
+            "hex": "#FFB6C1",
+            "is_dark": false,
+            "effect": "matte"
+          },
+          {
+            "name": "Burlesque Bubblegum",
+            "hex": "#FF69B4",
+            "is_dark": false,
+            "effect": "shimmer"
+          },
+          {
+            "name": "Barbie's Revenge",
+            "hex": "#FF1493",
+            "is_dark": false,
+            "effect": "sparkly"
+          },
+          {
             "name": "Glamour Glitch",
             "hex": "#FF00FF",
-            "id": "glamour-glitch",
             "is_dark": false,
             "effect": "sparkly"
           }
         ],
         "purples": [
           {
-            "name": "Moonlit Pawn",
-            "hex": "#2C2A4A",
-            "id": "moonlit-pawn",
+            "name": "Orchid Addiction",
+            "hex": "#DA70D6",
+            "is_dark": false,
+            "effect": "shimmer"
+          },
+          {
+            "name": "Thistle Thief",
+            "hex": "#D8BFD8",
+            "is_dark": false,
+            "effect": "shimmer"
+          },
+          {
+            "name": "Mauve Mayhem",
+            "hex": "#E0B0FF",
+            "is_dark": false,
+            "effect": "matte"
+          },
+          {
+            "name": "Lilac Terror",
+            "hex": "#C8A2C8",
+            "is_dark": false,
+            "effect": "matte"
+          },
+          {
+            "name": "Plum Poison",
+            "hex": "#8E4585",
+            "is_dark": true,
+            "effect": "shimmer"
+          },
+          {
+            "name": "Lavender Lies",
+            "hex": "#9370DB",
+            "is_dark": true,
+            "effect": "shimmer"
+          },
+          {
+            "name": "Violet Vengeance",
+            "hex": "#8A2BE2",
+            "is_dark": true,
+            "effect": "sparkly"
+          },
+          {
+            "name": "Grape Escape",
+            "hex": "#663399",
+            "is_dark": true,
+            "effect": "matte"
+          },
+          {
+            "name": "Midnight Amethyst",
+            "hex": "#4B0082",
             "is_dark": true,
             "effect": "sparkly"
           },
           {
             "name": "Foggy Velvet",
             "hex": "#4B3B47",
-            "id": "foggy-velvet",
             "is_dark": true,
             "effect": "matte"
+          },
+          {
+            "name": "Witch's Brew",
+            "hex": "#301934",
+            "is_dark": true,
+            "effect": "matte"
+          },
+          {
+            "name": "Moonlit Pawn",
+            "hex": "#2C2A4A",
+            "is_dark": true,
+            "effect": "sparkly"
           },
           {
             "name": "Royal Riddle",
             "hex": "#6A5ACD",
-            "id": "royal-riddle",
             "is_dark": true,
             "effect": "matte"
+          },
+          {
+            "name": "Cosmic Pandemonium",
+            "hex": "#7B68EE",
+            "is_dark": true,
+            "effect": "sparkly"
           }
         ],
         "bluesAndTeals": [
           {
-            "name": "Heavenly Virtue",
-            "hex": "#00CED1",
-            "id": "verdant-virtue",
+            "name": "Royal Blue Riot",
+            "hex": "#4169E1",
+            "is_dark": true,
+            "effect": "sparkly"
+          },
+          {
+            "name": "Electric Storm",
+            "hex": "#0080FF",
             "is_dark": false,
             "effect": "sparkly"
           },
           {
+            "name": "Azure Apocalypse",
+            "hex": "#007FFF",
+            "is_dark": false,
+            "effect": "matte"
+          },
+          {
+            "name": "Cornflower Kiss",
+            "hex": "#6495ED",
+            "is_dark": false,
+            "effect": "matte"
+          },
+          {
+            "name": "Powder Blue Poison",
+            "hex": "#B0E0E6",
+            "is_dark": false,
+            "effect": "matte"
+          },
+          {
             "name": "Teacup Tumble",
             "hex": "#A0E7E5",
-            "id": "teacup-tumble",
+            "is_dark": false,
+            "effect": "shimmer"
+          },
+          {
+            "name": "Heavenly Virtue",
+            "hex": "#00CED1",
+            "is_dark": false,
+            "effect": "sparkly"
+          },
+          {
+            "name": "Mermaid's Tears",
+            "hex": "#20B2AA",
+            "is_dark": false,
+            "effect": "shimmer"
+          },
+          {
+            "name": "Cerulean Glass",
+            "hex": "#007BA7",
+            "is_dark": true,
+            "effect": "sparkly"
+          },
+          {
+            "name": "Polished Navy",
+            "hex": "#000080",
+            "is_dark": true,
+            "effect": "matte"
+          },
+          {
+            "name": "Indigo Insanity",
+            "hex": "#4B0082",
+            "is_dark": true,
+            "effect": "shimmer"
+          },
+          {
+            "name": "Ocean's Wrath",
+            "hex": "#1E3A8A",
+            "is_dark": true,
+            "effect": "matte"
+          },
+          {
+            "name": "Midnight Sapphire",
+            "hex": "#082567",
+            "is_dark": true,
+            "effect": "shimmer"
+          },
+          {
+            "name": "Cobalt Scheme",
+            "hex": "#0047AB",
+            "is_dark": true,
+            "effect": "sparkly"
+          },
+          {
+            "name": "Steel Blue Sabotage",
+            "hex": "#4682B4",
+            "is_dark": true,
+            "effect": "shimmer"
+          },
+          {
+            "name": "Slate Storm",
+            "hex": "#708090",
+            "is_dark": true,
+            "effect": "sparkly"
+          },
+          {
+            "name": "Periwinkle Panic",
+            "hex": "#CCCCFF",
             "is_dark": false,
             "effect": "shimmer"
           }
@@ -154,35 +441,48 @@
           {
             "name": "Ice Queen",
             "hex": "#e6ffef",
-            "id": "Ice Queen",
             "is_dark": false,
             "effect": "matte"
           },
           {
             "name": "Botanic Bliss",
             "hex": "#B4F8C8",
-            "id": "Botanic-Bliss",
             "is_dark": false,
             "effect": "shimmer"
           },
           {
             "name": "Absinthe",
             "hex": "#39FF14",
-            "id": "absinthe",
+            "is_dark": false,
+            "effect": "sparkly"
+          },
+          {
+            "name": "Kiwi Delirium",
+            "hex": "#9ACD32",
+            "is_dark": false,
+            "effect": "matte"
+          },
+          {
+            "name": "Poison Apple",
+            "hex": "#228B22",
+            "is_dark": true,
+            "effect": "shimmer"
+          },
+          {
+            "name": "Jade Revolution",
+            "hex": "#00A86B",
             "is_dark": false,
             "effect": "sparkly"
           },
           {
             "name": "Covered in Ivy",
             "hex": "#076475",
-            "id": "covering-in-Ivy",
             "is_dark": true,
             "effect": "sparkly"
           },
           {
             "name": "Moonless Meadow",
             "hex": "#152c2c",
-            "id": "moonless-meadow",
             "is_dark": true,
             "effect": "matte"
           }

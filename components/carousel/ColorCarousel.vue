@@ -83,7 +83,7 @@ const handleSwatchClick = (colorData) => {
       <div class="carousel-swatches">
         <CarouselSwatch 
           v-for="color in currentPageColors" 
-          :key="color.id"
+          :key="color.name"
           :color-name="color.name" 
           :hex-code="color.hex" 
           :background-color="color.hex"
