@@ -23,6 +23,7 @@ const emit = defineEmits(['palette-action'])
 const dropdownItems = computed(() => {
   const items = [
     { label: 'Load Palette', icon: '', action: 'load' },
+    { label: 'Eye Preview', icon: '', action: 'eye-preview' },
     { label: 'Share Palette', icon: '', action: 'share' }
   ]
   

@@ -247,7 +247,6 @@ const canShare = computed(() => {
   display: flex;
   align-items: center;
   padding: 16px 20px;
-  text-align: left;
   width: 100%;
   border: 1px solid rgba(139, 129, 165, 0.2);
   border-radius: var(--radius-md);
