@@ -13,6 +13,7 @@
   --font-size-xxs: 8px;
   --font-size-xs: 9px;
   --font-size-sm: 12px;
+  --font-size-s: 14px;
   --font-size-base: 16px;
   --font-size-md: 18px;
   --font-size-lg: 20px;
@@ -29,6 +30,12 @@
   --font-weight-bold: 700;
   --font-weight-extrabold: 800;
   --font-weight-black: 900;
+  
+  /* Line Heights */
+  --line-height-tight: 1.1;
+  --line-height-snug: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.6;
   
   /* Font Colors */
   --color-text-primary: #333333;

@@ -141,7 +141,7 @@ const onMiniSwatchTouchEnd = (e) => {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
-  line-height: 1;
+  line-height: var(--line-height-tight);
 }
 
 .palette-swatch-container:has(.palette-swatch.dark-palette-swatch) .palette-color-name {

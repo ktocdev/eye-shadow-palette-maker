@@ -105,8 +105,8 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
+  font-size: var(--font-size-s);
+  font-weight: var(--font-weight-bold);
   color: var(--color-text-secondary);
   transition: all 0.2s ease;
   box-shadow: var(--shadow-swatch);
@@ -183,7 +183,7 @@ onUnmounted(() => {
 
 .dropdown-icon {
   margin-right: 8px;
-  font-size: 14px;
+  font-size: var(--font-size-s);
 }
 
 .dropdown-label {
@@ -196,7 +196,7 @@ onUnmounted(() => {
   .dropdown-toggle {
     width: 28px;
     height: 28px;
-    font-size: 16px;
+    font-size: var(--font-size-base);
   }
   
   .dropdown-menu {

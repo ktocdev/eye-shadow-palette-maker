@@ -148,7 +148,7 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
-  line-height: 1;
+  line-height: var(--line-height-tight);
   white-space: normal;
   word-wrap: break-word;
 }
@@ -157,7 +157,7 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   font-family: var(--font-family-primary);
   font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
-  line-height: 1;
+  line-height: var(--line-height-tight);
   margin-top: 1px;
 }
 

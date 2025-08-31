@@ -366,6 +366,7 @@ onMounted(() => {
             <PaletteControls
               :has-saved-palettes="hasSavedPalettes"
               :has-colors="hasColors"
+              :can-save="canSavePaletteWithFullGrid"
               :is-modal-open="showSavePaletteModal || showSavedPalettesModal || showAboutModal || showShareModal || showEyePreviewModal"
               @clear="handleClear"
               @randomize="handleRandomize"
@@ -436,7 +437,7 @@ onMounted(() => {
 }
 
 .app-info p {
-  font-size: 14px;
+  font-size: var(--font-size-s);
   margin-bottom: 0;
   max-width: 600px;
 }
@@ -500,7 +501,7 @@ onMounted(() => {
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
   margin: 0;
-  line-height: 1.2;
+  line-height: var(--line-height-snug);
 }
 
 .title-display {
@@ -521,7 +522,7 @@ onMounted(() => {
   border: 1px solid rgba(139, 129, 165, 0.3);
   border-radius: var(--radius-sm);
   padding: 4px 8px;
-  font-size: 14px;
+  font-size: var(--font-size-s);
   cursor: pointer;
   opacity: 0;
   transition: all 0.2s ease;

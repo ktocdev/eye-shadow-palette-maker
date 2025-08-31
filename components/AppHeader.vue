@@ -156,7 +156,7 @@ const handleCancelInlineTitle = () => {
 
 .app-title {
   font-size: var(--font-size-xl);
-  line-height: 1;
+  line-height: var(--line-height-tight);
   margin: 0;
   font-family: var(--font-family-heading);
   font-weight: var(--font-weight-bold);

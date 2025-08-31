@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import Modal from './Modal.vue'
+import BaseButton from './BaseButton.vue'
 import { useEyeDrawing, EYE_ZONES, ZONE_INFO } from '../../composables/useEyeDrawing.js'
 import { useColorSelection } from '../../composables/useColorSelection.js'
 
@@ -146,7 +147,6 @@ onMounted(() => {
   <Modal 
     :model-value="modelValue" 
     @update:model-value="$emit('update:modelValue', $event)"
-    class="eye-preview-modal"
   >
     <div class="eye-preview-content">
       <h2>Eye Preview</h2>
@@ -240,22 +240,19 @@ onMounted(() => {
       
       <!-- Footer -->
       <div class="eye-preview-footer">
-        <button 
+        <BaseButton 
           @click="$emit('update:modelValue', false)"
-          class="btn btn-compact btn-gradient-gray"
+          variant="gray"
+          size="compact"
         >
           Close
-        </button>
+        </BaseButton>
       </div>
     </div>
   </Modal>
 </template>
 
 <style scoped>
-.eye-preview-modal {
-  --modal-max-width: 800px;
-}
-
 .eye-preview-content {
   display: flex;
   flex-direction: column;
@@ -313,7 +310,7 @@ onMounted(() => {
 .zone-description {
   font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
-  line-height: 1.3;
+  line-height: var(--line-height-snug);
 }
 
 .eye-controls {
@@ -362,9 +359,9 @@ onMounted(() => {
 
 .color-swatch__check {
   color: white;
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
   text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
-  font-size: 16px;
+  font-size: var(--font-size-base);
 }
 
 .no-colors-message {

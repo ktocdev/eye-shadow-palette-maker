@@ -1,10 +1,16 @@
 <script setup>
+import BaseButton from './BaseButton.vue'
+
 const props = defineProps({
   hasSavedPalettes: {
     type: Boolean,
     default: false
   },
   hasColors: {
+    type: Boolean,
+    default: false
+  },
+  canSave: {
     type: Boolean,
     default: false
   },
@@ -19,34 +25,44 @@ const emit = defineEmits(['clear', 'randomize', 'open-save-modal', 'view-saved-p
 
 <template>
   <div class="palette-controls">
-    <button 
+    <BaseButton 
+      variant="green"
+      size="standard"
+      :disabled="!canSave"
       @click="$emit('open-save-modal')"
-      class="btn btn-standard btn-gradient-green"
     >
       Save Palette
-    </button>
-    <button 
-      @click="$emit('clear')"
+    </BaseButton>
+    <BaseButton 
+      variant="red"
+      size="standard"
       :disabled="!hasColors"
-      class="btn btn-standard btn-gradient-red"
-      :class="{ 'btn-disabled': !hasColors }"
+      @click="$emit('clear')"
     >
       Clear Palette
-    </button>
-    <button 
-      @click="$emit('view-saved-palettes')"
+    </BaseButton>
+    <BaseButton 
+      variant="blue"
+      size="standard"
       :disabled="!hasSavedPalettes"
-      class="btn btn-standard btn-gradient-blue"
-      :class="{ 'btn-disabled': !hasSavedPalettes }"
+      @click="$emit('view-saved-palettes')"
     >
       View Saved Palettes
-    </button>
-    <button @click="$emit('randomize')" class="btn btn-standard btn-gradient-purple">
+    </BaseButton>
+    <BaseButton 
+      variant="purple"
+      size="standard"
+      @click="$emit('randomize')"
+    >
       Random Palette
-    </button>
-    <button @click="$emit('open-about-modal')" class="btn btn-standard btn-gradient-orange">
+    </BaseButton>
+    <BaseButton 
+      variant="orange"
+      size="standard"
+      @click="$emit('open-about-modal')"
+    >
       About
-    </button>
+    </BaseButton>
   </div>
 </template>
 
