@@ -153,7 +153,6 @@ const gridColumns = computed(() => {
   font-size: var(--font-size-s);
   color: var(--color-text-secondary);
   text-align: center;
-  line-height: 1;
-  white-space: nowrap;
+  line-height: 1.2;
 }
 </style>
