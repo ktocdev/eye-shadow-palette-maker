@@ -114,8 +114,8 @@ watch(() => props.modelValue, (isOpen) => {
   border: none;
   background: rgba(0, 0, 0, 0.1);
   border-radius: 50%;
-  font-size: 20px;
-  line-height: 1;
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-tight);
   cursor: pointer;
   z-index: 1001;
   display: flex;
@@ -172,7 +172,7 @@ watch(() => props.modelValue, (isOpen) => {
     right: 32px;
     width: 32px;
     height: 32px;
-    font-size: 24px;
+    font-size: var(--font-size-xl);
   }
   
   .modal-inner-content {

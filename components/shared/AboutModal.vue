@@ -141,7 +141,7 @@ const handlePaletteAction = (action, paletteData) => {
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-normal);
   color: var(--color-text-secondary);
-  line-height: 1.6;
+  line-height: var(--line-height-relaxed);
   margin-bottom: 24px;
   text-align: center;
 }
@@ -158,7 +158,7 @@ const handlePaletteAction = (action, paletteData) => {
   font-family: var(--font-family-primary);
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
-  line-height: 1.5;
+  line-height: var(--line-height-normal);
   padding-left: 20px;
   margin: 0;
 }

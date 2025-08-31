@@ -40,12 +40,12 @@ const handleSizeChange = (event) => {
 
 .grid-controls label {
   font-weight: var(--font-weight-semibold);
-  font-size: 13px;
+  font-size: var(--font-size-sm);
 }
 
 .grid-controls select {
   padding: 8px;
-  font-size: 14px;
+  font-size: var(--font-size-s);
   border: var(--border-standard);
   border-radius: var(--radius-xs);
 }
@@ -58,7 +58,7 @@ const handleSizeChange = (event) => {
   }
   
   .grid-controls select {
-    font-size: 14px;
+    font-size: var(--font-size-s);
     padding: 6px 10px;
   }
 }

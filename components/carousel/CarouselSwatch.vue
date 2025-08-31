@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useDragDrop } from '../../composables/useDragDrop.js'
 import { useSound } from '../../composables/useSound.js'
 import { useColorSelection } from '../../composables/useColorSelection.js'
+import { useColorEffects } from '../../composables/useColorEffects.js'
 
 const props = defineProps({
   colorName: {
@@ -35,6 +36,9 @@ const { playDragStart } = useSound()
 
 // Use color selection composable
 const { selectColor, isColorSelected, clearSelection } = useColorSelection()
+
+// Use color effects composable
+const { getEffectClass } = useColorEffects()
 
 // Use drag and drop composable with swipe handling
 const { 
@@ -91,7 +95,7 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   <div class="carousel-swatch-block">
     <div 
       class="carousel-swatch" 
-      :class="[`effect-${effect}`, { selected: isColorSelected(colorData) }]"
+      :class="[getEffectClass(effect), { selected: isColorSelected(colorData) }]"
       :style="{ backgroundColor: backgroundColor }"
       draggable="true"
       @click="handleClick"
@@ -148,7 +152,7 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
-  line-height: 1;
+  line-height: var(--line-height-tight);
   white-space: normal;
   word-wrap: break-word;
 }
@@ -157,7 +161,7 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   font-family: var(--font-family-primary);
   font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
-  line-height: 1;
+  line-height: var(--line-height-tight);
   margin-top: 1px;
 }
 

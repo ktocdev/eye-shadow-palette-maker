@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useDragDrop } from '../../composables/useDragDrop.js'
 import { useSound } from '../../composables/useSound.js'
+import { useColorEffects } from '../../composables/useColorEffects.js'
 
 const props = defineProps({
   colorData: {
@@ -18,6 +19,9 @@ const emit = defineEmits(['clear-swatch'])
 
 // Use sound composable
 const { playDragOut, playRemoval } = useSound()
+
+// Use color effects composable
+const { getEffectClass } = useColorEffects()
 
 // Use drag and drop composable with sound effects
 const { 
@@ -85,7 +89,7 @@ const onMiniSwatchTouchEnd = (e) => {
       class="palette-swatch"
       :class="[
         { 'dark-palette-swatch': colorData.isDark },
-        `effect-${colorData.effect || 'matte'}`,
+        getEffectClass(colorData.effect),
         `size-${gridSize}x${gridSize}`
       ]"
       :style="{ backgroundColor: colorData.bgColor }"
@@ -141,7 +145,7 @@ const onMiniSwatchTouchEnd = (e) => {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
-  line-height: 1;
+  line-height: var(--line-height-tight);
 }
 
 .palette-swatch-container:has(.palette-swatch.dark-palette-swatch) .palette-color-name {

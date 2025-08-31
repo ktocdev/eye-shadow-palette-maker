@@ -2,9 +2,12 @@ import { ref, computed } from 'vue'
 
 /**
  * Composable for managing palette state including titles, user interactions, and display logic
+ * @param {Object} options - Configuration options
+ * @param {import('vue').Ref<boolean>} options.isGridFull - Reactive reference to grid full state
  * @returns {Object} Palette state and methods
  */
-export function usePaletteState() {
+export function usePaletteState(options = {}) {
+  const { isGridFull } = options
   const loadedPaletteTitle = ref('')
   const loadedPaletteModified = ref(false)
   const hasUserInteracted = ref(false)
@@ -30,7 +33,10 @@ export function usePaletteState() {
 
   const canSavePalette = computed(() => {
     if (loadedPaletteTitle.value === '') {
-      return inlinePaletteTitle.value.trim() !== ''
+      // Allow save if grid is full OR if title is provided
+      const hasTitle = inlinePaletteTitle.value.trim() !== ''
+      const gridIsFull = isGridFull && isGridFull.value
+      return hasTitle || gridIsFull
     }
     return loadedPaletteModified.value
   })

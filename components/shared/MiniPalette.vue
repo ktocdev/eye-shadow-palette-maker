@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import Dropdown from './Dropdown.vue'
+import { useColorEffects } from '../../composables/useColorEffects.js'
 
 const props = defineProps({
   paletteData: {
@@ -18,6 +19,9 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['palette-action'])
+
+// Use color effects composable
+const { getEffectClasses } = useColorEffects()
 
 // Dropdown menu items - conditionally include delete based on prop
 const dropdownItems = computed(() => {
@@ -92,11 +96,7 @@ const gridColumns = computed(() => {
         v-for="(colorData, index) in gridCells"
         :key="`mini-cell-${index}`"
         class="mini-palette-tile"
-        :class="{
-          'effect-matte': colorData && colorData.effect === 'matte',
-          'effect-shimmer': colorData && colorData.effect === 'shimmer', 
-          'effect-sparkly': colorData && colorData.effect === 'sparkly'
-        }"
+        :class="colorData ? getEffectClasses(colorData.effect) : {}"
         :style="{ 
           backgroundColor: colorData ? colorData.bgColor : 'transparent',
           width: tileSize + 'px',
@@ -153,6 +153,6 @@ const gridColumns = computed(() => {
   font-size: var(--font-size-s);
   color: var(--color-text-secondary);
   text-align: center;
-  line-height: 1.2;
+  line-height: var(--line-height-snug);
 }
 </style>

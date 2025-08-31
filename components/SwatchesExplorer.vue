@@ -21,23 +21,6 @@ import { useTitleEditing } from '../composables/useTitleEditing.js'
 
 // Use composables
 const { palette, allColors } = useColorData()
-const {
-  loadedPaletteTitle,
-  loadedPaletteModified,
-  hasUserInteracted,
-  shouldCollapseAppInfo,
-  inlinePaletteTitle,
-  showInlineTitleInput,
-  showLoadedPaletteTitle,
-  showAppInfo,
-  appInfoInitiallyOpen,
-  canSavePalette,
-  triggerUserInteraction,
-  loadPalette,
-  modifyPalette,
-  clearPalette,
-  updateLoadedPaletteTitle
-} = usePaletteState()
 
 const {
   savedPalettes,
@@ -96,6 +79,8 @@ const handleOpenSaveModal = () => {
     handleSavePalette()
     // Modal will be shown from within handleSavePalette after save is complete
   } else {
+    // Clear any stale savedPaletteData before opening modal for new save
+    savedPaletteData.value = null
     // Always show the modal so user can enter a title
     showSavePaletteModal.value = true
   }
@@ -104,6 +89,13 @@ const handleOpenSaveModal = () => {
 const handleViewSavedPalettes = () => {
   showSavePaletteModal.value = false
   showSavedPalettesModal.value = true
+}
+
+// Handle save palette modal close
+const handleSavePaletteModalClose = (isOpen) => {
+  if (!isOpen && savedPaletteData.value !== null) {
+    savedPaletteData.value = null
+  }
 }
 
 const handleOpenAboutModal = () => {
@@ -282,6 +274,25 @@ const isGridFull = computed(() => {
   return occupiedCells.length === totalCells
 })
 
+// Use palette state composable after isGridFull is defined
+const {
+  loadedPaletteTitle,
+  loadedPaletteModified,
+  hasUserInteracted,
+  shouldCollapseAppInfo,
+  inlinePaletteTitle,
+  showInlineTitleInput,
+  showLoadedPaletteTitle,
+  showAppInfo,
+  appInfoInitiallyOpen,
+  canSavePalette,
+  triggerUserInteraction,
+  loadPalette,
+  modifyPalette,
+  clearPalette,
+  updateLoadedPaletteTitle
+} = usePaletteState({ isGridFull })
+
 // Override canSavePalette to also require full grid
 const canSavePaletteWithFullGrid = computed(() => {
   if (!isGridFull.value) return false
@@ -366,6 +377,7 @@ onMounted(() => {
             <PaletteControls
               :has-saved-palettes="hasSavedPalettes"
               :has-colors="hasColors"
+              :can-save="canSavePaletteWithFullGrid"
               :is-modal-open="showSavePaletteModal || showSavedPalettesModal || showAboutModal || showShareModal || showEyePreviewModal"
               @clear="handleClear"
               @randomize="handleRandomize"
@@ -386,6 +398,7 @@ onMounted(() => {
       @save="handleSavePalette"
       @view-saved-palettes="handleViewSavedPalettes"
       @load-palette="handleLoadPalette"
+      @update:model-value="handleSavePaletteModalClose"
     />
     
     <!-- Saved Palettes Modal -->
@@ -436,7 +449,7 @@ onMounted(() => {
 }
 
 .app-info p {
-  font-size: 14px;
+  font-size: var(--font-size-s);
   margin-bottom: 0;
   max-width: 600px;
 }
@@ -500,7 +513,7 @@ onMounted(() => {
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
   margin: 0;
-  line-height: 1.2;
+  line-height: var(--line-height-snug);
 }
 
 .title-display {
@@ -521,7 +534,7 @@ onMounted(() => {
   border: 1px solid rgba(139, 129, 165, 0.3);
   border-radius: var(--radius-sm);
   padding: 4px 8px;
-  font-size: 14px;
+  font-size: var(--font-size-s);
   cursor: pointer;
   opacity: 0;
   transition: all 0.2s ease;

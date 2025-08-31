@@ -146,7 +146,7 @@ p {
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-normal);
   color: var(--color-text-secondary);
-  line-height: 1.6;
+  line-height: var(--line-height-relaxed);
   max-width: 400px;
   margin: 0 auto;
 }

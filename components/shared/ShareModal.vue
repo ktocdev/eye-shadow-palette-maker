@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import Modal from './Modal.vue'
+import BaseButton from './BaseButton.vue'
 import { usePaletteExport } from '../../composables/usePaletteExport.js'
 
 const props = defineProps({
@@ -148,18 +149,20 @@ const canShare = computed(() => {
         <p>{{ successMessage }}</p>
       </div>
       <div class="dialog-actions">
-        <button 
+        <BaseButton 
           @click="showSuccess = false"
-          class="btn btn-compact btn-gradient-blue"
+          variant="blue"
+          size="compact"
         >
           Share Again
-        </button>
-        <button 
+        </BaseButton>
+        <BaseButton 
           @click="$emit('update:modelValue', false)"
-          class="btn btn-compact btn-gradient-gray"
+          variant="gray"
+          size="compact"
         >
           Close
-        </button>
+        </BaseButton>
       </div>
     </div>
     
@@ -217,12 +220,13 @@ const canShare = computed(() => {
       </div>
       
       <div class="dialog-actions">
-        <button 
+        <BaseButton 
           @click="$emit('update:modelValue', false)"
-          class="btn btn-compact btn-gradient-gray"
+          variant="gray"
+          size="compact"
         >
           Cancel
-        </button>
+        </BaseButton>
       </div>
     </div>
   </Modal>
@@ -348,7 +352,7 @@ const canShare = computed(() => {
   }
   
   .share-icon {
-    font-size: 20px;
+    font-size: var(--font-size-lg);
   }
   
   .share-btn-title {
