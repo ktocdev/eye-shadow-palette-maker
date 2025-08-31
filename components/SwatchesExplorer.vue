@@ -12,6 +12,8 @@ import SavedPalettesModal from './shared/SavedPalettesModal.vue'
 import AboutModal from './shared/AboutModal.vue'
 import ShareModal from './shared/ShareModal.vue'
 import EyePreviewModal from './shared/EyePreviewModal.vue'
+import LoaderOverlay from './shared/LoaderOverlay.vue'
+import ToastNotification from './shared/ToastNotification.vue'
 
 // Composables
 import { useColorData } from '../composables/useColorData.js'
@@ -54,6 +56,11 @@ const showShareModal = ref(false)
 const showEyePreviewModal = ref(false)
 const savedPaletteData = ref(null)
 
+// Loader and toast states
+const showLoader = ref(false)
+const showToast = ref(false)
+const savedPaletteTitle = ref('')
+
 // Handle grid size changes
 const handleGridSizeChange = (newSize) => {
   currentGridSize.value = newSize
@@ -89,6 +96,11 @@ const handleOpenSaveModal = () => {
 
 const handleViewSavedPalettes = () => {
   showSavePaletteModal.value = false
+  showSavedPalettesModal.value = true
+}
+
+// Handle toast action
+const handleToastViewSavedPalettes = () => {
   showSavedPalettesModal.value = true
 }
 
@@ -178,28 +190,41 @@ const gridData = computed(() => {
 })
 
 // Handle save palette modal events
-const handleSavePalette = (title = '') => {
-  const gridData = paletteGridRef.value?.getOccupiedCells() || []
-  console.log('Raw grid data from getOccupiedCells:', gridData)
+const handleSavePalette = async (title = '') => {
+  // Show loader immediately
+  showLoader.value = true
   
-  // Use inline title if available, otherwise use provided title
-  const finalTitle = inlinePaletteTitle.value.trim() || title || 'My Custom Palette'
-  
-  // Save using the composable
-  const savedPalette = savePalette(gridData, finalTitle, currentGridSize.value)
-  
-  // Store the saved palette data for the modal to display
-  savedPaletteData.value = savedPalette
-  
-  // If this was called from inline title, show the success modal
-  if (inlinePaletteTitle.value.trim()) {
-    showSavePaletteModal.value = true
+  try {
+    const gridData = paletteGridRef.value?.getOccupiedCells() || []
+    
+    // Use inline title if available, otherwise use provided title
+    const finalTitle = inlinePaletteTitle.value.trim() || title || 'My Custom Palette'
+    
+    // Save using the composable
+    const savedPalette = savePalette(gridData, finalTitle, currentGridSize.value)
+    
+    // Keep loader visible for minimum 1 second for visual feedback
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    
+    // Hide loader and show toast
+    showLoader.value = false
+    savedPaletteTitle.value = savedPalette.title
+    showToast.value = true
+    
+    // Close save modal if it was open
+    showSavePaletteModal.value = false
+    
+    // Clear the grid after successful save
+    paletteGridRef.value?.clearGrid()
+    clearPalette()
+    updateGridTracker()
+    
+  } catch (error) {
+    console.error('Failed to save palette:', error)
+    // Hide loader on error
+    showLoader.value = false
+    // Could show error toast here in the future
   }
-  
-  // Clear the grid after successful save
-  paletteGridRef.value?.clearGrid()
-  clearPalette()
-  updateGridTracker()
 }
 
 // Handle loading a saved palette into the main grid
@@ -440,6 +465,19 @@ onMounted(() => {
     <EyePreviewModal 
       v-model="showEyePreviewModal"
       :palette-colors="eyePreviewColors"
+    />
+    
+    <!-- Loader Overlay -->
+    <LoaderOverlay 
+      v-model="showLoader"
+      message="Saving palette..."
+    />
+    
+    <!-- Toast Notification -->
+    <ToastNotification 
+      v-model="showToast"
+      :title="savedPaletteTitle"
+      @view-saved-palettes="handleToastViewSavedPalettes"
     />
   </div>
 </template>
