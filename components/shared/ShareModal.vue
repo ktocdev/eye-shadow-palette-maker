@@ -110,7 +110,9 @@ const actualGridData = computed(() => {
     
     return gridData
   }
-  return props.gridData
+  
+  // Extract colorData from current grid format { index, colorData }
+  return props.gridData.map(({ colorData }) => colorData)
 })
 
 const actualGridSize = computed(() => {

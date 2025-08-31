@@ -18,7 +18,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue', 'save', 'view-saved-palettes', 'load-palette'])
+const emit = defineEmits(['update:modelValue', 'save', 'view-saved-palettes', 'load-palette', 'share-palette', 'eye-preview-palette'])
 
 const paletteTitle = ref('')
 const showSuccessMessage = ref(false)
@@ -40,12 +40,20 @@ const openSavedPalettes = () => {
 }
 
 // Handle palette actions from MiniPalette
-const handlePaletteAction = (action, paletteData) => {
+const handlePaletteAction = (action, paletteId) => {
   if (action === 'load') {
     // Emit to parent to load palette
-    emit('load-palette', paletteData)
+    emit('load-palette', paletteId)
     // Close the modal
     emit('update:modelValue', false)
+  } else if (action === 'share') {
+    // Emit to parent to open share modal
+    emit('share-palette', paletteId)
+    // Don't close the modal - let user close it manually after sharing
+  } else if (action === 'eye-preview') {
+    // Emit to parent to open eye preview modal
+    emit('eye-preview-palette', paletteId)
+    // Don't close the modal - let user close it manually after eye preview
   }
 }
 

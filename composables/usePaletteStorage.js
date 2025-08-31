@@ -82,6 +82,10 @@ export function usePaletteStorage() {
     }
   }
 
+  const findPaletteById = (paletteId) => {
+    return savedPalettes.value.find(p => p.id === paletteId) || null
+  }
+
 
   return {
     // State
@@ -94,6 +98,7 @@ export function usePaletteStorage() {
     loadSavedPalettes,
     savePalette,
     deletePalette,
-    updatePaletteTitle
+    updatePaletteTitle,
+    findPaletteById
   }
 }

@@ -40,7 +40,11 @@ const dropdownItems = computed(() => {
 
 // Handle dropdown actions
 const handleAction = (action) => {
-  emit('palette-action', action, props.paletteData)
+  if (!props.paletteData?.id) {
+    console.error('MiniPalette: Missing palette ID', props.paletteData)
+    return
+  }
+  emit('palette-action', action, props.paletteData.id)
 }
 
 // Calculate tile size based on overall size

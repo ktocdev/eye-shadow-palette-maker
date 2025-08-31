@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import CollapsibleText from './shared/CollapsibleText.vue'
+import BaseButton from './shared/BaseButton.vue'
 
 const props = defineProps({
   showAppInfo: {
@@ -49,7 +50,6 @@ const appDescription = "Create custom eyeshadow palettes by selecting colors fro
 const updateInlineTitle = (event) => {
   emit('update:inline-palette-title', event.target.value)
 }
-
 
 // Inline title input focus state
 const isInlineTitleFocused = ref(false)
@@ -108,15 +108,21 @@ const handleCancelInlineTitle = () => {
         />
         <Transition name="inline-actions">
           <div v-if="isInlineTitleFocused || inlinePaletteTitle.trim()" class="edit-actions">
-            <button 
-              @click="handleSaveInlineTitle" 
+            <BaseButton
+              variant="ghost-green"
+              size="compact"
               :disabled="!inlinePaletteTitle.trim() || !isGridFull"
-              class="save-btn"
-              :class="{ 'btn-disabled': !inlinePaletteTitle.trim() || !isGridFull }"
+              @click="handleSaveInlineTitle"
             >
               ✓
-            </button>
-            <button @click="handleCancelInlineTitle" class="cancel-btn">✕</button>
+            </BaseButton>
+            <BaseButton
+              variant="ghost-red"
+              size="compact"
+              @click="handleCancelInlineTitle"
+            >
+              ✕
+            </BaseButton>
           </div>
         </Transition>
       </div>
@@ -231,42 +237,4 @@ const handleCancelInlineTitle = () => {
   gap: 8px;
 }
 
-.save-btn,
-.cancel-btn {
-  background: none;
-  border: 1px solid rgba(139, 129, 165, 0.3);
-  border-radius: var(--radius-sm);
-  padding: 6px 10px;
-  cursor: pointer;
-  font-size: var(--font-size-sm);
-  transition: all 0.2s ease;
-}
-
-.save-btn {
-  color: #228B22;
-  border-color: rgba(34, 139, 34, 0.3);
-}
-
-.save-btn:hover:not(:disabled) {
-  background: rgba(34, 139, 34, 0.1);
-  border-color: rgba(34, 139, 34, 0.5);
-}
-
-.save-btn:disabled,
-.save-btn.btn-disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  color: #999;
-  border-color: rgba(153, 153, 153, 0.3);
-}
-
-.cancel-btn {
-  color: #DC143C;
-  border-color: rgba(220, 20, 60, 0.3);
-}
-
-.cancel-btn:hover {
-  background: rgba(220, 20, 60, 0.1);
-  border-color: rgba(220, 20, 60, 0.5);
-}
 </style>

@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { onMounted, watch } from 'vue'
 import MiniPalette from './MiniPalette.vue'
 import Modal from './Modal.vue'
+import { usePaletteStorage } from '../../composables/usePaletteStorage.js'
 
 const props = defineProps({
   modelValue: {
@@ -12,21 +13,12 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'load-palette', 'share-palette', 'eye-preview-palette'])
 
-const savedPalettes = ref([])
-
-
-// Load saved palettes from localStorage
-const loadSavedPalettes = () => {
-  try {
-    const saved = localStorage.getItem('eyeshadow-saved-palettes')
-    if (saved) {
-      savedPalettes.value = JSON.parse(saved)
-    }
-  } catch (error) {
-    console.error('Error loading saved palettes:', error)
-    savedPalettes.value = []
-  }
-}
+// Use palette storage composable
+const {
+  savedPalettes,
+  loadSavedPalettes,
+  deletePalette: deletePaletteById
+} = usePaletteStorage()
 
 // Load saved palettes when component mounts and when modal opens
 onMounted(() => {
@@ -42,34 +34,25 @@ watch(() => props.modelValue, (isOpen) => {
 
 
 // Handle palette actions from MiniPalette
-const handlePaletteAction = (action, paletteData) => {
+const handlePaletteAction = (action, paletteId) => {
   if (action === 'load') {
     // Emit to parent (SwatchesExplorer) to load palette
-    emit('load-palette', paletteData)
+    emit('load-palette', paletteId)
   } else if (action === 'delete') {
-    // Handle delete locally
-    deletePalette(paletteData)
+    // Handle delete using ID
+    deletePalette(paletteId)
   } else if (action === 'share') {
     // Emit to parent to handle sharing
-    emit('share-palette', paletteData)
+    emit('share-palette', paletteId)
   } else if (action === 'eye-preview') {
     // Emit to parent to handle eye preview
-    emit('eye-preview-palette', paletteData)
+    emit('eye-preview-palette', paletteId)
   }
 }
 
-// Delete a palette from saved palettes
-const deletePalette = (paletteToDelete) => {
-  const index = savedPalettes.value.findIndex(palette => 
-    palette.title === paletteToDelete.title && 
-    palette.createdAt === paletteToDelete.createdAt
-  )
-  
-  if (index !== -1) {
-    savedPalettes.value.splice(index, 1)
-    // Update localStorage
-    localStorage.setItem('eyeshadow-saved-palettes', JSON.stringify(savedPalettes.value))
-  }
+// Delete a palette by ID
+const deletePalette = (paletteId) => {
+  deletePaletteById(paletteId)
 }
 </script>
 

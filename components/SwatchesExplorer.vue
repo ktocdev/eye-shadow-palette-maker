@@ -28,7 +28,8 @@ const {
   loadSavedPalettes,
   savePalette,
   deletePalette,
-  updatePaletteTitle
+  updatePaletteTitle,
+  findPaletteById
 } = usePaletteStorage()
 
 const {
@@ -102,9 +103,10 @@ const handleOpenAboutModal = () => {
   showAboutModal.value = true
 }
 
-const handleOpenShareModal = (paletteData = null) => {
-  if (paletteData) {
-    // Sharing a saved palette - set the saved palette data for the modal
+const handleOpenShareModal = (paletteId = null) => {
+  if (paletteId) {
+    // Sharing a saved palette - look up palette data by ID
+    const paletteData = findPaletteById(paletteId)
     savedPaletteData.value = paletteData
   } else {
     // Clear saved palette data when sharing current palette
@@ -113,14 +115,13 @@ const handleOpenShareModal = (paletteData = null) => {
   showShareModal.value = true
 }
 
-const handleOpenEyePreview = (paletteData = null) => {
-  if (paletteData) {
-    // Eye preview for a saved palette - set the saved palette data for the modal
-    console.log('Opening eye preview for saved palette:', paletteData)
+const handleOpenEyePreview = (paletteId = null) => {
+  if (paletteId) {
+    // Eye preview for a saved palette - look up palette data by ID
+    const paletteData = findPaletteById(paletteId)
     savedPaletteData.value = paletteData
   } else {
     // Clear saved palette data when previewing current palette
-    console.log('Opening eye preview with current gridData:', gridData.value)
     savedPaletteData.value = null
   }
   showEyePreviewModal.value = true
@@ -202,9 +203,17 @@ const handleSavePalette = (title = '') => {
 }
 
 // Handle loading a saved palette into the main grid
-const handleLoadPalette = (paletteData) => {
+const handleLoadPalette = (paletteId) => {
   // Close the modal first
   showSavedPalettesModal.value = false
+  showSavePaletteModal.value = false
+  
+  // Look up palette data by ID
+  const paletteData = findPaletteById(paletteId)
+  if (!paletteData) {
+    console.error('Palette not found:', paletteId)
+    return
+  }
   
   // Use composable to load palette state
   loadPalette(paletteData)
@@ -303,13 +312,14 @@ const canSavePaletteWithFullGrid = computed(() => {
 const eyePreviewColors = computed(() => {
   if (savedPaletteData.value) {
     // Extract colors from saved palette data
-    console.log('Getting colors from saved palette:', savedPaletteData.value)
     return savedPaletteData.value.colors
       .map(({ colorData }) => colorData)
       .filter(color => color !== null)
   } else {
-    // Use current grid data
-    return gridData.value.map(item => item.colorData).filter(color => color !== null)
+    // Use current grid data - gridData has structure { index, colorData }
+    return gridData.value
+      .map(({ colorData }) => colorData)
+      .filter(color => color !== null)
   }
 })
 
@@ -398,6 +408,8 @@ onMounted(() => {
       @save="handleSavePalette"
       @view-saved-palettes="handleViewSavedPalettes"
       @load-palette="handleLoadPalette"
+      @share-palette="handleOpenShareModal"
+      @eye-preview-palette="handleOpenEyePreview"
       @update:model-value="handleSavePaletteModalClose"
     />
     
