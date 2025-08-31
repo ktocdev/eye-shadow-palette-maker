@@ -21,23 +21,6 @@ import { useTitleEditing } from '../composables/useTitleEditing.js'
 
 // Use composables
 const { palette, allColors } = useColorData()
-const {
-  loadedPaletteTitle,
-  loadedPaletteModified,
-  hasUserInteracted,
-  shouldCollapseAppInfo,
-  inlinePaletteTitle,
-  showInlineTitleInput,
-  showLoadedPaletteTitle,
-  showAppInfo,
-  appInfoInitiallyOpen,
-  canSavePalette,
-  triggerUserInteraction,
-  loadPalette,
-  modifyPalette,
-  clearPalette,
-  updateLoadedPaletteTitle
-} = usePaletteState()
 
 const {
   savedPalettes,
@@ -96,6 +79,8 @@ const handleOpenSaveModal = () => {
     handleSavePalette()
     // Modal will be shown from within handleSavePalette after save is complete
   } else {
+    // Clear any stale savedPaletteData before opening modal for new save
+    savedPaletteData.value = null
     // Always show the modal so user can enter a title
     showSavePaletteModal.value = true
   }
@@ -104,6 +89,13 @@ const handleOpenSaveModal = () => {
 const handleViewSavedPalettes = () => {
   showSavePaletteModal.value = false
   showSavedPalettesModal.value = true
+}
+
+// Handle save palette modal close
+const handleSavePaletteModalClose = (isOpen) => {
+  if (!isOpen && savedPaletteData.value !== null) {
+    savedPaletteData.value = null
+  }
 }
 
 const handleOpenAboutModal = () => {
@@ -282,6 +274,25 @@ const isGridFull = computed(() => {
   return occupiedCells.length === totalCells
 })
 
+// Use palette state composable after isGridFull is defined
+const {
+  loadedPaletteTitle,
+  loadedPaletteModified,
+  hasUserInteracted,
+  shouldCollapseAppInfo,
+  inlinePaletteTitle,
+  showInlineTitleInput,
+  showLoadedPaletteTitle,
+  showAppInfo,
+  appInfoInitiallyOpen,
+  canSavePalette,
+  triggerUserInteraction,
+  loadPalette,
+  modifyPalette,
+  clearPalette,
+  updateLoadedPaletteTitle
+} = usePaletteState({ isGridFull })
+
 // Override canSavePalette to also require full grid
 const canSavePaletteWithFullGrid = computed(() => {
   if (!isGridFull.value) return false
@@ -387,6 +398,7 @@ onMounted(() => {
       @save="handleSavePalette"
       @view-saved-palettes="handleViewSavedPalettes"
       @load-palette="handleLoadPalette"
+      @update:model-value="handleSavePaletteModalClose"
     />
     
     <!-- Saved Palettes Modal -->
