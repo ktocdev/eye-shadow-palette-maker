@@ -27,14 +27,6 @@ const props = defineProps({
     type: String,
     default: ''
   },
-  isEditingTitle: {
-    type: Boolean,
-    default: false
-  },
-  editedTitle: {
-    type: String,
-    default: ''
-  },
   loadedPaletteModified: {
     type: Boolean,
     default: false
@@ -47,10 +39,6 @@ const props = defineProps({
 
 const emit = defineEmits([
   'update:inline-palette-title',
-  'update:edited-title',
-  'start-title-edit',
-  'save-title-edit',
-  'cancel-title-edit',
   'save-inline-title',
   'cancel-inline-title'
 ])
@@ -62,21 +50,6 @@ const updateInlineTitle = (event) => {
   emit('update:inline-palette-title', event.target.value)
 }
 
-const updateEditedTitle = (event) => {
-  emit('update:edited-title', event.target.value)
-}
-
-const handleStartEdit = () => {
-  emit('start-title-edit', props.loadedPaletteTitle)
-}
-
-const handleSaveEdit = () => {
-  emit('save-title-edit')
-}
-
-const handleCancelEdit = () => {
-  emit('cancel-title-edit')
-}
 
 // Inline title input focus state
 const isInlineTitleFocused = ref(false)
@@ -152,30 +125,7 @@ const handleCancelInlineTitle = () => {
     <!-- Loaded Palette Title -->
     <div v-else-if="showLoadedPaletteTitle" class="loaded-palette-section">
       <div class="palette-title-container">
-        <div v-if="!isEditingTitle" class="palette-title-display">
-          <h2 class="loaded-palette-title">{{ loadedPaletteTitle }}</h2>
-          <button 
-            @click="handleStartEdit"
-            class="edit-title-btn"
-            aria-label="Edit palette title"
-          >
-            ✏️
-          </button>
-        </div>
-        <div v-else class="palette-title-edit">
-          <input
-            :value="editedTitle"
-            @input="updateEditedTitle"
-            type="text"
-            class="palette-title-input"
-            @keyup.enter="handleSaveEdit"
-            @keyup.escape="handleCancelEdit"
-          />
-          <div class="edit-actions">
-            <button @click="handleSaveEdit" class="save-btn">✓</button>
-            <button @click="handleCancelEdit" class="cancel-btn">✕</button>
-          </div>
-        </div>
+        <h2 class="loaded-palette-title">{{ loadedPaletteTitle }}</h2>
       </div>
     </div>
   </div>
@@ -265,17 +215,6 @@ const handleCancelInlineTitle = () => {
   transform: translateX(0);
 }
 
-.palette-title-display {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  position: relative;
-}
-
-.palette-title-display:hover .edit-title-btn {
-  opacity: 1;
-}
 
 .loaded-palette-title {
   font-size: var(--font-size-lg);
@@ -286,48 +225,6 @@ const handleCancelInlineTitle = () => {
   text-align: center;
 }
 
-.edit-title-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: var(--font-size-base);
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
-  transition: all 0.2s ease;
-  opacity: 0;
-}
-
-.edit-title-btn:hover {
-  opacity: 1;
-  background: rgba(106, 90, 205, 0.1);
-}
-
-.palette-title-edit {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  width: 100%;
-}
-
-.palette-title-input {
-  flex: 1;
-  padding: 8px 12px;
-  border: 1px solid rgba(139, 129, 165, 0.3);
-  border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.9);
-  font-family: var(--font-family-primary);
-  font-size: var(--font-size-base);
-  color: var(--color-text-primary);
-  text-align: center;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.palette-title-input:focus {
-  outline: none;
-  border-color: rgba(106, 90, 205, 0.5);
-  box-shadow: 0 0 0 3px rgba(106, 90, 205, 0.1);
-}
 
 .edit-actions {
   display: flex;

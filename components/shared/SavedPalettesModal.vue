@@ -10,7 +10,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue', 'load-palette'])
+const emit = defineEmits(['update:modelValue', 'load-palette', 'share-palette'])
 
 const savedPalettes = ref([])
 
@@ -49,6 +49,9 @@ const handlePaletteAction = (action, paletteData) => {
   } else if (action === 'delete') {
     // Handle delete locally
     deletePalette(paletteData)
+  } else if (action === 'share') {
+    // Emit to parent to handle sharing
+    emit('share-palette', paletteData)
   }
 }
 

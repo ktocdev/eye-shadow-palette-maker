@@ -10,6 +10,7 @@ import AppHeader from './AppHeader.vue'
 import SavePaletteModal from './shared/SavePaletteModal.vue'
 import SavedPalettesModal from './shared/SavedPalettesModal.vue'
 import AboutModal from './shared/AboutModal.vue'
+import ShareModal from './shared/ShareModal.vue'
 
 // Composables
 import { useColorData } from '../composables/useColorData.js'
@@ -64,6 +65,7 @@ const currentGridSize = ref(2)
 const showSavePaletteModal = ref(false)
 const showSavedPalettesModal = ref(false)
 const showAboutModal = ref(false)
+const showShareModal = ref(false)
 const savedPaletteData = ref(null)
 
 // Handle grid size changes
@@ -92,6 +94,7 @@ const handleOpenSaveModal = () => {
     handleSavePalette()
     // Modal will be shown from within handleSavePalette after save is complete
   } else {
+    // Always show the modal so user can enter a title
     showSavePaletteModal.value = true
   }
 }
@@ -103,6 +106,17 @@ const handleViewSavedPalettes = () => {
 
 const handleOpenAboutModal = () => {
   showAboutModal.value = true
+}
+
+const handleOpenShareModal = (paletteData = null) => {
+  if (paletteData) {
+    // Sharing a saved palette - set the saved palette data for the modal
+    savedPaletteData.value = paletteData
+  } else {
+    // Clear saved palette data when sharing current palette
+    savedPaletteData.value = null
+  }
+  showShareModal.value = true
 }
 
 // Title editing handlers
@@ -321,10 +335,9 @@ onMounted(() => {
             />
             
             <PaletteControls
-              :can-save="canSavePaletteWithFullGrid"
               :has-saved-palettes="hasSavedPalettes"
               :has-colors="hasColors"
-              :is-modal-open="showSavePaletteModal || showSavedPalettesModal || showAboutModal"
+              :is-modal-open="showSavePaletteModal || showSavedPalettesModal || showAboutModal || showShareModal"
               @clear="handleClear"
               @randomize="handleRandomize"
               @open-save-modal="handleOpenSaveModal"
@@ -349,12 +362,22 @@ onMounted(() => {
     <SavedPalettesModal 
       v-model="showSavedPalettesModal"
       @load-palette="handleLoadPalette"
+      @share-palette="handleOpenShareModal"
     />
     
     <!-- About Modal -->
     <AboutModal 
       v-model="showAboutModal"
       @load-palette="handleLoadPalette"
+    />
+    
+    <!-- Share Modal -->
+    <ShareModal 
+      v-model="showShareModal"
+      :grid-data="gridData"
+      :grid-size="currentGridSize"
+      :title="loadedPaletteTitle || inlinePaletteTitle || 'My Palette'"
+      :saved-palette-data="savedPaletteData"
     />
   </div>
 </template>

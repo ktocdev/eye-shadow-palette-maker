@@ -22,7 +22,8 @@ const emit = defineEmits(['palette-action'])
 // Dropdown menu items - conditionally include delete based on prop
 const dropdownItems = computed(() => {
   const items = [
-    { label: 'Load Palette', icon: '', action: 'load' }
+    { label: 'Load Palette', icon: '', action: 'load' },
+    { label: 'Share Palette', icon: '', action: 'share' }
   ]
   
   if (props.showDelete) {
