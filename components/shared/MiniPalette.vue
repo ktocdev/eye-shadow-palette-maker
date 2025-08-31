@@ -22,7 +22,9 @@ const emit = defineEmits(['palette-action'])
 // Dropdown menu items - conditionally include delete based on prop
 const dropdownItems = computed(() => {
   const items = [
-    { label: 'Load Palette', icon: '', action: 'load' }
+    { label: 'Load Palette', icon: '', action: 'load' },
+    { label: 'Eye Preview', icon: '', action: 'eye-preview' },
+    { label: 'Share Palette', icon: '', action: 'share' }
   ]
   
   if (props.showDelete) {
@@ -151,7 +153,6 @@ const gridColumns = computed(() => {
   font-size: var(--font-size-s);
   color: var(--color-text-secondary);
   text-align: center;
-  line-height: 1;
-  white-space: nowrap;
+  line-height: 1.2;
 }
 </style>

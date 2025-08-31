@@ -77,9 +77,9 @@ watch(() => props.modelValue, (isOpen) => {
       <div class="dialog-actions">
         <button 
           @click="handleSavePalette"
-          :disabled="!paletteTitle.trim() || !canSave"
+          :disabled="!paletteTitle.trim()"
           class="btn btn-compact btn-gradient-green"
-          :class="{ 'btn-disabled': !paletteTitle.trim() || !canSave }"
+          :class="{ 'btn-disabled': !paletteTitle.trim() }"
         >
           Save Palette
         </button>

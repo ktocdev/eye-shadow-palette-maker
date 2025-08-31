@@ -10,6 +10,8 @@ import AppHeader from './AppHeader.vue'
 import SavePaletteModal from './shared/SavePaletteModal.vue'
 import SavedPalettesModal from './shared/SavedPalettesModal.vue'
 import AboutModal from './shared/AboutModal.vue'
+import ShareModal from './shared/ShareModal.vue'
+import EyePreviewModal from './shared/EyePreviewModal.vue'
 
 // Composables
 import { useColorData } from '../composables/useColorData.js'
@@ -64,6 +66,8 @@ const currentGridSize = ref(2)
 const showSavePaletteModal = ref(false)
 const showSavedPalettesModal = ref(false)
 const showAboutModal = ref(false)
+const showShareModal = ref(false)
+const showEyePreviewModal = ref(false)
 const savedPaletteData = ref(null)
 
 // Handle grid size changes
@@ -92,6 +96,7 @@ const handleOpenSaveModal = () => {
     handleSavePalette()
     // Modal will be shown from within handleSavePalette after save is complete
   } else {
+    // Always show the modal so user can enter a title
     showSavePaletteModal.value = true
   }
 }
@@ -103,6 +108,30 @@ const handleViewSavedPalettes = () => {
 
 const handleOpenAboutModal = () => {
   showAboutModal.value = true
+}
+
+const handleOpenShareModal = (paletteData = null) => {
+  if (paletteData) {
+    // Sharing a saved palette - set the saved palette data for the modal
+    savedPaletteData.value = paletteData
+  } else {
+    // Clear saved palette data when sharing current palette
+    savedPaletteData.value = null
+  }
+  showShareModal.value = true
+}
+
+const handleOpenEyePreview = (paletteData = null) => {
+  if (paletteData) {
+    // Eye preview for a saved palette - set the saved palette data for the modal
+    console.log('Opening eye preview for saved palette:', paletteData)
+    savedPaletteData.value = paletteData
+  } else {
+    // Clear saved palette data when previewing current palette
+    console.log('Opening eye preview with current gridData:', gridData.value)
+    savedPaletteData.value = null
+  }
+  showEyePreviewModal.value = true
 }
 
 // Title editing handlers
@@ -259,6 +288,20 @@ const canSavePaletteWithFullGrid = computed(() => {
   return canSavePalette.value
 })
 
+// Get colors for eye preview - either from saved palette or current grid
+const eyePreviewColors = computed(() => {
+  if (savedPaletteData.value) {
+    // Extract colors from saved palette data
+    console.log('Getting colors from saved palette:', savedPaletteData.value)
+    return savedPaletteData.value.colors
+      .map(({ colorData }) => colorData)
+      .filter(color => color !== null)
+  } else {
+    // Use current grid data
+    return gridData.value.map(item => item.colorData).filter(color => color !== null)
+  }
+})
+
 // Load saved palettes on mount
 onMounted(() => {
   loadSavedPalettes()
@@ -321,15 +364,15 @@ onMounted(() => {
             />
             
             <PaletteControls
-              :can-save="canSavePaletteWithFullGrid"
               :has-saved-palettes="hasSavedPalettes"
               :has-colors="hasColors"
-              :is-modal-open="showSavePaletteModal || showSavedPalettesModal || showAboutModal"
+              :is-modal-open="showSavePaletteModal || showSavedPalettesModal || showAboutModal || showShareModal || showEyePreviewModal"
               @clear="handleClear"
               @randomize="handleRandomize"
               @open-save-modal="handleOpenSaveModal"
               @view-saved-palettes="handleViewSavedPalettes"
               @open-about-modal="handleOpenAboutModal"
+              @open-eye-preview="handleOpenEyePreview"
             />
           </div>
         </div>
@@ -349,12 +392,29 @@ onMounted(() => {
     <SavedPalettesModal 
       v-model="showSavedPalettesModal"
       @load-palette="handleLoadPalette"
+      @share-palette="handleOpenShareModal"
+      @eye-preview-palette="handleOpenEyePreview"
     />
     
     <!-- About Modal -->
     <AboutModal 
       v-model="showAboutModal"
       @load-palette="handleLoadPalette"
+    />
+    
+    <!-- Share Modal -->
+    <ShareModal 
+      v-model="showShareModal"
+      :grid-data="gridData"
+      :grid-size="currentGridSize"
+      :title="loadedPaletteTitle || inlinePaletteTitle || 'My Palette'"
+      :saved-palette-data="savedPaletteData"
+    />
+    
+    <!-- Eye Preview Modal -->
+    <EyePreviewModal 
+      v-model="showEyePreviewModal"
+      :palette-colors="eyePreviewColors"
     />
   </div>
 </template>

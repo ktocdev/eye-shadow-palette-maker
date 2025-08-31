@@ -34,7 +34,7 @@ const emit = defineEmits(['swipe-left', 'swipe-right', 'click'])
 const { playDragStart } = useSound()
 
 // Use color selection composable
-const { selectColor, isColorSelected } = useColorSelection()
+const { selectColor, isColorSelected, clearSelection } = useColorSelection()
 
 // Use drag and drop composable with swipe handling
 const { 
@@ -71,10 +71,18 @@ const handleClick = (e) => {
 }
 
 // Handle events with proper data
-const onDragStart = (e) => handleDragStart(e, colorData.value, false)
+const onDragStart = (e) => {
+  // Clear any selected color when starting a drag operation
+  clearSelection()
+  handleDragStart(e, colorData.value, false)
+}
 const onDrag = (e) => handleDrag(e)
 const onDragEnd = (e) => handleDragEnd(e)
-const onTouchStart = (e) => handleTouchStart(e, colorData.value, false)
+const onTouchStart = (e) => {
+  // Clear any selected color when starting a touch drag operation
+  clearSelection()
+  handleTouchStart(e, colorData.value, false)
+}
 const onTouchMove = (e) => handleTouchMove(e)
 const onTouchEnd = (e) => handleTouchEnd(e)
 </script>
