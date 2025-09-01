@@ -18,10 +18,14 @@ const props = defineProps({
   gridSize: {
     type: Number,
     default: 4
+  },
+  activeCellIndex: {
+    type: Number,
+    default: null
   }
 })
 
-const emit = defineEmits(['grid-size-change', 'grid-updated'])
+const emit = defineEmits(['grid-size-change', 'grid-updated', 'grid-cell-click'])
 
 // Use palette grid composable
 const {
@@ -54,7 +58,7 @@ watch(() => props.gridSize, (newSize) => {
 const { addEventListener } = useEventCleanup()
 
 // Sound composable
-const { playDropSuccess } = useSound()
+const { playSoftClick } = useSound()
 
 // Color selection composable
 const { selectedColor, hasSelection, clearSelection } = useColorSelection()
@@ -71,7 +75,7 @@ const handleCellDrop = ({ index, colorData, isFromGrid }) => {
   }
   
   // Play drop success sound after successful drop
-  playDropSuccess()
+  playSoftClick()
   
   // Emit grid updated event
   emit('grid-updated')
@@ -90,17 +94,20 @@ const handleGridSizeChange = (newSize) => {
   emit('grid-size-change', newSize)
 }
 
-// Handle cell click for placing selected colors
-const handleCellClick = (index) => {
-  if (!hasSelection.value) return
-  
-  // Place the selected color in the clicked cell (allow replacing existing colors)
-  setCellData(index, selectedColor.value)
-  playDropSuccess()
-  clearSelection()
-  emit('grid-updated')
+// Handle cell click for showing carousel or placing selected colors
+const handleCellClick = (index, event) => {
+  if (hasSelection.value) {
+    // Place the selected color in the clicked cell (allow replacing existing colors)
+    setCellData(index, selectedColor.value)
+    playSoftClick()
+    clearSelection()
+    emit('grid-updated')
+  } else {
+    // No color selected - emit grid-cell-click to show carousel
+    const cellRect = event?.target?.getBoundingClientRect()
+    emit('grid-cell-click', index, cellRect)
+  }
 }
-
 
 // Handle touch drop events
 const handleTouchDrop = (e) => {
@@ -141,7 +148,8 @@ defineExpose({
   generateRandomPalette,
   getOccupiedCells,
   importGridData,
-  changeGridSize
+  changeGridSize,
+  setCellData
 })
 </script>
 
@@ -157,6 +165,7 @@ defineExpose({
       :index="cell.index"
       :color-data="cell.colorData"
       :grid-size="gridSize"
+      :is-active="activeCellIndex === cell.index"
       @drop="handleCellDrop"
       @clear-cell="handleCellClear"
       @cell-click="handleCellClick"

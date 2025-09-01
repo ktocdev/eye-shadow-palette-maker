@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import Modal from './Modal.vue'
+import { useSound } from '../../composables/useSound.js'
 
 const props = defineProps({
   modelValue: {
@@ -11,14 +12,22 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'save'])
 
+// Use sound composable
+const { playSubtleClick, playSoftClick } = useSound()
+
 const paletteTitle = ref('')
 
 const handleSavePalette = () => {
+  playSoftClick()
   // Emit save event with title and close immediately
   emit('save', paletteTitle.value)
   emit('update:modelValue', false)
   // Clear the title
   paletteTitle.value = ''
+}
+
+const handleTitleInputFocus = () => {
+  playSoftClick()
 }
 </script>
 
@@ -33,6 +42,7 @@ const handleSavePalette = () => {
         type="text" 
         placeholder="Enter palette name"
         class="form-input"
+        @focus="handleTitleInputFocus"
       />
     </div>
     <div class="dialog-actions">

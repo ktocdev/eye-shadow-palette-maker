@@ -12,13 +12,17 @@ const props = defineProps({
   gridSize: {
     type: Number,
     required: true
+  },
+  isActive: {
+    type: Boolean,
+    default: false
   }
 })
 
 const emit = defineEmits(['clear-swatch'])
 
 // Use sound composable
-const { playDragOut, playRemoval } = useSound()
+const { playDownSweep, playCrumple } = useSound()
 
 // Use color effects composable
 const { getEffectClass } = useColorEffects()
@@ -32,7 +36,7 @@ const {
   handleTouchMove: handleMiniTouchMove,
   handleTouchEnd: handleMiniTouchEnd
 } = useDragDrop({
-  onDragOut: () => playDragOut()
+  onDragOut: () => playDownSweep()
 })
 
 // Handle drag events with proper data
@@ -53,7 +57,7 @@ const onMiniSwatchDragEnd = (e) => {
   // If drag was not successful (dropped outside grid), remove this swatch
   if (!wasSuccessfulDrop) {
     console.log('PaletteSwatch dragged outside grid, removing:', props.colorData.colorName)
-    playRemoval() // Play paper crumple sound
+    playCrumple() // Play paper crumple sound
     emit('clear-swatch')
   }
 }
@@ -77,7 +81,7 @@ const onMiniSwatchTouchEnd = (e) => {
   // If touch ended outside grid, remove this swatch
   if (!gridCell) {
     console.log('PaletteSwatch touch ended outside grid, removing:', props.colorData.colorName)
-    playRemoval() // Play paper crumple sound
+    playCrumple() // Play paper crumple sound
     emit('clear-swatch')
   }
 }
@@ -88,7 +92,10 @@ const onMiniSwatchTouchEnd = (e) => {
     <div 
       class="palette-swatch"
       :class="[
-        { 'dark-palette-swatch': colorData.isDark },
+        { 
+          'dark-palette-swatch': colorData.isDark,
+          'active': isActive
+        },
         getEffectClass(colorData.effect),
         `size-${gridSize}x${gridSize}`
       ]"
@@ -121,6 +128,19 @@ const onMiniSwatchTouchEnd = (e) => {
   cursor: grab;
   position: relative;
   box-shadow: var(--shadow-swatch);
+  transition: all 0.2s ease;
+}
+
+.palette-swatch:hover {
+  box-shadow: var(--shadow-grid-cell-hover);
+  transform: translateY(-2px) scale(1.01);
+  border: 2px solid var(--color-purple-light);
+}
+
+.palette-swatch.active {
+  box-shadow: var(--shadow-grid-cell-hover);
+  transform: translateY(-2px) scale(1.01);
+  border: 2px solid var(--color-purple-light);
 }
 
 .palette-swatch:active {
@@ -134,11 +154,9 @@ const onMiniSwatchTouchEnd = (e) => {
 
 .palette-color-name {
   font-family: var(--font-family-primary);
-  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-normal);
   color: var(--color-text-primary);
   text-align: center;
-  padding: 4px;
   pointer-events: none;
   position: absolute;
   top: 50%;
@@ -152,52 +170,55 @@ const onMiniSwatchTouchEnd = (e) => {
   color: #f8f9fa;
 }
 
-/* Desktop default styles */
+/* Mobile first - base styles (smallest screens) */
 .palette-color-name.text-2x2 {
-  font-size: var(--font-size-base);
-  padding: 8px;
+  font-size: var(--font-size-xs);
+  padding: 2px;
 }
 
 .palette-color-name.text-3x3 {
-  font-size: var(--font-size-sm);
-  padding: 6px;
+  font-size: var(--font-size-xs);
+  padding: 2px;
 }
 
 .palette-color-name.text-4x4 {
-  font-size: var(--font-size-sm);
-  padding: 5px;
+  font-size: var(--font-size-xs);
+  padding: 2px;
 }
 
-/* Medium breakpoint - step down at 769px */
-@media (max-width: 768px) {
+/* Tablet breakpoint - step up at 481px */
+@media (min-width: 481px) {
   .palette-color-name.text-2x2 {
     font-size: var(--font-size-sm);
-    padding: 6px;
-  }
-  
-  .palette-color-name.text-3x3 {
-    font-size: var(--font-size-xs);
-    padding: 5px;
-  }
-  
-  .palette-color-name.text-4x4 {
-    font-size: var(--font-size-xs);
-    padding: 4px;
-  }
-}
-
-/* Mobile breakpoint - smallest sizes at 480px */
-@media (max-width: 480px) {
-  .palette-color-name.text-2x2 {
     padding: 4px;
   }
   
   .palette-color-name.text-3x3 {
+    font-size: var(--font-size-xs);
     padding: 3px;
   }
   
   .palette-color-name.text-4x4 {
-    padding: 2px;
+    font-size: var(--font-size-xs);
+    padding: 3px;
+  }
+}
+
+/* Desktop breakpoint - largest sizes at 769px */
+@media (min-width: 769px) {
+  .palette-color-name.text-2x2 {
+    font-size: var(--font-size-base);
+    padding: 8px;
+  }
+  
+  .palette-color-name.text-3x3 {
+    font-size: var(--font-size-sm);
+    padding: 6px;
+  }
+  
+  .palette-color-name.text-4x4 {
+    font-size: var(--font-size-sm);
+    padding: 5px;
   }
 }
 </style>

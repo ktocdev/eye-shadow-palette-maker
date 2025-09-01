@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import MiniPalette from './MiniPalette.vue'
 import Modal from './Modal.vue'
 import { useColorData } from '../../composables/useColorData.js'
+import { usePaletteStorage } from '../../composables/usePaletteStorage.js'
 import demoPalettesData from '../../data/demoPalettes.json'
 
 const props = defineProps({
@@ -12,14 +13,17 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue', 'load-palette'])
+const emit = defineEmits(['update:modelValue', 'load-palette', 'eye-preview'])
 
 // Use color data composable to get real colors
 const { findColorByHex, convertToColorData } = useColorData()
 
+// Use palette storage to register demo palettes
+const { registerDemoPalettes } = usePaletteStorage()
+
 // Create demo palettes from predefined JSON data
 const createDemoPalettes = () => {
-  return demoPalettesData.palettes.map(paletteTemplate => {
+  return demoPalettesData.palettes.map((paletteTemplate, index) => {
     const colors = paletteTemplate.colors.map(colorRef => {
       const foundColor = findColorByHex(colorRef.hex)
       if (foundColor) {
@@ -34,6 +38,7 @@ const createDemoPalettes = () => {
     }).filter(Boolean) // Remove null entries
     
     return {
+      id: `demo-palette-${index}`, // Add proper ID for demo palettes
       title: paletteTemplate.title,
       gridSize: paletteTemplate.gridSize,
       colors,
@@ -45,11 +50,17 @@ const createDemoPalettes = () => {
 // Get the demo palettes
 const demoPalettes = createDemoPalettes()
 
-// Handle palette actions from MiniPalette
-const handlePaletteAction = (action, paletteData) => {
+// Register demo palettes with storage system so they can be accessed by other components
+registerDemoPalettes(demoPalettes)
+
+// Handle palette actions from MiniPalette (same pattern as SavedPalettesGrid)
+const handlePaletteAction = (action, paletteId) => {
   if (action === 'load') {
-    // Emit to parent to load palette
-    emit('load-palette', paletteData)
+    emit('load-palette', paletteId)
+    // Close the about modal
+    emit('update:modelValue', false)
+  } else if (action === 'eye-preview') {
+    emit('eye-preview', paletteId)
     // Close the about modal
     emit('update:modelValue', false)
   }
@@ -89,6 +100,7 @@ const handlePaletteAction = (action, paletteData) => {
             :palette-data="demoPalettes[0]" 
             :size="120" 
             :show-delete="false"
+            :show-share="false"
             @palette-action="handlePaletteAction"
           />
         </div>
@@ -99,6 +111,7 @@ const handlePaletteAction = (action, paletteData) => {
             :palette-data="demoPalettes[1]" 
             :size="120" 
             :show-delete="false"
+            :show-share="false"
             @palette-action="handlePaletteAction"
           />
         </div>
@@ -109,6 +122,7 @@ const handlePaletteAction = (action, paletteData) => {
             :palette-data="demoPalettes[2]" 
             :size="120" 
             :show-delete="false"
+            :show-share="false"
             @palette-action="handlePaletteAction"
           />
         </div>

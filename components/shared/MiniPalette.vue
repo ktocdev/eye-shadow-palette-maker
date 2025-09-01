@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import Dropdown from './Dropdown.vue'
 import { useColorEffects } from '../../composables/useColorEffects.js'
+import { useSound } from '../../composables/useSound.js'
 
 const props = defineProps({
   paletteData: {
@@ -16,6 +17,10 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
+  showShare: {
+    type: Boolean,
+    default: true
+  },
   showActions: {
     type: Boolean,
     default: true
@@ -27,13 +32,19 @@ const emit = defineEmits(['palette-action'])
 // Use color effects composable
 const { getEffectClasses } = useColorEffects()
 
-// Dropdown menu items - conditionally include delete based on prop
+// Use sound composable
+const { playSoftClick, playDownSweep } = useSound()
+
+// Dropdown menu items - conditionally include delete and share based on props
 const dropdownItems = computed(() => {
   const items = [
     { label: 'Load Palette', icon: '', action: 'load' },
-    { label: 'Eye Preview', icon: '', action: 'eye-preview' },
-    { label: 'Share', icon: '', action: 'share' }
+    { label: 'Eye Preview', icon: '', action: 'eye-preview' }
   ]
+  
+  if (props.showShare) {
+    items.push({ label: 'Share', icon: '', action: 'share' })
+  }
   
   if (props.showDelete) {
     items.push({ label: 'Delete', icon: '', action: 'delete' })
@@ -44,6 +55,13 @@ const dropdownItems = computed(() => {
 
 // Handle dropdown actions
 const handleAction = (action) => {
+  // Use different sounds for different actions
+  if (action === 'delete') {
+    playDownSweep() // Downward swoop for delete
+  } else {
+    playSoftClick() // Success drop for load, share, eye-preview
+  }
+  
   if (!props.paletteData?.id) {
     console.error('MiniPalette: Missing palette ID', props.paletteData)
     return

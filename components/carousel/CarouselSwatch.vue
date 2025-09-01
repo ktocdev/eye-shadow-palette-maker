@@ -32,7 +32,7 @@ const props = defineProps({
 const emit = defineEmits(['swipe-left', 'swipe-right', 'click'])
 
 // Use sound composable
-const { playDragStart } = useSound()
+const { playUpSweep } = useSound()
 
 // Use color selection composable
 const { selectColor, isColorSelected, clearSelection } = useColorSelection()
@@ -52,7 +52,7 @@ const {
 } = useDragDrop({
   onSwipeLeft: () => emit('swipe-left'),
   onSwipeRight: () => emit('swipe-right'),
-  onDragStart: () => playDragStart(),
+  onDragStart: () => playUpSweep(),
   swipeThreshold: 50,
   swipeAngleThreshold: 30
 })
@@ -114,11 +114,12 @@ const onTouchEnd = (e) => handleTouchEnd(e)
 <style>
 .carousel-swatch-block {
   width: 50px;
-  height: 95px;
+  /* height: 95px; */
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
 }
 
 .carousel-swatch {

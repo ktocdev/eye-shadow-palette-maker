@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, computed, nextTick, ref } from 'vue'
+import { onMounted, onUnmounted, computed, nextTick, ref } from 'vue'
 
 // Components
 import ColorCarousel from './carousel/ColorCarousel.vue'
@@ -17,7 +17,9 @@ import ToastNotification from './shared/ToastNotification.vue'
 import { useColorData } from '../composables/useColorData.js'
 import { usePaletteState } from '../composables/usePaletteState.js'
 import { usePaletteStorage } from '../composables/usePaletteStorage.js'
+import { useSound } from '../composables/useSound.js'
 import { useTitleEditing } from '../composables/useTitleEditing.js'
+import { useColorSelection } from '../composables/useColorSelection.js'
 
 // Use composables
 const { palette, allColors } = useColorData()
@@ -32,12 +34,16 @@ const {
   findPaletteById
 } = usePaletteStorage()
 
+// Use sound composable (only needed for carousel interactions now)  
+const { playSubtleClick } = useSound()
+
+// Use color selection composable
+const { clearSelection } = useColorSelection()
+
+// Use title editing composable (only for state access, not handlers)
 const {
   isEditingTitle,
-  editedTitle,
-  startTitleEdit,
-  saveTitleEdit,
-  cancelTitleEdit
+  editedTitle
 } = useTitleEditing()
 
 // Reference to PaletteGrid component
@@ -46,11 +52,21 @@ const paletteGridRef = ref(null)
 // Track current grid size
 const currentGridSize = ref(2)
 
+// Carousel state management
+const showCarousel = ref(false)
+const carouselPosition = ref({ top: 0, left: 0 })
+const carouselRef = ref(null)
+const targetCellIndex = ref(null) // Track which cell opened the carousel
+
 // Modal states
 const showSavePaletteModal = ref(false)
 const showPaletteManager = ref(false)
 const showAboutModal = ref(false)
 const savedPaletteData = ref(null)
+
+// Palette manager modal state
+const paletteManagerTab = ref('saved')
+const paletteManagerPaletteId = ref(null)
 
 // Loader and toast states
 const showLoader = ref(false)
@@ -92,7 +108,19 @@ const handleOpenSaveModal = () => {
 
 const handleViewSavedPalettes = () => {
   showSavePaletteModal.value = false
+  // Reset to default state for saved palettes view
+  paletteManagerTab.value = 'saved'
+  paletteManagerPaletteId.value = null
   showPaletteManager.value = true
+}
+
+const handlePaletteManagerClose = (isOpen) => {
+  showPaletteManager.value = isOpen
+  if (!isOpen) {
+    // Reset state when closing
+    paletteManagerTab.value = 'saved'
+    paletteManagerPaletteId.value = null
+  }
 }
 
 // Handle toast action
@@ -111,43 +139,37 @@ const handleOpenAboutModal = () => {
   showAboutModal.value = true
 }
 
-
-// Title editing handlers
-const handleStartTitleEdit = async (currentTitle) => {
-  startTitleEdit(currentTitle)
-  // Focus the input after DOM update
-  await nextTick()
-  const input = document.querySelector('.palette-title-input')
-  input?.focus()
-  input?.select()
+// Handle demo palette actions from AboutModal
+const handleDemoPaletteEyePreview = (paletteId) => {
+  console.log('Demo palette eye preview:', paletteId)
+  showAboutModal.value = false
+  // Set palette manager to open with eye preview tab
+  paletteManagerTab.value = 'preview'
+  paletteManagerPaletteId.value = paletteId
+  showPaletteManager.value = true
 }
 
-const handleSaveTitleEdit = () => {
-  const result = saveTitleEdit()
-  if (result.success && result.hasChanged) {
-    const oldTitle = loadedPaletteTitle.value
-    updateLoadedPaletteTitle(result.newTitle)
-    // Find the palette by old title and update it
-    const paletteToUpdate = savedPalettes.value.find(p => p.title === oldTitle)
-    if (paletteToUpdate) {
-      updatePaletteTitle(paletteToUpdate.id, result.newTitle)
-    }
+
+
+// New title editing handlers (receive events from AppHeader)
+const handleTitleSaved = ({ oldTitle, newTitle }) => {
+  updateLoadedPaletteTitle(newTitle)
+  // Find the palette by old title and update it
+  const paletteToUpdate = savedPalettes.value.find(p => p.title === oldTitle)
+  if (paletteToUpdate) {
+    updatePaletteTitle(paletteToUpdate.id, newTitle)
   }
 }
 
-const handleCancelTitleEdit = () => {
-  cancelTitleEdit()
-}
-
-// Inline title handlers
-const handleSaveInlineTitle = () => {
+// Inline title handlers (receive events from AppHeader)
+const handleInlineTitleSaved = (title) => {
   // Trigger save palette functionality
-  if (inlinePaletteTitle.value.trim()) {
-    handleSavePalette(inlinePaletteTitle.value)
+  if (title.trim()) {
+    handleSavePalette(title)
   }
 }
 
-const handleCancelInlineTitle = () => {
+const handleInlineTitleCancelled = () => {
   // Clear the inline title
   inlinePaletteTitle.value = ''
 }
@@ -245,9 +267,88 @@ const handleLoadPalette = (paletteId) => {
   gridChangeTracker.value++
 }
 
-// Handle carousel swatch click - selection is handled by CarouselSwatch directly
+// Handle carousel swatch click - automatically place color in target cell
 const handleSwatchClick = (colorData) => {
-  // No action needed - selection is handled in CarouselSwatch component
+  // If we have a target cell, automatically place the color there
+  if (targetCellIndex.value !== null && paletteGridRef.value) {
+    paletteGridRef.value.setCellData(targetCellIndex.value, colorData)
+    // Don't clear targetCellIndex - keep it for repeat placements in same cell
+  }
+  
+  // Keep carousel open for continued interaction
+  // Reset color selection state so user can pick new colors
+  clearSelection()
+}
+
+// Handle grid cell click - show carousel positioned near the clicked cell
+const handleGridCellClick = (cellIndex, cellRect) => {
+  console.log('Grid cell clicked:', cellIndex, cellRect)
+  
+  // Store which cell opened the carousel for automatic placement
+  targetCellIndex.value = cellIndex
+  
+  if (cellRect) {
+    // Get viewport dimensions
+    const viewportWidth = window.innerWidth
+    const viewportHeight = window.innerHeight
+    const isMobile = viewportWidth <= 480
+    
+    // Estimate carousel dimensions (responsive)
+    const carouselWidth = isMobile ? Math.min(viewportWidth - 40, 260) : Math.min(600, viewportWidth - 40)
+    const carouselHeight = 140 // estimated height
+    
+    let left, top
+    
+    if (isMobile) {
+      // On mobile, center carousel horizontally and position below/above cell
+      left = 0
+      
+      // Try to position below the cell first
+      if (cellRect.bottom + carouselHeight + 20 < viewportHeight) {
+        top = cellRect.bottom + 10
+      } else {
+        // Position above the cell if not enough space below
+        top = Math.max(20, cellRect.top - carouselHeight - 10)
+      }
+    } else {
+      // Desktop: prefer right of cell, fallback to left
+      if (cellRect.right + carouselWidth + 20 < viewportWidth) {
+        left = cellRect.right + 10
+      } else if (cellRect.left - carouselWidth - 10 > 0) {
+        left = cellRect.left - carouselWidth - 10
+      } else {
+        // Center if neither side fits
+        left = Math.max(20, (viewportWidth - carouselWidth) / 2)
+      }
+      
+      // Vertically center on cell, but keep within viewport
+      top = Math.max(20, Math.min(cellRect.top - 50, viewportHeight - carouselHeight - 20))
+    }
+    
+    carouselPosition.value = { top, left }
+  }
+  
+  showCarousel.value = true
+}
+
+// Handle clicking outside carousel to hide it
+const handleDocumentClick = (event) => {
+  if (!showCarousel.value) return
+  
+  // Check if click was on the carousel or a grid cell
+  const carouselElement = carouselRef.value?.$el
+  const clickedElement = event.target
+  
+  // Don't hide if clicking on carousel itself or grid cells
+  if (carouselElement?.contains(clickedElement) || 
+      clickedElement.closest('.grid-cell')) {
+    return
+  }
+  
+  // Hide carousel when clicking elsewhere
+  showCarousel.value = false
+  // Reset target cell index when carousel is closed
+  targetCellIndex.value = null
 }
 
 // Track grid changes for reactivity
@@ -324,17 +425,18 @@ const eyePreviewColors = computed(() => {
 // Load saved palettes on mount
 onMounted(() => {
   loadSavedPalettes()
+  // Add document click listener to hide carousel when clicking outside
+  document.addEventListener('click', handleDocumentClick)
+})
+
+// Cleanup on unmount
+onUnmounted(() => {
+  document.removeEventListener('click', handleDocumentClick)
 })
 </script>
 
 <template>
-  <div class="swatches-explorer page-container typography-base">
-    <ColorCarousel
-      :colors="allColors"
-      :palette-name="palette.name"
-      @swatch-click="handleSwatchClick"
-    />
-    
+  <div class="swatches-explorer page-container typography-base">    
     <div class="main-content main-content-layout">
       <div class="palette-container">
         <div class="app-header-container">
@@ -350,11 +452,11 @@ onMounted(() => {
               :edited-title="editedTitle"
               @update:inline-palette-title="(value) => inlinePaletteTitle = value"
               @update:edited-title="(value) => editedTitle = value"
-              @start-title-edit="handleStartTitleEdit"
-              @save-title-edit="handleSaveTitleEdit"
-              @cancel-title-edit="handleCancelTitleEdit"
-              @save-inline-title="handleSaveInlineTitle"
-              @cancel-inline-title="handleCancelInlineTitle"
+              @title-saved="handleTitleSaved"
+              @title-edit-cancelled="() => {}"
+              @inline-title-saved="handleInlineTitleSaved"
+              @inline-title-cancelled="handleInlineTitleCancelled"
+              @start-title-edit="() => {}"
             />
           </div>
         </div>
@@ -370,8 +472,10 @@ onMounted(() => {
             :colors="allColors"
             :initial-grid-size="2"
             :grid-size="currentGridSize"
+            :active-cell-index="showCarousel ? targetCellIndex : null"
             @grid-size-change="handleGridSizeChange"
             @grid-updated="updateGridTracker"
+            @grid-cell-click="handleGridCellClick"
           />
         
           <div class="palette-controls-segment">
@@ -396,6 +500,22 @@ onMounted(() => {
         </div>
       </div>
     </div>
+    
+    <!-- Color Carousel - shown conditionally on grid cell click -->
+    <ColorCarousel
+      v-if="showCarousel"
+      ref="carouselRef"
+      :colors="allColors"
+      :palette-name="palette.name"
+      :style="{
+        position: 'fixed',
+        top: carouselPosition.top + 'px',
+        left: carouselPosition.left + 'px',
+        zIndex: 200
+      }"
+      @swatch-click="handleSwatchClick"
+    />
+    
     <!-- Save Palette Modal -->
     <SavePaletteModal 
       v-model="showSavePaletteModal"
@@ -410,13 +530,17 @@ onMounted(() => {
     <!-- Palette Manager Modal (tabbed: saved palettes, eye preview, share) -->
     <PaletteManagerModal 
       v-model="showPaletteManager"
+      :initial-tab="paletteManagerTab"
+      :initial-palette-id="paletteManagerPaletteId"
       @load-palette="handleLoadPalette"
+      @update:model-value="handlePaletteManagerClose"
     />
     
     <!-- About Modal -->
     <AboutModal 
       v-model="showAboutModal"
       @load-palette="handleLoadPalette"
+      @eye-preview="handleDemoPaletteEyePreview"
     />
     
     
@@ -458,7 +582,6 @@ onMounted(() => {
 }
 
 @media (min-width: 769px) {
-  .swatches-explorer,
   .main-content {
     padding: 20px;
   }

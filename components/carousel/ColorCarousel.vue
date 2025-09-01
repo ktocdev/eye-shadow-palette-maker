@@ -29,19 +29,19 @@ const {
 } = useCarousel(computed(() => props.colors))
 
 // Use sound composable
-const { playNavigation } = useSound()
+const { playSharpClick } = useSound()
 
 // Handle arrow button clicks with sound
 const handlePrevClick = () => {
   if (canGoPrev.value) {
-    playNavigation() // Higher-pitched navigation sound
+    playSharpClick() // Higher-pitched navigation sound
     goToPrevPage()
   }
 }
 
 const handleNextClick = () => {
   if (canGoNext.value) {
-    playNavigation() // Higher-pitched navigation sound
+    playSharpClick() // Higher-pitched navigation sound
     goToNextPage()
   }
 }
@@ -109,16 +109,35 @@ const handleSwatchClick = (colorData) => {
 
 <style>
 .color-carousel {
-  position: sticky;
-  top: 0;
-  z-index: 100;
   background: var(--gradient-container-primary);
   border-radius: var(--radius-container-large);
   box-shadow: var(--shadow-carousel);
   border: var(--border-container);
-  border-top: none;
   padding: var(--font-size-base);
-  container-type: inline-size;
+  min-width: 280px;
+}
+
+@media (max-width: 400px) {
+  .color-carousel {
+    width: 100%;
+    max-width: none;
+    min-width: auto;
+    padding: 12px;
+  }
+}
+
+@media (min-width: 401px) and (max-width: 480px) {
+  .color-carousel {
+    max-width: calc(100vw - 40px);
+    min-width: 260px;
+    padding: 12px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .color-carousel {
+    max-width: 500px;
+  }
 }
 
 .carousel-left {
@@ -140,9 +159,10 @@ const handleSwatchClick = (colorData) => {
 
 .carousel-container {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: 8px;
   margin: auto;
+  height: auto;
 }
 
 @container (min-width: 768px) {
@@ -178,9 +198,9 @@ const handleSwatchClick = (colorData) => {
   display: flex;
   gap: 6px;
   flex: 1;
-  justify-content: center;
-  min-height: 80px;
+  justify-content: flex-start;
   align-items: flex-start;
+  height: auto;
 }
 
 @container (min-width: 1024px) {
@@ -189,7 +209,6 @@ const handleSwatchClick = (colorData) => {
   }
   
   .carousel-swatches {
-    min-height: 140px;
     gap: 15px;
   }
 

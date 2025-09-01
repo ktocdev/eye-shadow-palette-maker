@@ -2,6 +2,7 @@ import { ref, computed } from 'vue'
 
 // Singleton state - shared across all instances
 const savedPalettes = ref([])
+const demoPalettes = ref([])
 
 /**
  * Composable for managing palette storage operations with localStorage
@@ -17,7 +18,27 @@ export function usePaletteStorage() {
     const palettes = localStorage.getItem('eyeshadow-saved-palettes')
     if (palettes) {
       try {
-        savedPalettes.value = JSON.parse(palettes)
+        let loadedPalettes = JSON.parse(palettes)
+        
+        // Migrate palettes that don't have IDs (from older versions)
+        let needsUpdate = false
+        loadedPalettes = loadedPalettes.map(palette => {
+          if (!palette.id) {
+            needsUpdate = true
+            return {
+              ...palette,
+              id: `migrated-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+            }
+          }
+          return palette
+        })
+        
+        // Save back to localStorage if we added IDs
+        if (needsUpdate) {
+          localStorage.setItem('eyeshadow-saved-palettes', JSON.stringify(loadedPalettes))
+        }
+        
+        savedPalettes.value = loadedPalettes
       } catch (error) {
         console.error('Failed to parse saved palettes:', error)
         savedPalettes.value = []
@@ -85,7 +106,19 @@ export function usePaletteStorage() {
   }
 
   const findPaletteById = (paletteId) => {
-    return savedPalettes.value.find(p => p.id === paletteId) || null
+    // Check saved palettes first
+    const savedPalette = savedPalettes.value.find(p => p.id === paletteId)
+    if (savedPalette) return savedPalette
+    
+    // Check demo palettes
+    const demoPalette = demoPalettes.value.find(p => p.id === paletteId)
+    if (demoPalette) return demoPalette
+    
+    return null
+  }
+
+  const registerDemoPalettes = (palettes) => {
+    demoPalettes.value = palettes
   }
 
 
@@ -101,6 +134,7 @@ export function usePaletteStorage() {
     savePalette,
     deletePalette,
     updatePaletteTitle,
-    findPaletteById
+    findPaletteById,
+    registerDemoPalettes
   }
 }

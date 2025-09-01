@@ -48,9 +48,9 @@ export function useSound() {
   }
   
   /**
-   * Play drag start sound - a gentle upward sweep (for carousel swatches)
+   * Play upward frequency sweep - a gentle rising tone
    */
-  const playDragStart = () => {
+  const playUpSweep = () => {
     if (!isEnabled.value) return
     
     initAudioContext()
@@ -77,9 +77,9 @@ export function useSound() {
   }
   
   /**
-   * Play drag out sound - a gentle downward sweep (for palette grid swatches)
+   * Play downward frequency sweep - a gentle falling tone
    */
-  const playDragOut = () => {
+  const playDownSweep = () => {
     if (!isEnabled.value) return
     
     initAudioContext()
@@ -106,9 +106,9 @@ export function useSound() {
   }
   
   /**
-   * Play drop success sound - a light click like something clicking into place
+   * Play soft click sound - a crisp, filtered click tone
    */
-  const playDropSuccess = () => {
+  const playSoftClick = () => {
     if (!isEnabled.value) return
     
     initAudioContext()
@@ -150,9 +150,9 @@ export function useSound() {
   }
   
   /**
-   * Play removal sound - a paper crumple effect like Mac recycle bin
+   * Play crumple sound - textured paper crinkle effect
    */
-  const playRemoval = () => {
+  const playCrumple = () => {
     if (!isEnabled.value) return
     
     initAudioContext()
@@ -217,9 +217,9 @@ export function useSound() {
   }
 
   /**
-   * Play navigation sound - a higher-pitched click for arrow buttons
+   * Play sharp click sound - a bright, high-pitched click tone
    */
-  const playNavigation = () => {
+  const playSharpClick = () => {
     if (!isEnabled.value) return
     
     initAudioContext()
@@ -263,9 +263,60 @@ export function useSound() {
   }
 
   /**
-   * Play a subtle click sound
+   * Play soft bell sound - a gentle, harmonic bell tone
    */
-  const playClick = () => {
+  const playSoftBell = () => {
+    if (!isEnabled.value) return
+    
+    initAudioContext()
+    if (!audioContext.value) return
+    
+    // Create a bell-like sound using multiple sine waves (harmonics)
+    const duration = 0.8 // 800ms for a nice bell resonance
+    const fundamentalFreq = 880 // A5 - sweet, clear frequency
+    
+    // Create multiple oscillators for bell harmonics
+    const oscillators = []
+    const gainNodes = []
+    
+    // Bell harmonics with very gentle amplitudes
+    const harmonics = [
+      { freq: fundamentalFreq, amp: 0.03 },      // Fundamental - very gentle
+      { freq: fundamentalFreq * 2, amp: 0.02 },   // Octave
+      { freq: fundamentalFreq * 3, amp: 0.012 },  // Perfect fifth
+      { freq: fundamentalFreq * 4, amp: 0.006 },  // Second octave
+      { freq: fundamentalFreq * 5, amp: 0.003 }   // Major third
+    ]
+    
+    harmonics.forEach((harmonic, index) => {
+      const oscillator = audioContext.value.createOscillator()
+      const gainNode = audioContext.value.createGain()
+      
+      oscillator.connect(gainNode)
+      gainNode.connect(audioContext.value.destination)
+      
+      // Use sine wave for pure bell tone
+      oscillator.type = 'sine'
+      oscillator.frequency.setValueAtTime(harmonic.freq, audioContext.value.currentTime)
+      
+      // Bell-like envelope - quick attack, slow decay with slight resonance
+      gainNode.gain.setValueAtTime(0, audioContext.value.currentTime)
+      gainNode.gain.linearRampToValueAtTime(harmonic.amp, audioContext.value.currentTime + 0.01)
+      gainNode.gain.exponentialRampToValueAtTime(harmonic.amp * 0.5, audioContext.value.currentTime + 0.1)
+      gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.value.currentTime + duration)
+      
+      oscillator.start(audioContext.value.currentTime)
+      oscillator.stop(audioContext.value.currentTime + duration)
+      
+      oscillators.push(oscillator)
+      gainNodes.push(gainNode)
+    })
+  }
+
+  /**
+   * Play subtle click sound - a quiet, simple beep tone
+   */
+  const playSubtleClick = () => {
     createBeep(800, 50, 0.05)
   }
   
@@ -292,12 +343,13 @@ export function useSound() {
   
   return {
     isEnabled,
-    playDragStart,
-    playDragOut,
-    playDropSuccess,
-    playRemoval,
-    playNavigation,
-    playClick,
+    playUpSweep,
+    playDownSweep,
+    playSoftClick,
+    playCrumple,
+    playSharpClick,
+    playSubtleClick,
+    playSoftBell,
     createBeep,
     toggleSound,
     enableSound,

@@ -1,4 +1,6 @@
 <script setup>
+import { useSound } from '../../composables/useSound.js'
+
 const props = defineProps({
   gridSize: {
     type: Number,
@@ -8,7 +10,11 @@ const props = defineProps({
 
 const emit = defineEmits(['size-change'])
 
+// Use sound composable
+const { playUpSweep } = useSound()
+
 const handleSizeChange = (event) => {
+  playUpSweep()
   emit('size-change', parseInt(event.target.value))
 }
 </script>

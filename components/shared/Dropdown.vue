@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useSound } from '../../composables/useSound.js'
 
 const props = defineProps({
   items: {
@@ -15,11 +16,15 @@ const props = defineProps({
 
 const emit = defineEmits(['action'])
 
+// Use sound composable
+const { playSoftClick } = useSound()
+
 const isOpen = ref(false)
 const dropdownRef = ref(null)
 
 // Toggle dropdown
 const toggle = () => {
+  playSoftClick()
   isOpen.value = !isOpen.value
 }
 

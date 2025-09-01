@@ -1,6 +1,8 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, nextTick } from 'vue'
 import BaseButton from './shared/BaseButton.vue'
+import { useSound } from '../composables/useSound.js'
+import { useTitleEditing } from '../composables/useTitleEditing.js'
 
 const props = defineProps({
   showInlineTitleInput: {
@@ -26,16 +28,38 @@ const props = defineProps({
   isGridFull: {
     type: Boolean,
     default: false
+  },
+  isEditingTitle: {
+    type: Boolean,
+    default: false
+  },
+  editedTitle: {
+    type: String,
+    default: ''
   }
 })
 
 const emit = defineEmits([
   'update:inline-palette-title',
-  'save-inline-title',
-  'cancel-inline-title'
+  'update:edited-title',
+  'title-saved',
+  'title-edit-cancelled',
+  'inline-title-saved',
+  'inline-title-cancelled',
+  'start-title-edit'
 ])
 
 const appTitle = "Eyeshadow Palette Maker"
+
+// Use sound composable
+const { playSoftClick } = useSound()
+
+// Use title editing composable
+const {
+  startTitleEdit,
+  saveTitleEdit,
+  cancelTitleEdit
+} = useTitleEditing()
 
 const updateInlineTitle = (event) => {
   emit('update:inline-palette-title', event.target.value)
@@ -45,6 +69,7 @@ const updateInlineTitle = (event) => {
 const isInlineTitleFocused = ref(false)
 
 const handleInlineTitleFocus = () => {
+  playSoftClick()
   isInlineTitleFocused.value = true
 }
 
@@ -59,14 +84,42 @@ const handleInlineTitleBlur = (event) => {
 
 const handleSaveInlineTitle = () => {
   if (props.inlinePaletteTitle.trim() && props.isGridFull) {
-    emit('save-inline-title')
+    playSoftClick()
+    emit('inline-title-saved', props.inlinePaletteTitle.trim())
     isInlineTitleFocused.value = false
   }
 }
 
 const handleCancelInlineTitle = () => {
-  emit('cancel-inline-title')
+  playSoftClick()
+  emit('inline-title-cancelled')
   isInlineTitleFocused.value = false
+}
+
+// Title editing handlers (moved from SwatchesExplorer)
+const handleStartTitleEdit = async (currentTitle) => {
+  playSoftClick()
+  startTitleEdit(currentTitle)
+  emit('start-title-edit', currentTitle)
+  // Focus the input after DOM update
+  await nextTick()
+  const input = document.querySelector('.palette-title-input')
+  input?.focus()
+  input?.select()
+}
+
+const handleSaveTitleEdit = () => {
+  playSoftClick()
+  const result = saveTitleEdit()
+  if (result.success && result.hasChanged) {
+    emit('title-saved', { oldTitle: props.loadedPaletteTitle, newTitle: result.newTitle })
+  }
+}
+
+const handleCancelTitleEdit = () => {
+  playSoftClick()
+  cancelTitleEdit()
+  emit('title-edit-cancelled')
 }
 </script>
 
@@ -82,7 +135,7 @@ const handleCancelInlineTitle = () => {
           @focus="handleInlineTitleFocus"
           @blur="handleInlineTitleBlur"
           type="text"
-          :placeholder="loadedPaletteModified ? 'Add Palette Title' : 'New Palette Title'"
+          placeholder="Add Palette Title Here"
           class="inline-title-input"
           @keyup.enter="handleSaveInlineTitle"
           @keyup.escape="handleCancelInlineTitle"
@@ -112,7 +165,47 @@ const handleCancelInlineTitle = () => {
     <!-- Loaded Palette Title -->
     <div v-else-if="showLoadedPaletteTitle" class="loaded-palette-section">
       <div class="palette-title-container">
-        <h2 class="loaded-palette-title">{{ loadedPaletteTitle }}</h2>
+        <div v-if="!isEditingTitle" class="title-display">
+          <h2 
+            class="loaded-palette-title" 
+            @click="handleStartTitleEdit(loadedPaletteTitle)"
+          >
+            {{ loadedPaletteTitle }}
+          </h2>
+          <button 
+            @click="handleStartTitleEdit(loadedPaletteTitle)"
+            class="edit-title-btn"
+          >
+            Edit
+          </button>
+        </div>
+        
+        <div v-else class="title-edit-form">
+          <input
+            :value="editedTitle"
+            @input="$emit('update:edited-title', $event.target.value)"
+            type="text"
+            class="palette-title-input"
+            @keyup.enter="handleSaveTitleEdit"
+            @keyup.escape="handleCancelTitleEdit"
+          />
+          <div class="edit-actions">
+            <BaseButton
+              variant="green"
+              size="compact"
+              @click="handleSaveTitleEdit"
+            >
+              ✓
+            </BaseButton>
+            <BaseButton
+              variant="red"
+              size="compact"
+              @click="handleCancelTitleEdit"
+            >
+              ✕
+            </BaseButton>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -227,6 +320,70 @@ const handleCancelInlineTitle = () => {
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
   text-align: center;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.loaded-palette-title:hover {
+  color: var(--color-success-primary);
+}
+
+.title-display {
+  position: relative;
+  display: inline-block;
+}
+
+.title-display:hover .edit-title-btn {
+  opacity: 1;
+}
+
+.edit-title-btn {
+  position: absolute;
+  top: 50%;
+  right: -35px;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(139, 129, 165, 0.3);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  font-size: var(--font-size-s);
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(5px);
+}
+
+.edit-title-btn:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(106, 90, 205, 0.4);
+  box-shadow: 0 2px 4px rgba(139, 129, 165, 0.2);
+}
+
+.title-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.palette-title-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 12px 16px;
+  border: 1px solid rgba(139, 129, 165, 0.3);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.9);
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  text-align: center;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.palette-title-input:focus {
+  outline: none;
+  border-color: rgba(106, 90, 205, 0.5);
+  box-shadow: 0 0 0 3px rgba(106, 90, 205, 0.1);
 }
 
 .edit-actions {
