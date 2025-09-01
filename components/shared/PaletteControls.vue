@@ -24,31 +24,31 @@ const props = defineProps({
 const emit = defineEmits(['clear', 'randomize', 'open-save-modal', 'view-saved-palettes', 'open-about-modal'])
 
 // Use sound composable
-const { playClick, playDropSuccess } = useSound()
+const { playSubtleClick, playSoftClick } = useSound()
 
 // Handle button clicks with sound
 const handleSaveClick = () => {
-  playDropSuccess()
+  playSoftClick()
   emit('open-save-modal')
 }
 
 const handleClearClick = () => {
-  playClick()
+  playSubtleClick()
   emit('clear')
 }
 
 const handleViewSavedClick = () => {
-  playDropSuccess()
+  playSoftClick()
   emit('view-saved-palettes')
 }
 
 const handleRandomizeClick = () => {
-  playDropSuccess()
+  playSoftClick()
   emit('randomize')
 }
 
 const handleAboutClick = () => {
-  playDropSuccess()
+  playSoftClick()
   emit('open-about-modal')
 }
 </script>

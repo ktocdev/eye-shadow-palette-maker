@@ -54,7 +54,7 @@ watch(() => props.gridSize, (newSize) => {
 const { addEventListener } = useEventCleanup()
 
 // Sound composable
-const { playDropSuccess } = useSound()
+const { playSoftClick } = useSound()
 
 // Color selection composable
 const { selectedColor, hasSelection, clearSelection } = useColorSelection()
@@ -71,7 +71,7 @@ const handleCellDrop = ({ index, colorData, isFromGrid }) => {
   }
   
   // Play drop success sound after successful drop
-  playDropSuccess()
+  playSoftClick()
   
   // Emit grid updated event
   emit('grid-updated')
@@ -95,7 +95,7 @@ const handleCellClick = (index, event) => {
   if (hasSelection.value) {
     // Place the selected color in the clicked cell (allow replacing existing colors)
     setCellData(index, selectedColor.value)
-    playDropSuccess()
+    playSoftClick()
     clearSelection()
     emit('grid-updated')
   } else {

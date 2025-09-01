@@ -13,12 +13,12 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'save'])
 
 // Use sound composable
-const { playClick, playDropSuccess } = useSound()
+const { playSubtleClick, playSoftClick } = useSound()
 
 const paletteTitle = ref('')
 
 const handleSavePalette = () => {
-  playDropSuccess()
+  playSoftClick()
   // Emit save event with title and close immediately
   emit('save', paletteTitle.value)
   emit('update:modelValue', false)
@@ -27,7 +27,7 @@ const handleSavePalette = () => {
 }
 
 const handleTitleInputFocus = () => {
-  playDropSuccess()
+  playSoftClick()
 }
 </script>
 

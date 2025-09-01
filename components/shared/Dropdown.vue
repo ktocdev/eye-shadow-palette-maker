@@ -17,14 +17,14 @@ const props = defineProps({
 const emit = defineEmits(['action'])
 
 // Use sound composable
-const { playDropSuccess } = useSound()
+const { playSoftClick } = useSound()
 
 const isOpen = ref(false)
 const dropdownRef = ref(null)
 
 // Toggle dropdown
 const toggle = () => {
-  playDropSuccess()
+  playSoftClick()
   isOpen.value = !isOpen.value
 }
 

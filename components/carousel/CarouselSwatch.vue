@@ -32,7 +32,7 @@ const props = defineProps({
 const emit = defineEmits(['swipe-left', 'swipe-right', 'click'])
 
 // Use sound composable
-const { playDragStart } = useSound()
+const { playUpSweep } = useSound()
 
 // Use color selection composable
 const { selectColor, isColorSelected, clearSelection } = useColorSelection()
@@ -52,7 +52,7 @@ const {
 } = useDragDrop({
   onSwipeLeft: () => emit('swipe-left'),
   onSwipeRight: () => emit('swipe-right'),
-  onDragStart: () => playDragStart(),
+  onDragStart: () => playUpSweep(),
   swipeThreshold: 50,
   swipeAngleThreshold: 30
 })

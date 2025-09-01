@@ -33,7 +33,7 @@ const emit = defineEmits(['palette-action'])
 const { getEffectClasses } = useColorEffects()
 
 // Use sound composable
-const { playDropSuccess, playDragOut } = useSound()
+const { playSoftClick, playDownSweep } = useSound()
 
 // Dropdown menu items - conditionally include delete and share based on props
 const dropdownItems = computed(() => {
@@ -57,9 +57,9 @@ const dropdownItems = computed(() => {
 const handleAction = (action) => {
   // Use different sounds for different actions
   if (action === 'delete') {
-    playDragOut() // Downward swoop for delete
+    playDownSweep() // Downward swoop for delete
   } else {
-    playDropSuccess() // Success drop for load, share, eye-preview
+    playSoftClick() // Success drop for load, share, eye-preview
   }
   
   if (!props.paletteData?.id) {

@@ -52,7 +52,7 @@ const emit = defineEmits([
 const appTitle = "Eyeshadow Palette Maker"
 
 // Use sound composable
-const { playDropSuccess } = useSound()
+const { playSoftClick } = useSound()
 
 // Use title editing composable
 const {
@@ -69,7 +69,7 @@ const updateInlineTitle = (event) => {
 const isInlineTitleFocused = ref(false)
 
 const handleInlineTitleFocus = () => {
-  playDropSuccess()
+  playSoftClick()
   isInlineTitleFocused.value = true
 }
 
@@ -84,21 +84,21 @@ const handleInlineTitleBlur = (event) => {
 
 const handleSaveInlineTitle = () => {
   if (props.inlinePaletteTitle.trim() && props.isGridFull) {
-    playDropSuccess()
+    playSoftClick()
     emit('inline-title-saved', props.inlinePaletteTitle.trim())
     isInlineTitleFocused.value = false
   }
 }
 
 const handleCancelInlineTitle = () => {
-  playDropSuccess()
+  playSoftClick()
   emit('inline-title-cancelled')
   isInlineTitleFocused.value = false
 }
 
 // Title editing handlers (moved from SwatchesExplorer)
 const handleStartTitleEdit = async (currentTitle) => {
-  playDropSuccess()
+  playSoftClick()
   startTitleEdit(currentTitle)
   emit('start-title-edit', currentTitle)
   // Focus the input after DOM update
@@ -109,7 +109,7 @@ const handleStartTitleEdit = async (currentTitle) => {
 }
 
 const handleSaveTitleEdit = () => {
-  playDropSuccess()
+  playSoftClick()
   const result = saveTitleEdit()
   if (result.success && result.hasChanged) {
     emit('title-saved', { oldTitle: props.loadedPaletteTitle, newTitle: result.newTitle })
@@ -117,7 +117,7 @@ const handleSaveTitleEdit = () => {
 }
 
 const handleCancelTitleEdit = () => {
-  playDropSuccess()
+  playSoftClick()
   cancelTitleEdit()
   emit('title-edit-cancelled')
 }

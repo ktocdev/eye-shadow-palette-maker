@@ -16,10 +16,10 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 // Use sound composable
-const { playDragOut } = useSound()
+const { playDownSweep } = useSound()
 
 const closeModal = () => {
-  playDragOut()
+  playDownSweep()
   emit('update:modelValue', false)
 }
 

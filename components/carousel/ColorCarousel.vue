@@ -29,19 +29,19 @@ const {
 } = useCarousel(computed(() => props.colors))
 
 // Use sound composable
-const { playNavigation } = useSound()
+const { playSharpClick } = useSound()
 
 // Handle arrow button clicks with sound
 const handlePrevClick = () => {
   if (canGoPrev.value) {
-    playNavigation() // Higher-pitched navigation sound
+    playSharpClick() // Higher-pitched navigation sound
     goToPrevPage()
   }
 }
 
 const handleNextClick = () => {
   if (canGoNext.value) {
-    playNavigation() // Higher-pitched navigation sound
+    playSharpClick() // Higher-pitched navigation sound
     goToNextPage()
   }
 }

@@ -18,7 +18,7 @@ const props = defineProps({
 const emit = defineEmits(['clear-swatch'])
 
 // Use sound composable
-const { playDragOut, playRemoval } = useSound()
+const { playDownSweep, playCrumple } = useSound()
 
 // Use color effects composable
 const { getEffectClass } = useColorEffects()
@@ -32,7 +32,7 @@ const {
   handleTouchMove: handleMiniTouchMove,
   handleTouchEnd: handleMiniTouchEnd
 } = useDragDrop({
-  onDragOut: () => playDragOut()
+  onDragOut: () => playDownSweep()
 })
 
 // Handle drag events with proper data
@@ -53,7 +53,7 @@ const onMiniSwatchDragEnd = (e) => {
   // If drag was not successful (dropped outside grid), remove this swatch
   if (!wasSuccessfulDrop) {
     console.log('PaletteSwatch dragged outside grid, removing:', props.colorData.colorName)
-    playRemoval() // Play paper crumple sound
+    playCrumple() // Play paper crumple sound
     emit('clear-swatch')
   }
 }
@@ -77,7 +77,7 @@ const onMiniSwatchTouchEnd = (e) => {
   // If touch ended outside grid, remove this swatch
   if (!gridCell) {
     console.log('PaletteSwatch touch ended outside grid, removing:', props.colorData.colorName)
-    playRemoval() // Play paper crumple sound
+    playCrumple() // Play paper crumple sound
     emit('clear-swatch')
   }
 }

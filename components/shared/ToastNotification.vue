@@ -32,12 +32,12 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'view-saved-palettes'])
 
 // Use sound composable
-const { playDropSuccess, playBell } = useSound()
+const { playSoftClick, playSoftBell } = useSound()
 
 const timeoutId = ref(null)
 
 const handleClose = () => {
-  playDropSuccess()
+  playSoftClick()
   if (timeoutId.value) {
     clearTimeout(timeoutId.value)
     timeoutId.value = null
@@ -54,7 +54,7 @@ const handleAction = () => {
 watch(() => props.modelValue, (isVisible) => {
   if (isVisible) {
     // Play bell sound when toast appears
-    playBell()
+    playSoftBell()
     
     // Clear any existing timeout
     if (timeoutId.value) {

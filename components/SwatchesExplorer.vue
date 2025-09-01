@@ -34,7 +34,7 @@ const {
 } = usePaletteStorage()
 
 // Use sound composable (only needed for carousel interactions now)  
-const { playClick } = useSound()
+const { playSubtleClick } = useSound()
 
 // Use title editing composable (only for state access, not handlers)
 const {

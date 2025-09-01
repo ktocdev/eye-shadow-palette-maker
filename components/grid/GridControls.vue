@@ -11,10 +11,10 @@ const props = defineProps({
 const emit = defineEmits(['size-change'])
 
 // Use sound composable
-const { playDragStart } = useSound()
+const { playUpSweep } = useSound()
 
 const handleSizeChange = (event) => {
-  playDragStart()
+  playUpSweep()
   emit('size-change', parseInt(event.target.value))
 }
 </script>
