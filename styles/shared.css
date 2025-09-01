@@ -314,7 +314,7 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 30px;
   height: 16px;
   background: transparent;
   z-index: 10;
@@ -347,7 +347,6 @@ h1, h2, h3, h4, h5, h6 {
 
 @media (min-width: 481px) {
   .palette-hinges {
-    padding: 0 30px;
     height: 18px;
     margin: -3px 0;
   }
@@ -366,7 +365,6 @@ h1, h2, h3, h4, h5, h6 {
 
 @media (min-width: 973px) {
   .palette-hinges {
-    padding: 0 40px;
     height: 20px;
     margin: -4px 0;
   }
@@ -429,7 +427,7 @@ h1, h2, h3, h4, h5, h6 {
    ========================================= */
 
 .app-header-container {
-  padding: 20px;
+  padding: 18px;
   background: var(--gradient-controls-container);
   border-radius: var(--radius-container-large);
   box-shadow: var(--shadow-controls-container);
@@ -452,12 +450,6 @@ h1, h2, h3, h4, h5, h6 {
   z-index: 2;
 }
 
-@media (min-width: 481px) {
-  .app-header-container {
-    padding: 25px;
-  }
-}
-
 @media (min-width: 600px) {
   .app-header-container__inner {
     gap: 24px;
@@ -465,9 +457,9 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-@media (min-width: 973px) {
+@media (min-width: 768px) {
   .app-header-container {
-    padding: 35px;
+    padding: 30px;
   }
   
   .app-header-container__inner {

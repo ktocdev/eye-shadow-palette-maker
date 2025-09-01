@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import BaseButton from './BaseButton.vue'
+import MiniPalette from './MiniPalette.vue'
 import { usePaletteExport } from '../../composables/usePaletteExport.js'
 import { usePaletteStorage } from '../../composables/usePaletteStorage.js'
 
@@ -126,7 +127,6 @@ const canShare = computed(() => {
 </script>
 
 <template>
-  <div class="share-palette-content">
     <div v-if="!paletteData" class="error-message">
       <p>⚠️ Palette not found.</p>
     </div>
@@ -154,6 +154,15 @@ const canShare = computed(() => {
       <p class="share-description">
         Choose how you'd like to share your "{{ actualTitle }}":
       </p>
+      
+      <!-- Palette Preview -->
+      <div class="palette-preview">
+        <MiniPalette 
+          :palette-data="paletteData"
+          :size="140"
+          :show-actions="false"
+        />
+      </div>
       
       <div class="share-buttons">
         <button 
@@ -203,21 +212,26 @@ const canShare = computed(() => {
         <p>🎨 Creating your palette image...</p>
       </div>
     </div>
-  </div>
 </template>
 
 <style scoped>
-.share-palette-content {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
+/* Container styles applied to modal-content by parent */
 
 .share-description {
   text-align: center;
   margin-bottom: 24px;
   color: var(--color-text-secondary);
   font-size: var(--font-size-base);
+}
+
+.palette-preview {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(139, 129, 165, 0.1);
+  border-radius: var(--radius-md);
 }
 
 .share-buttons {

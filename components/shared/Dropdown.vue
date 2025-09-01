@@ -189,6 +189,7 @@ onUnmounted(() => {
 .dropdown-label {
   font-family: var(--font-family-primary);
   font-weight: var(--font-weight-medium);
+  text-align: left;
 }
 
 /* Mobile adjustments */

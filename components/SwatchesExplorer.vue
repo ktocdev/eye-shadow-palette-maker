@@ -340,8 +340,6 @@ onMounted(() => {
         <div class="app-header-container">
           <div class="app-header-container__inner">
             <AppHeader
-              :show-app-info="showAppInfo"
-              :app-info-initially-open="appInfoInitiallyOpen"
               :show-inline-title-input="showInlineTitleInput"
               :show-loaded-palette-title="showLoadedPaletteTitle"
               :inline-palette-title="inlinePaletteTitle"

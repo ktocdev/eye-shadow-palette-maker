@@ -134,29 +134,26 @@ onMounted(() => {
   transform: scale(0.98);
 }
 
-/* Grid size specific cell styling - Desktop first */
-.grid-cell {
-  border-radius: var(--radius-xl);
-}
+/* Grid size specific cell styling - Mobile first */
 
-/* Desktop default sizes */
+/* Mobile base styles (smallest screens) */
 .grid-cell.size-2x2 {
-  min-height: 130px;
-  max-height: 182px;
+  min-height: 78px;
+  max-height: 117px;
 }
 
 .grid-cell.size-3x3 {
-  min-height: 104px;
-  max-height: 143px;
+  min-height: 59px;
+  max-height: 91px;
 }
 
 .grid-cell.size-4x4 {
-  min-height: 85px;
-  max-height: 124px;
+  min-height: 46px;
+  max-height: 78px;
 }
 
-/* Medium breakpoint - step down at 769px */
-@media (max-width: 768px) {
+/* Tablet breakpoint - step up at 481px */
+@media (min-width: 481px) {
   .grid-cell {
     border-radius: var(--radius-lg);
   }
@@ -177,21 +174,25 @@ onMounted(() => {
   }
 }
 
-/* Mobile breakpoint - smallest sizes at 480px */
-@media (max-width: 480px) {
+/* Desktop breakpoint - largest sizes at 769px */
+@media (min-width: 769px) {
+  .grid-cell {
+    border-radius: var(--radius-xl);
+  }
+
   .grid-cell.size-2x2 {
-    min-height: 78px;
-    max-height: 117px;
+    min-height: 130px;
+    max-height: 182px;
   }
 
   .grid-cell.size-3x3 {
-    min-height: 59px;
-    max-height: 91px;
+    min-height: 104px;
+    max-height: 143px;
   }
 
   .grid-cell.size-4x4 {
-    min-height: 46px;
-    max-height: 78px;
+    min-height: 85px;
+    max-height: 124px;
   }
 }
 </style>

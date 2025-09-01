@@ -32,6 +32,7 @@
   --font-weight-black: 900;
   
   /* Line Heights */
+  --line-height-very-tight: 1;
   --line-height-tight: 1.1;
   --line-height-snug: 1.25;
   --line-height-normal: 1.5;

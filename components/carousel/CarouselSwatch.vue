@@ -114,7 +114,7 @@ const onTouchEnd = (e) => handleTouchEnd(e)
 <style>
 .carousel-swatch-block {
   width: 50px;
-  height: 80px;
+  height: 95px;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -153,8 +153,28 @@ const onTouchEnd = (e) => handleTouchEnd(e)
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
   line-height: var(--line-height-tight);
-  white-space: normal;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
   word-wrap: break-word;
+}
+
+/* Mobile constraints below 600px */
+@media (max-width: 599px) {
+  .carousel-color-name {
+    max-height: 28px;
+    max-width: 55px;
+  }
+}
+
+/* Desktop - allow unlimited lines above 600px */
+@media (min-width: 600px) {
+  .carousel-color-name {
+    line-clamp: unset;
+    max-height: none;
+  }
 }
 
 .carousel-hex-code {
@@ -169,7 +189,6 @@ const onTouchEnd = (e) => handleTouchEnd(e)
 @container (min-width: 400px) and (max-width: 540px) {
   .carousel-swatch-block {
     width: 55px;
-    height: 85px;
   }
   
   .carousel-swatch {
@@ -181,7 +200,7 @@ const onTouchEnd = (e) => handleTouchEnd(e)
 @container (min-width: 540px) and (max-width: 650px) {
   .carousel-swatch-block {
     width: 65px;
-    height: 95px;
+    height: 105px;
   }
   
   .carousel-swatch {
@@ -210,7 +229,7 @@ const onTouchEnd = (e) => handleTouchEnd(e)
 @container (min-width: 1024px) {
   .carousel-swatch-block {
     width: 90px;
-    height: 120px;
+    height: 140px;
   }
   
   .carousel-swatch {
@@ -232,7 +251,7 @@ const onTouchEnd = (e) => handleTouchEnd(e)
 @container (min-width: 1440px) {
   .carousel-swatch-block {
     width: 110px;
-    height: 160px;
+    height: 170px;
   }
   
   .carousel-swatch {

@@ -15,6 +15,10 @@ const props = defineProps({
   showDelete: {
     type: Boolean,
     default: true
+  },
+  showActions: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -28,7 +32,7 @@ const dropdownItems = computed(() => {
   const items = [
     { label: 'Load Palette', icon: '', action: 'load' },
     { label: 'Eye Preview', icon: '', action: 'eye-preview' },
-    { label: 'Share Palette', icon: '', action: 'share' }
+    { label: 'Share', icon: '', action: 'share' }
   ]
   
   if (props.showDelete) {
@@ -108,7 +112,7 @@ const gridColumns = computed(() => {
         }"
         />
       </div>
-      <div class="mini-palette-actions">
+      <div v-if="showActions" class="mini-palette-actions">
         <Dropdown 
           :items="dropdownItems" 
           position="bottom-right"

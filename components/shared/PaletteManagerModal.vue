@@ -77,7 +77,8 @@ const handleClose = (isOpen) => {
         @click="goBackToSaved"
         class="back-button"
       >
-        ← Back to All Saved Palettes
+        <span class="back-text-mobile">← Saved Palettes</span>
+        <span class="back-text-desktop">← Back to All Saved Palettes</span>
       </button>
       <h2>{{ getModalTitle() }}</h2>
     </div>
@@ -88,7 +89,7 @@ const handleClose = (isOpen) => {
     </div>
     
     <!-- Content area -->
-    <div class="modal-content">
+    <div class="tab-content">
       <!-- Saved Palettes Grid -->
       <SavedPalettesGrid 
         v-if="modalState.currentTab === 'saved'" 
@@ -169,7 +170,29 @@ const handleClose = (isOpen) => {
   color: var(--color-text-primary);
 }
 
-.modal-content {
+.tab-content {
   min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Mobile-first responsive back button text */
+.back-text-mobile {
+  display: inline;
+}
+
+.back-text-desktop {
+  display: none;
+}
+
+@media (min-width: 480px) {
+  .back-text-mobile {
+    display: none;
+  }
+  
+  .back-text-desktop {
+    display: inline;
+  }
 }
 </style>

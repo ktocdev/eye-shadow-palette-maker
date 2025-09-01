@@ -140,10 +140,16 @@ const handleSwatchClick = (colorData) => {
 
 .carousel-container {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 8px;
-  width: min-content;
   margin: auto;
+}
+
+@container (min-width: 768px) {
+  .carousel-container {
+    width: min-content;
+    align-items: center;
+  }
 }
 
 .carousel-arrow {

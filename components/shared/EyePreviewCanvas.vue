@@ -36,6 +36,13 @@ const canvasElement = ref(null)
 const activeColorIndex = ref(0)
 const paletteColors = ref([])
 
+// Color selection from palette
+const handleColorSelect = (colorData, index) => {
+  selectColor(colorData)
+  activeColorIndex.value = index
+  selectedColor.value = colorData
+}
+
 // Load palette data when paletteId changes
 watch(() => props.paletteId, (paletteId) => {
   if (paletteId) {
@@ -46,10 +53,13 @@ watch(() => props.paletteId, (paletteId) => {
       console.log('EyePreviewCanvas loaded palette:', palette.title, 'with colors:', paletteColors.value.length)
       if (paletteColors.value.length > 0) {
         console.log('First color example:', paletteColors.value[0])
+        // Auto-select first color
+        handleColorSelect(paletteColors.value[0], 0)
       }
     } else {
       console.error('Palette not found:', paletteId)
       paletteColors.value = []
+      activeColorIndex.value = 0
     }
   }
 }, { immediate: true })
@@ -127,11 +137,48 @@ const handleCanvasMouseUp = () => {
   stopDrawing()
 }
 
-// Color selection from palette
-const handleColorSelect = (colorData, index) => {
-  selectColor(colorData)
-  activeColorIndex.value = index
-  selectedColor.value = colorData
+// Handle canvas touch events for mobile
+const handleCanvasTouchStart = (event) => {
+  event.preventDefault() // Prevent scrolling/zooming
+  if (!canvasElement.value || !globalSelectedColor.value) return
+  
+  const touch = event.touches[0]
+  const rect = canvasElement.value.getBoundingClientRect()
+  const x = touch.clientX - rect.left
+  const y = touch.clientY - rect.top
+  
+  // Adjust for canvas scaling
+  const scaleX = canvasElement.value.width / rect.width
+  const scaleY = canvasElement.value.height / rect.height
+  
+  const canvasX = x * scaleX
+  const canvasY = y * scaleY
+  
+  startDrawing(canvasX, canvasY)
+}
+
+const handleCanvasTouchMove = (event) => {
+  event.preventDefault() // Prevent scrolling while drawing
+  if (!canvasElement.value) return
+  
+  const touch = event.touches[0]
+  const rect = canvasElement.value.getBoundingClientRect()
+  const x = touch.clientX - rect.left
+  const y = touch.clientY - rect.top
+  
+  // Adjust for canvas scaling
+  const scaleX = canvasElement.value.width / rect.width
+  const scaleY = canvasElement.value.height / rect.height
+  
+  const canvasX = x * scaleX
+  const canvasY = y * scaleY
+  
+  continueDrawing(canvasX, canvasY)
+}
+
+const handleCanvasTouchEnd = (event) => {
+  event.preventDefault()
+  stopDrawing()
 }
 
 // Brush control handlers
@@ -145,9 +192,8 @@ const setBrushOpacity = (opacity) => {
 </script>
 
 <template>
-  <div class="eye-preview-content">
     <p class="eye-preview-description">
-      Select a color from your palette, then click and drag on the eye to paint eyeshadow.
+      Select a color from your palette, then click and drag (or touch and drag) on the eye to paint eyeshadow.
     </p>
     
     <!-- Main eye preview area -->
@@ -159,6 +205,9 @@ const setBrushOpacity = (opacity) => {
         @mousemove="handleCanvasMouseMove"
         @mouseup="handleCanvasMouseUp"
         @mouseleave="handleCanvasMouseUp"
+        @touchstart="handleCanvasTouchStart"
+        @touchmove="handleCanvasTouchMove"
+        @touchend="handleCanvasTouchEnd"
       ></canvas>
     </div>
     
@@ -221,26 +270,21 @@ const setBrushOpacity = (opacity) => {
       <!-- Action buttons -->
       <div class="action-buttons-section">
         <div class="action-buttons">
-          <button 
+          <BaseButton
             @click="clearAllColors"
             :disabled="!hasAnyColors"
-            class="action-btn danger"
-            :class="{ 'disabled': !hasAnyColors }"
+            variant="red"
+            size="compact"
           >
             Clear All
-          </button>
+          </BaseButton>
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <style scoped>
-.eye-preview-content {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
+/* Container styles applied to modal-content by parent */
 
 .eye-preview-description {
   text-align: center;
@@ -379,30 +423,6 @@ const setBrushOpacity = (opacity) => {
   justify-content: center;
 }
 
-.action-btn {
-  padding: 10px 20px;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  border: 1px solid;
-}
-
-.action-btn.danger {
-  background: rgba(220, 53, 69, 0.1);
-  border-color: rgba(220, 53, 69, 0.2);
-  color: #dc3545;
-}
-
-.action-btn.danger:hover:not(.disabled) {
-  background: rgba(220, 53, 69, 0.2);
-}
-
-.action-btn.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
 
 @media (min-width: 600px) {
   .eye-controls {
