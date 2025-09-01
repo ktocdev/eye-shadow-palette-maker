@@ -114,14 +114,19 @@ const handleSwatchClick = (colorData) => {
   box-shadow: var(--shadow-carousel);
   border: var(--border-container);
   padding: var(--font-size-base);
-  /* container-type: inline-size; */
-  /* max-width: 600px; */
-  /* width: max-content; */
   min-width: 280px;
 }
 
-/* Mobile-first responsive sizing */
-@media (max-width: 480px) {
+@media (max-width: 400px) {
+  .color-carousel {
+    width: 100%;
+    max-width: none;
+    min-width: auto;
+    padding: 12px;
+  }
+}
+
+@media (min-width: 401px) and (max-width: 480px) {
   .color-carousel {
     max-width: calc(100vw - 40px);
     min-width: 260px;
@@ -154,9 +159,10 @@ const handleSwatchClick = (colorData) => {
 
 .carousel-container {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: 8px;
   margin: auto;
+  height: auto;
 }
 
 @container (min-width: 768px) {
@@ -192,9 +198,9 @@ const handleSwatchClick = (colorData) => {
   display: flex;
   gap: 6px;
   flex: 1;
-  justify-content: center;
-  min-height: 80px;
+  justify-content: flex-start;
   align-items: flex-start;
+  height: auto;
 }
 
 @container (min-width: 1024px) {
@@ -203,7 +209,6 @@ const handleSwatchClick = (colorData) => {
   }
   
   .carousel-swatches {
-    min-height: 140px;
     gap: 15px;
   }
 

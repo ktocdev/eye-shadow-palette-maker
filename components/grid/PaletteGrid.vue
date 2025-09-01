@@ -18,6 +18,10 @@ const props = defineProps({
   gridSize: {
     type: Number,
     default: 4
+  },
+  activeCellIndex: {
+    type: Number,
+    default: null
   }
 })
 
@@ -105,7 +109,6 @@ const handleCellClick = (index, event) => {
   }
 }
 
-
 // Handle touch drop events
 const handleTouchDrop = (e) => {
   const { dragData, targetCell, isFromGrid } = e.detail
@@ -145,7 +148,8 @@ defineExpose({
   generateRandomPalette,
   getOccupiedCells,
   importGridData,
-  changeGridSize
+  changeGridSize,
+  setCellData
 })
 </script>
 
@@ -161,6 +165,7 @@ defineExpose({
       :index="cell.index"
       :color-data="cell.colorData"
       :grid-size="gridSize"
+      :is-active="activeCellIndex === cell.index"
       @drop="handleCellDrop"
       @clear-cell="handleCellClear"
       @cell-click="handleCellClick"

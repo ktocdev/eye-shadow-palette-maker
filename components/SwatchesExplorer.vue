@@ -19,6 +19,7 @@ import { usePaletteState } from '../composables/usePaletteState.js'
 import { usePaletteStorage } from '../composables/usePaletteStorage.js'
 import { useSound } from '../composables/useSound.js'
 import { useTitleEditing } from '../composables/useTitleEditing.js'
+import { useColorSelection } from '../composables/useColorSelection.js'
 
 // Use composables
 const { palette, allColors } = useColorData()
@@ -36,6 +37,9 @@ const {
 // Use sound composable (only needed for carousel interactions now)  
 const { playSubtleClick } = useSound()
 
+// Use color selection composable
+const { clearSelection } = useColorSelection()
+
 // Use title editing composable (only for state access, not handlers)
 const {
   isEditingTitle,
@@ -52,6 +56,7 @@ const currentGridSize = ref(2)
 const showCarousel = ref(false)
 const carouselPosition = ref({ top: 0, left: 0 })
 const carouselRef = ref(null)
+const targetCellIndex = ref(null) // Track which cell opened the carousel
 
 // Modal states
 const showSavePaletteModal = ref(false)
@@ -262,15 +267,25 @@ const handleLoadPalette = (paletteId) => {
   gridChangeTracker.value++
 }
 
-// Handle carousel swatch click - selection is handled by CarouselSwatch directly
+// Handle carousel swatch click - automatically place color in target cell
 const handleSwatchClick = (colorData) => {
-  // Hide carousel after color selection
-  showCarousel.value = false
+  // If we have a target cell, automatically place the color there
+  if (targetCellIndex.value !== null && paletteGridRef.value) {
+    paletteGridRef.value.setCellData(targetCellIndex.value, colorData)
+    // Don't clear targetCellIndex - keep it for repeat placements in same cell
+  }
+  
+  // Keep carousel open for continued interaction
+  // Reset color selection state so user can pick new colors
+  clearSelection()
 }
 
 // Handle grid cell click - show carousel positioned near the clicked cell
 const handleGridCellClick = (cellIndex, cellRect) => {
   console.log('Grid cell clicked:', cellIndex, cellRect)
+  
+  // Store which cell opened the carousel for automatic placement
+  targetCellIndex.value = cellIndex
   
   if (cellRect) {
     // Get viewport dimensions
@@ -286,7 +301,7 @@ const handleGridCellClick = (cellIndex, cellRect) => {
     
     if (isMobile) {
       // On mobile, center carousel horizontally and position below/above cell
-      left = Math.max(20, (viewportWidth - carouselWidth) / 2)
+      left = 0
       
       // Try to position below the cell first
       if (cellRect.bottom + carouselHeight + 20 < viewportHeight) {
@@ -332,6 +347,8 @@ const handleDocumentClick = (event) => {
   
   // Hide carousel when clicking elsewhere
   showCarousel.value = false
+  // Reset target cell index when carousel is closed
+  targetCellIndex.value = null
 }
 
 // Track grid changes for reactivity
@@ -455,6 +472,7 @@ onUnmounted(() => {
             :colors="allColors"
             :initial-grid-size="2"
             :grid-size="currentGridSize"
+            :active-cell-index="showCarousel ? targetCellIndex : null"
             @grid-size-change="handleGridSizeChange"
             @grid-updated="updateGridTracker"
             @grid-cell-click="handleGridCellClick"

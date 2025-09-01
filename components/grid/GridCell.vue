@@ -17,6 +17,10 @@ const props = defineProps({
   gridSize: {
     type: Number,
     required: true
+  },
+  isActive: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -77,7 +81,8 @@ onMounted(() => {
     :class="[
       { 
         occupied: !!colorData,
-        'can-receive': canReceiveColor
+        'can-receive': canReceiveColor,
+        active: isActive
       },
       `size-${gridSize}x${gridSize}`
     ]"
@@ -88,6 +93,7 @@ onMounted(() => {
       v-if="colorData"
       :color-data="colorData"
       :grid-size="gridSize"
+      :is-active="isActive"
       @clear-swatch="emit('clear-cell', props.index)"
     />
   </div>
@@ -105,10 +111,18 @@ onMounted(() => {
   justify-content: center;
   transition: all 0.2s ease;
   position: relative;
+  cursor: pointer;
+}
+
+.grid-cell:hover {
+  box-shadow: var(--shadow-grid-cell-hover);
+  transform: translateY(-2px) scale(1.01);
+  border: 2px solid var(--color-purple-light);
 }
 
 .grid-cell.drag-over {
   background: var(--gradient-container-hover);
+  border: 2px solid var(--color-purple-light);
   box-shadow: var(--shadow-grid-cell-hover);
   transform: scale(1.02);
 }
@@ -118,19 +132,28 @@ onMounted(() => {
   background: transparent;
 }
 
+.grid-cell.active:not(.occupied) {
+  box-shadow: var(--shadow-grid-cell-hover);
+  transform: translateY(-2px) scale(1.01);
+  border: 2px solid var(--color-purple-light);
+}
+
+
 .grid-cell.can-receive {
   cursor: pointer;
-  border: 2px dashed rgba(188, 179, 222, 0.5);
+  /* border: 2px solid var(--color-purple-light); */
 }
 
 .grid-cell.can-receive:not(.occupied) {
   background: var(--gradient-container-hover);
   box-shadow: var(--shadow-grid-cell-hover);
+  /* border: 2px solid var(--color-purple-light); */
 }
 
 .grid-cell.can-receive.occupied {
   opacity: 0.8;
   transform: scale(0.98);
+  /* border: 2px solid var(--color-purple-light); */
 }
 
 /* Grid size specific cell styling - Mobile first */

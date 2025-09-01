@@ -114,11 +114,12 @@ const onTouchEnd = (e) => handleTouchEnd(e)
 <style>
 .carousel-swatch-block {
   width: 50px;
-  height: 95px;
+  /* height: 95px; */
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
 }
 
 .carousel-swatch {

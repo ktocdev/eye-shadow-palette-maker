@@ -12,6 +12,10 @@ const props = defineProps({
   gridSize: {
     type: Number,
     required: true
+  },
+  isActive: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -88,7 +92,10 @@ const onMiniSwatchTouchEnd = (e) => {
     <div 
       class="palette-swatch"
       :class="[
-        { 'dark-palette-swatch': colorData.isDark },
+        { 
+          'dark-palette-swatch': colorData.isDark,
+          'active': isActive
+        },
         getEffectClass(colorData.effect),
         `size-${gridSize}x${gridSize}`
       ]"
@@ -121,6 +128,19 @@ const onMiniSwatchTouchEnd = (e) => {
   cursor: grab;
   position: relative;
   box-shadow: var(--shadow-swatch);
+  transition: all 0.2s ease;
+}
+
+.palette-swatch:hover {
+  box-shadow: var(--shadow-grid-cell-hover);
+  transform: translateY(-2px) scale(1.01);
+  border: 2px solid var(--color-purple-light);
+}
+
+.palette-swatch.active {
+  box-shadow: var(--shadow-grid-cell-hover);
+  transform: translateY(-2px) scale(1.01);
+  border: 2px solid var(--color-purple-light);
 }
 
 .palette-swatch:active {
@@ -134,11 +154,9 @@ const onMiniSwatchTouchEnd = (e) => {
 
 .palette-color-name {
   font-family: var(--font-family-primary);
-  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-normal);
   color: var(--color-text-primary);
   text-align: center;
-  padding: 4px;
   pointer-events: none;
   position: absolute;
   top: 50%;
@@ -152,52 +170,55 @@ const onMiniSwatchTouchEnd = (e) => {
   color: #f8f9fa;
 }
 
-/* Desktop default styles */
+/* Mobile first - base styles (smallest screens) */
 .palette-color-name.text-2x2 {
-  font-size: var(--font-size-base);
-  padding: 8px;
+  font-size: var(--font-size-xs);
+  padding: 2px;
 }
 
 .palette-color-name.text-3x3 {
-  font-size: var(--font-size-sm);
-  padding: 6px;
+  font-size: var(--font-size-xs);
+  padding: 2px;
 }
 
 .palette-color-name.text-4x4 {
-  font-size: var(--font-size-sm);
-  padding: 5px;
+  font-size: var(--font-size-xs);
+  padding: 2px;
 }
 
-/* Medium breakpoint - step down at 769px */
-@media (max-width: 768px) {
+/* Tablet breakpoint - step up at 481px */
+@media (min-width: 481px) {
   .palette-color-name.text-2x2 {
     font-size: var(--font-size-sm);
-    padding: 6px;
-  }
-  
-  .palette-color-name.text-3x3 {
-    font-size: var(--font-size-xs);
-    padding: 5px;
-  }
-  
-  .palette-color-name.text-4x4 {
-    font-size: var(--font-size-xs);
-    padding: 4px;
-  }
-}
-
-/* Mobile breakpoint - smallest sizes at 480px */
-@media (max-width: 480px) {
-  .palette-color-name.text-2x2 {
     padding: 4px;
   }
   
   .palette-color-name.text-3x3 {
+    font-size: var(--font-size-xs);
     padding: 3px;
   }
   
   .palette-color-name.text-4x4 {
-    padding: 2px;
+    font-size: var(--font-size-xs);
+    padding: 3px;
+  }
+}
+
+/* Desktop breakpoint - largest sizes at 769px */
+@media (min-width: 769px) {
+  .palette-color-name.text-2x2 {
+    font-size: var(--font-size-base);
+    padding: 8px;
+  }
+  
+  .palette-color-name.text-3x3 {
+    font-size: var(--font-size-sm);
+    padding: 6px;
+  }
+  
+  .palette-color-name.text-4x4 {
+    font-size: var(--font-size-sm);
+    padding: 5px;
   }
 }
 </style>
