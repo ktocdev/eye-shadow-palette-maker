@@ -109,16 +109,30 @@ const handleSwatchClick = (colorData) => {
 
 <style>
 .color-carousel {
-  position: sticky;
-  top: 0;
-  z-index: 100;
   background: var(--gradient-container-primary);
   border-radius: var(--radius-container-large);
   box-shadow: var(--shadow-carousel);
   border: var(--border-container);
-  border-top: none;
   padding: var(--font-size-base);
-  container-type: inline-size;
+  /* container-type: inline-size; */
+  /* max-width: 600px; */
+  /* width: max-content; */
+  min-width: 280px;
+}
+
+/* Mobile-first responsive sizing */
+@media (max-width: 480px) {
+  .color-carousel {
+    max-width: calc(100vw - 40px);
+    min-width: 260px;
+    padding: 12px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .color-carousel {
+    max-width: 500px;
+  }
 }
 
 .carousel-left {

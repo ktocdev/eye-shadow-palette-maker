@@ -34,10 +34,9 @@ const canReceiveColor = computed(() => {
 })
 
 // Handle cell click
-const handleCellClick = () => {
-  if (canReceiveColor.value) {
-    emit('cell-click', props.index)
-  }
+const handleCellClick = (event) => {
+  // Always emit cell click (either for color placement or carousel showing)
+  emit('cell-click', props.index, event)
 }
 
 // Single instance of drag drop composable

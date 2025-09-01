@@ -1,5 +1,6 @@
 <script setup>
 import BaseButton from './BaseButton.vue'
+import { useSound } from '../../composables/useSound.js'
 
 const props = defineProps({
   hasSavedPalettes: {
@@ -21,6 +22,35 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['clear', 'randomize', 'open-save-modal', 'view-saved-palettes', 'open-about-modal'])
+
+// Use sound composable
+const { playClick, playDropSuccess } = useSound()
+
+// Handle button clicks with sound
+const handleSaveClick = () => {
+  playDropSuccess()
+  emit('open-save-modal')
+}
+
+const handleClearClick = () => {
+  playClick()
+  emit('clear')
+}
+
+const handleViewSavedClick = () => {
+  playDropSuccess()
+  emit('view-saved-palettes')
+}
+
+const handleRandomizeClick = () => {
+  playDropSuccess()
+  emit('randomize')
+}
+
+const handleAboutClick = () => {
+  playDropSuccess()
+  emit('open-about-modal')
+}
 </script>
 
 <template>
@@ -29,7 +59,7 @@ const emit = defineEmits(['clear', 'randomize', 'open-save-modal', 'view-saved-p
       variant="green"
       size="standard"
       :disabled="!canSave"
-      @click="$emit('open-save-modal')"
+      @click="handleSaveClick"
     >
       Save Palette
     </BaseButton>
@@ -37,7 +67,7 @@ const emit = defineEmits(['clear', 'randomize', 'open-save-modal', 'view-saved-p
       variant="red"
       size="standard"
       :disabled="!hasColors"
-      @click="$emit('clear')"
+      @click="handleClearClick"
     >
       Clear Palette
     </BaseButton>
@@ -45,21 +75,21 @@ const emit = defineEmits(['clear', 'randomize', 'open-save-modal', 'view-saved-p
       variant="blue"
       size="standard"
       :disabled="!hasSavedPalettes"
-      @click="$emit('view-saved-palettes')"
+      @click="handleViewSavedClick"
     >
       View Saved Palettes
     </BaseButton>
     <BaseButton 
       variant="purple"
       size="standard"
-      @click="$emit('randomize')"
+      @click="handleRandomizeClick"
     >
       Random Palette
     </BaseButton>
     <BaseButton 
       variant="orange"
       size="standard"
-      @click="$emit('open-about-modal')"
+      @click="handleAboutClick"
     >
       About
     </BaseButton>

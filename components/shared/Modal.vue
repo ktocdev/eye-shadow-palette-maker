@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, onUnmounted, watch } from 'vue'
+import { useSound } from '../../composables/useSound.js'
 
 const props = defineProps({
   modelValue: {
@@ -14,7 +15,11 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
+// Use sound composable
+const { playDragOut } = useSound()
+
 const closeModal = () => {
+  playDragOut()
   emit('update:modelValue', false)
 }
 

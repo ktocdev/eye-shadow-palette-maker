@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue'
+import { useSound } from '../../composables/useSound.js'
 
 const props = defineProps({
   modelValue: {
@@ -30,9 +31,13 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'view-saved-palettes'])
 
+// Use sound composable
+const { playDropSuccess, playBell } = useSound()
+
 const timeoutId = ref(null)
 
 const handleClose = () => {
+  playDropSuccess()
   if (timeoutId.value) {
     clearTimeout(timeoutId.value)
     timeoutId.value = null
@@ -48,6 +53,9 @@ const handleAction = () => {
 // Auto-dismiss timer
 watch(() => props.modelValue, (isVisible) => {
   if (isVisible) {
+    // Play bell sound when toast appears
+    playBell()
+    
     // Clear any existing timeout
     if (timeoutId.value) {
       clearTimeout(timeoutId.value)

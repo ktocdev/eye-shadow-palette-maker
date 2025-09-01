@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, computed } from 'vue'
+import { reactive, computed, watch } from 'vue'
 import Modal from './Modal.vue'
 // Import tab components
 import SavedPalettesGrid from './SavedPalettesGrid.vue'
@@ -10,6 +10,14 @@ const props = defineProps({
   modelValue: {
     type: Boolean,
     default: false
+  },
+  initialTab: {
+    type: String,
+    default: 'saved'
+  },
+  initialPaletteId: {
+    type: String,
+    default: null
   }
 })
 
@@ -17,9 +25,18 @@ const emit = defineEmits(['update:modelValue', 'load-palette'])
 
 // Modal state
 const modalState = reactive({
-  currentTab: 'saved', // Always starts on saved palettes
-  selectedPaletteId: null,
+  currentTab: props.initialTab || 'saved',
+  selectedPaletteId: props.initialPaletteId || null,
   previousTab: null // Track navigation history
+})
+
+// Watch for prop changes to update modal state
+watch(() => [props.initialTab, props.initialPaletteId, props.modelValue], ([newTab, newPaletteId, isOpen]) => {
+  if (isOpen) {
+    // Only update when modal is opening
+    modalState.currentTab = newTab || 'saved'
+    modalState.selectedPaletteId = newPaletteId || null
+  }
 })
 
 // Navigation methods

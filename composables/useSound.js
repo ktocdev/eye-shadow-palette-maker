@@ -263,6 +263,57 @@ export function useSound() {
   }
 
   /**
+   * Play a clear sweet bell sound for notifications
+   */
+  const playBell = () => {
+    if (!isEnabled.value) return
+    
+    initAudioContext()
+    if (!audioContext.value) return
+    
+    // Create a bell-like sound using multiple sine waves (harmonics)
+    const duration = 0.8 // 800ms for a nice bell resonance
+    const fundamentalFreq = 880 // A5 - sweet, clear frequency
+    
+    // Create multiple oscillators for bell harmonics
+    const oscillators = []
+    const gainNodes = []
+    
+    // Bell harmonics with much softer amplitudes
+    const harmonics = [
+      { freq: fundamentalFreq, amp: 0.08 },      // Fundamental - much softer
+      { freq: fundamentalFreq * 2, amp: 0.05 },   // Octave
+      { freq: fundamentalFreq * 3, amp: 0.03 },   // Perfect fifth
+      { freq: fundamentalFreq * 4, amp: 0.015 },  // Second octave
+      { freq: fundamentalFreq * 5, amp: 0.008 }   // Major third
+    ]
+    
+    harmonics.forEach((harmonic, index) => {
+      const oscillator = audioContext.value.createOscillator()
+      const gainNode = audioContext.value.createGain()
+      
+      oscillator.connect(gainNode)
+      gainNode.connect(audioContext.value.destination)
+      
+      // Use sine wave for pure bell tone
+      oscillator.type = 'sine'
+      oscillator.frequency.setValueAtTime(harmonic.freq, audioContext.value.currentTime)
+      
+      // Bell-like envelope - quick attack, slow decay with slight resonance
+      gainNode.gain.setValueAtTime(0, audioContext.value.currentTime)
+      gainNode.gain.linearRampToValueAtTime(harmonic.amp, audioContext.value.currentTime + 0.01)
+      gainNode.gain.exponentialRampToValueAtTime(harmonic.amp * 0.5, audioContext.value.currentTime + 0.1)
+      gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.value.currentTime + duration)
+      
+      oscillator.start(audioContext.value.currentTime)
+      oscillator.stop(audioContext.value.currentTime + duration)
+      
+      oscillators.push(oscillator)
+      gainNodes.push(gainNode)
+    })
+  }
+
+  /**
    * Play a subtle click sound
    */
   const playClick = () => {
@@ -298,6 +349,7 @@ export function useSound() {
     playRemoval,
     playNavigation,
     playClick,
+    playBell,
     createBeep,
     toggleSound,
     enableSound,

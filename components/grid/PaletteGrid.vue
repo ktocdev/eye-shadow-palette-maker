@@ -21,7 +21,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['grid-size-change', 'grid-updated'])
+const emit = defineEmits(['grid-size-change', 'grid-updated', 'grid-cell-click'])
 
 // Use palette grid composable
 const {
@@ -90,15 +90,19 @@ const handleGridSizeChange = (newSize) => {
   emit('grid-size-change', newSize)
 }
 
-// Handle cell click for placing selected colors
-const handleCellClick = (index) => {
-  if (!hasSelection.value) return
-  
-  // Place the selected color in the clicked cell (allow replacing existing colors)
-  setCellData(index, selectedColor.value)
-  playDropSuccess()
-  clearSelection()
-  emit('grid-updated')
+// Handle cell click for showing carousel or placing selected colors
+const handleCellClick = (index, event) => {
+  if (hasSelection.value) {
+    // Place the selected color in the clicked cell (allow replacing existing colors)
+    setCellData(index, selectedColor.value)
+    playDropSuccess()
+    clearSelection()
+    emit('grid-updated')
+  } else {
+    // No color selected - emit grid-cell-click to show carousel
+    const cellRect = event?.target?.getBoundingClientRect()
+    emit('grid-cell-click', index, cellRect)
+  }
 }
 
 
