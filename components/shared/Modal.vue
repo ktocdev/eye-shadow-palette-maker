@@ -102,7 +102,6 @@ watch(() => props.modelValue, (isOpen) => {
   position: relative;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
 }
 
 .modal-close {
@@ -141,7 +140,7 @@ watch(() => props.modelValue, (isOpen) => {
 }
 
 .modal-inner-content h2 {
-  margin-bottom: 24px;
+  margin: 0 36px 0 0;
   color: var(--color-text-primary);
 }
 
@@ -194,6 +193,10 @@ watch(() => props.modelValue, (isOpen) => {
   
   .modal-content {
     box-shadow: var(--shadow-grid-container-desktop);
+  }
+
+  .modal-inner-content h2 {
+    margin: 0 48px 0 0;
   }
   
   .modal-close {

@@ -8,10 +8,10 @@ import PaletteGrid from './grid/PaletteGrid.vue'
 import PaletteControls from './shared/PaletteControls.vue'
 import AppHeader from './AppHeader.vue'
 import SavePaletteModal from './shared/SavePaletteModal.vue'
-import SavedPalettesModal from './shared/SavedPalettesModal.vue'
+import PaletteManagerModal from './shared/PaletteManagerModal.vue'
 import AboutModal from './shared/AboutModal.vue'
-import ShareModal from './shared/ShareModal.vue'
-import EyePreviewModal from './shared/EyePreviewModal.vue'
+import LoaderOverlay from './shared/LoaderOverlay.vue'
+import ToastNotification from './shared/ToastNotification.vue'
 
 // Composables
 import { useColorData } from '../composables/useColorData.js'
@@ -28,7 +28,8 @@ const {
   loadSavedPalettes,
   savePalette,
   deletePalette,
-  updatePaletteTitle
+  updatePaletteTitle,
+  findPaletteById
 } = usePaletteStorage()
 
 const {
@@ -47,11 +48,14 @@ const currentGridSize = ref(2)
 
 // Modal states
 const showSavePaletteModal = ref(false)
-const showSavedPalettesModal = ref(false)
+const showPaletteManager = ref(false)
 const showAboutModal = ref(false)
-const showShareModal = ref(false)
-const showEyePreviewModal = ref(false)
 const savedPaletteData = ref(null)
+
+// Loader and toast states
+const showLoader = ref(false)
+const showToast = ref(false)
+const savedPaletteTitle = ref('')
 
 // Handle grid size changes
 const handleGridSizeChange = (newSize) => {
@@ -88,7 +92,12 @@ const handleOpenSaveModal = () => {
 
 const handleViewSavedPalettes = () => {
   showSavePaletteModal.value = false
-  showSavedPalettesModal.value = true
+  showPaletteManager.value = true
+}
+
+// Handle toast action
+const handleToastViewSavedPalettes = () => {
+  showPaletteManager.value = true
 }
 
 // Handle save palette modal close
@@ -102,29 +111,6 @@ const handleOpenAboutModal = () => {
   showAboutModal.value = true
 }
 
-const handleOpenShareModal = (paletteData = null) => {
-  if (paletteData) {
-    // Sharing a saved palette - set the saved palette data for the modal
-    savedPaletteData.value = paletteData
-  } else {
-    // Clear saved palette data when sharing current palette
-    savedPaletteData.value = null
-  }
-  showShareModal.value = true
-}
-
-const handleOpenEyePreview = (paletteData = null) => {
-  if (paletteData) {
-    // Eye preview for a saved palette - set the saved palette data for the modal
-    console.log('Opening eye preview for saved palette:', paletteData)
-    savedPaletteData.value = paletteData
-  } else {
-    // Clear saved palette data when previewing current palette
-    console.log('Opening eye preview with current gridData:', gridData.value)
-    savedPaletteData.value = null
-  }
-  showEyePreviewModal.value = true
-}
 
 // Title editing handlers
 const handleStartTitleEdit = async (currentTitle) => {
@@ -177,34 +163,55 @@ const gridData = computed(() => {
 })
 
 // Handle save palette modal events
-const handleSavePalette = (title = '') => {
-  const gridData = paletteGridRef.value?.getOccupiedCells() || []
-  console.log('Raw grid data from getOccupiedCells:', gridData)
+const handleSavePalette = async (title = '') => {
+  // Show loader immediately
+  showLoader.value = true
   
-  // Use inline title if available, otherwise use provided title
-  const finalTitle = inlinePaletteTitle.value.trim() || title || 'My Custom Palette'
-  
-  // Save using the composable
-  const savedPalette = savePalette(gridData, finalTitle, currentGridSize.value)
-  
-  // Store the saved palette data for the modal to display
-  savedPaletteData.value = savedPalette
-  
-  // If this was called from inline title, show the success modal
-  if (inlinePaletteTitle.value.trim()) {
-    showSavePaletteModal.value = true
+  try {
+    const gridData = paletteGridRef.value?.getOccupiedCells() || []
+    
+    // Use inline title if available, otherwise use provided title
+    const finalTitle = inlinePaletteTitle.value.trim() || title || 'My Custom Palette'
+    
+    // Save using the composable
+    const savedPalette = savePalette(gridData, finalTitle, currentGridSize.value)
+    
+    // Keep loader visible for minimum 1 second for visual feedback
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    
+    // Hide loader and show toast
+    showLoader.value = false
+    savedPaletteTitle.value = savedPalette.title
+    showToast.value = true
+    
+    // Close save modal if it was open
+    showSavePaletteModal.value = false
+    
+    // Clear the grid after successful save
+    paletteGridRef.value?.clearGrid()
+    clearPalette()
+    updateGridTracker()
+    
+  } catch (error) {
+    console.error('Failed to save palette:', error)
+    // Hide loader on error
+    showLoader.value = false
+    // Could show error toast here in the future
   }
-  
-  // Clear the grid after successful save
-  paletteGridRef.value?.clearGrid()
-  clearPalette()
-  updateGridTracker()
 }
 
 // Handle loading a saved palette into the main grid
-const handleLoadPalette = (paletteData) => {
+const handleLoadPalette = (paletteId) => {
   // Close the modal first
-  showSavedPalettesModal.value = false
+  showPaletteManager.value = false
+  showSavePaletteModal.value = false
+  
+  // Look up palette data by ID
+  const paletteData = findPaletteById(paletteId)
+  if (!paletteData) {
+    console.error('Palette not found:', paletteId)
+    return
+  }
   
   // Use composable to load palette state
   loadPalette(paletteData)
@@ -303,13 +310,14 @@ const canSavePaletteWithFullGrid = computed(() => {
 const eyePreviewColors = computed(() => {
   if (savedPaletteData.value) {
     // Extract colors from saved palette data
-    console.log('Getting colors from saved palette:', savedPaletteData.value)
     return savedPaletteData.value.colors
       .map(({ colorData }) => colorData)
       .filter(color => color !== null)
   } else {
-    // Use current grid data
-    return gridData.value.map(item => item.colorData).filter(color => color !== null)
+    // Use current grid data - gridData has structure { index, colorData }
+    return gridData.value
+      .map(({ colorData }) => colorData)
+      .filter(color => color !== null)
   }
 })
 
@@ -332,8 +340,6 @@ onMounted(() => {
         <div class="app-header-container">
           <div class="app-header-container__inner">
             <AppHeader
-              :show-app-info="showAppInfo"
-              :app-info-initially-open="appInfoInitiallyOpen"
               :show-inline-title-input="showInlineTitleInput"
               :show-loaded-palette-title="showLoadedPaletteTitle"
               :inline-palette-title="inlinePaletteTitle"
@@ -378,7 +384,7 @@ onMounted(() => {
               :has-saved-palettes="hasSavedPalettes"
               :has-colors="hasColors"
               :can-save="canSavePaletteWithFullGrid"
-              :is-modal-open="showSavePaletteModal || showSavedPalettesModal || showAboutModal || showShareModal || showEyePreviewModal"
+              :is-modal-open="showSavePaletteModal || showPaletteManager || showAboutModal"
               @clear="handleClear"
               @randomize="handleRandomize"
               @open-save-modal="handleOpenSaveModal"
@@ -401,12 +407,10 @@ onMounted(() => {
       @update:model-value="handleSavePaletteModalClose"
     />
     
-    <!-- Saved Palettes Modal -->
-    <SavedPalettesModal 
-      v-model="showSavedPalettesModal"
+    <!-- Palette Manager Modal (tabbed: saved palettes, eye preview, share) -->
+    <PaletteManagerModal 
+      v-model="showPaletteManager"
       @load-palette="handleLoadPalette"
-      @share-palette="handleOpenShareModal"
-      @eye-preview-palette="handleOpenEyePreview"
     />
     
     <!-- About Modal -->
@@ -415,19 +419,18 @@ onMounted(() => {
       @load-palette="handleLoadPalette"
     />
     
-    <!-- Share Modal -->
-    <ShareModal 
-      v-model="showShareModal"
-      :grid-data="gridData"
-      :grid-size="currentGridSize"
-      :title="loadedPaletteTitle || inlinePaletteTitle || 'My Palette'"
-      :saved-palette-data="savedPaletteData"
+    
+    <!-- Loader Overlay -->
+    <LoaderOverlay 
+      v-model="showLoader"
+      message="Saving palette..."
     />
     
-    <!-- Eye Preview Modal -->
-    <EyePreviewModal 
-      v-model="showEyePreviewModal"
-      :palette-colors="eyePreviewColors"
+    <!-- Toast Notification -->
+    <ToastNotification 
+      v-model="showToast"
+      :title="savedPaletteTitle"
+      @view-saved-palettes="handleToastViewSavedPalettes"
     />
   </div>
 </template>

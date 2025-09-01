@@ -59,6 +59,7 @@ export function useEyeDrawing() {
   const brushOpacity = ref(0.6)
   const lastDrawPosition = ref({ x: 0, y: 0 })
   const eyeLayer = ref(null) // Store the base eye drawing
+  const hasDrawnOnCanvas = ref(false) // Track if user has drawn anything
 
   /**
    * Initialize the canvas and draw the base eye shape
@@ -199,6 +200,9 @@ export function useEyeDrawing() {
       // Store the base eye for later restoration
       eyeLayer.value = ctx.getImageData(0, 0, 400, 300)
       
+      // Reset drawn state when drawing base eye
+      hasDrawnOnCanvas.value = false
+      
       console.log('Simplified eye drawing completed successfully')
       return true
       
@@ -250,6 +254,9 @@ export function useEyeDrawing() {
     ctx.arc(x, y, brushSize.value / 2, 0, Math.PI * 2)
     ctx.fill()
     ctx.restore()
+    
+    // Mark that we've drawn on the canvas
+    hasDrawnOnCanvas.value = true
   }
 
   /**
@@ -270,37 +277,46 @@ export function useEyeDrawing() {
     ctx.lineTo(x2, y2)
     ctx.stroke()
     ctx.restore()
+    
+    // Mark that we've drawn on the canvas
+    hasDrawnOnCanvas.value = true
   }
 
   /**
    * Clear all drawing and restore base eye
    */
   const clearAllColors = () => {
+    console.log('clearAllColors called')
     const ctx = canvasContext.value
-    if (!ctx || !eyeLayer.value) return
+    console.log('Canvas context:', ctx)
+    console.log('Eye layer available:', !!eyeLayer.value)
     
-    // Restore the base eye layer
-    ctx.putImageData(eyeLayer.value, 0, 0)
+    if (!ctx) {
+      console.error('No canvas context available for clearing')
+      return
+    }
+    
+    if (!eyeLayer.value) {
+      console.warn('No eye layer available, redrawing base eye')
+      // If eyeLayer is not available, redraw the base eye
+      drawBaseEye()
+    } else {
+      console.log('Restoring eye layer')
+      // Restore the base eye layer
+      ctx.putImageData(eyeLayer.value, 0, 0)
+      console.log('Eye layer restored successfully')
+    }
+    
+    // Reset the drawn state
+    hasDrawnOnCanvas.value = false
   }
 
   /**
    * Check if there are any colors applied
    */
   const hasAnyColors = computed(() => {
-    const ctx = canvasContext.value
-    if (!ctx || !eyeLayer.value) return false
-    
-    // Check if current canvas is different from base eye
-    const currentImageData = ctx.getImageData(0, 0, 400, 300)
-    const baseImageData = eyeLayer.value
-    
-    // Compare pixel data
-    for (let i = 0; i < currentImageData.data.length; i++) {
-      if (currentImageData.data[i] !== baseImageData.data[i]) {
-        return true
-      }
-    }
-    return false
+    // Use the reactive flag instead of comparing image data
+    return hasDrawnOnCanvas.value
   })
 
   return {

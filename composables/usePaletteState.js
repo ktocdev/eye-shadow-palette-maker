@@ -15,7 +15,8 @@ export function usePaletteState(options = {}) {
   const inlinePaletteTitle = ref('')
 
   const showInlineTitleInput = computed(() => {
-    return (loadedPaletteTitle.value === '' && hasUserInteracted.value) || 
+    // Always show title input when no palette is loaded or when loaded palette is modified
+    return loadedPaletteTitle.value === '' || 
            (loadedPaletteTitle.value !== '' && loadedPaletteModified.value)
   })
 
@@ -24,7 +25,8 @@ export function usePaletteState(options = {}) {
   })
 
   const showAppInfo = computed(() => {
-    return !hasUserInteracted.value && loadedPaletteTitle.value === ''
+    // Never show app info - always show title input or loaded title instead
+    return false
   })
 
   const appInfoInitiallyOpen = computed(() => {

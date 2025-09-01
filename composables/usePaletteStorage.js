@@ -1,11 +1,13 @@
 import { ref, computed } from 'vue'
 
+// Singleton state - shared across all instances
+const savedPalettes = ref([])
+
 /**
  * Composable for managing palette storage operations with localStorage
  * @returns {Object} Storage state and methods
  */
 export function usePaletteStorage() {
-  const savedPalettes = ref([])
 
   const hasSavedPalettes = computed(() => {
     return savedPalettes.value.length > 0
@@ -82,6 +84,10 @@ export function usePaletteStorage() {
     }
   }
 
+  const findPaletteById = (paletteId) => {
+    return savedPalettes.value.find(p => p.id === paletteId) || null
+  }
+
 
   return {
     // State
@@ -94,6 +100,7 @@ export function usePaletteStorage() {
     loadSavedPalettes,
     savePalette,
     deletePalette,
-    updatePaletteTitle
+    updatePaletteTitle,
+    findPaletteById
   }
 }

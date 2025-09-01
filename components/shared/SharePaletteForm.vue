@@ -1,33 +1,19 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import Modal from './Modal.vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import BaseButton from './BaseButton.vue'
+import MiniPalette from './MiniPalette.vue'
 import { usePaletteExport } from '../../composables/usePaletteExport.js'
+import { usePaletteStorage } from '../../composables/usePaletteStorage.js'
 
 const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    default: false
-  },
-  savedPaletteData: {
-    type: Object,
-    default: null
-  },
-  gridData: {
-    type: Array,
-    default: () => []
-  },
-  gridSize: {
-    type: Number,
-    default: 2
-  },
-  title: {
+  paletteId: {
     type: String,
-    default: 'My Palette'
+    required: true
   }
 })
 
-const emit = defineEmits(['update:modelValue'])
+// Palette storage to find palette by ID
+const { findPaletteById, loadSavedPalettes } = usePaletteStorage()
 
 const { 
   isExporting, 
@@ -41,24 +27,34 @@ const {
 const shareCapabilities = ref({})
 const showSuccess = ref(false)
 const successMessage = ref('')
+const paletteData = ref(null)
 
 // Get share capabilities on mount
 onMounted(() => {
   shareCapabilities.value = getShareCapabilities()
+  // Load saved palettes 
+  loadSavedPalettes()
 })
 
-// Clear success message when modal opens/closes
-const handleModalChange = (isOpen) => {
-  emit('update:modelValue', isOpen)
-  if (!isOpen) {
-    showSuccess.value = false
-    successMessage.value = ''
-  } else {
-    // Always start with the share options screen when opening
-    showSuccess.value = false
-    successMessage.value = ''
+// Load palette data when paletteId changes
+watch(() => props.paletteId, (paletteId) => {
+  if (paletteId) {
+    const palette = findPaletteById(paletteId)
+    if (palette) {
+      paletteData.value = palette
+      console.log('SharePaletteForm loaded palette:', palette.title)
+    } else {
+      console.error('Palette not found:', paletteId)
+      paletteData.value = null
+    }
   }
-}
+}, { immediate: true })
+
+// Clear success message when palette changes
+watch(() => props.paletteId, () => {
+  showSuccess.value = false
+  successMessage.value = ''
+})
 
 // Handle download as JPG
 const handleDownloadJPG = async () => {
@@ -93,34 +89,30 @@ const handleWebShare = async () => {
   }
 }
 
-
 // Computed properties for actual data to use
 const actualGridData = computed(() => {
-  if (props.savedPaletteData) {
-    // Convert saved palette data to grid format
-    const gridSize = props.savedPaletteData.gridSize || 2
-    const totalCells = gridSize * gridSize
-    const gridData = new Array(totalCells).fill(null)
-    
-    props.savedPaletteData.colors.forEach(({ index, colorData }) => {
-      if (index < totalCells) {
-        gridData[index] = colorData
-      }
-    })
-    
-    return gridData
-  }
+  if (!paletteData.value) return []
   
-  // Extract colorData from current grid format { index, colorData }
-  return props.gridData.map(({ colorData }) => colorData)
+  // Convert saved palette data to grid format
+  const gridSize = paletteData.value.gridSize || 2
+  const totalCells = gridSize * gridSize
+  const gridData = new Array(totalCells).fill(null)
+  
+  paletteData.value.colors.forEach(({ index, colorData }) => {
+    if (index < totalCells) {
+      gridData[index] = colorData
+    }
+  })
+  
+  return gridData
 })
 
 const actualGridSize = computed(() => {
-  return props.savedPaletteData ? props.savedPaletteData.gridSize : props.gridSize
+  return paletteData.value ? paletteData.value.gridSize : 2
 })
 
 const actualTitle = computed(() => {
-  return props.savedPaletteData ? props.savedPaletteData.title : props.title
+  return paletteData.value ? paletteData.value.title : 'My Palette'
 })
 
 // Computed properties for button states
@@ -135,15 +127,12 @@ const canShare = computed(() => {
 </script>
 
 <template>
-  <Modal 
-    :model-value="modelValue" 
-    @update:model-value="handleModalChange" 
-    :dialog="true"
-  >
-    <h2>Share Palette</h2>
+    <div v-if="!paletteData" class="error-message">
+      <p>⚠️ Palette not found.</p>
+    </div>
     
-    <div v-if="!hasValidData" class="error-message">
-      <p>⚠️ No palette data to share. Please create a palette first.</p>
+    <div v-else-if="!hasValidData" class="error-message">
+      <p>⚠️ No palette data to share.</p>
     </div>
     
     <div v-else-if="showSuccess" class="success-section">
@@ -158,20 +147,22 @@ const canShare = computed(() => {
         >
           Share Again
         </BaseButton>
-        <BaseButton 
-          @click="$emit('update:modelValue', false)"
-          variant="gray"
-          size="compact"
-        >
-          Close
-        </BaseButton>
       </div>
     </div>
     
     <div v-else class="share-options">
       <p class="share-description">
-        Choose how you'd like to share your {{ actualTitle }}:
+        Choose how you'd like to share your "{{ actualTitle }}":
       </p>
+      
+      <!-- Palette Preview -->
+      <div class="palette-preview">
+        <MiniPalette 
+          :palette-data="paletteData"
+          :size="140"
+          :show-actions="false"
+        />
+      </div>
       
       <div class="share-buttons">
         <button 
@@ -220,26 +211,27 @@ const canShare = computed(() => {
       <div v-if="isExporting" class="exporting-message">
         <p>🎨 Creating your palette image...</p>
       </div>
-      
-      <div class="dialog-actions">
-        <BaseButton 
-          @click="$emit('update:modelValue', false)"
-          variant="gray"
-          size="compact"
-        >
-          Cancel
-        </BaseButton>
-      </div>
     </div>
-  </Modal>
 </template>
 
 <style scoped>
+/* Container styles applied to modal-content by parent */
+
 .share-description {
   text-align: center;
   margin-bottom: 24px;
   color: var(--color-text-secondary);
   font-size: var(--font-size-base);
+}
+
+.palette-preview {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(139, 129, 165, 0.1);
+  border-radius: var(--radius-md);
 }
 
 .share-buttons {
@@ -351,10 +343,6 @@ const canShare = computed(() => {
   .share-btn {
     padding: 12px 16px;
     gap: 12px;
-  }
-  
-  .share-icon {
-    font-size: var(--font-size-lg);
   }
   
   .share-btn-title {

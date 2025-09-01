@@ -3,7 +3,7 @@ const props = defineProps({
   variant: {
     type: String,
     default: 'gray',
-    validator: (value) => ['red', 'purple', 'gray', 'green', 'blue', 'orange'].includes(value)
+    validator: (value) => ['red', 'purple', 'gray', 'green', 'blue', 'orange', 'ghost-green', 'ghost-red'].includes(value)
   },
   size: {
     type: String,
@@ -130,12 +130,48 @@ const handleClick = (event) => {
   box-shadow: var(--shadow-button-hover);
 }
 
+/* Ghost variants */
+.base-button--ghost-green {
+  background: none;
+  color: var(--color-success-primary);
+  border: 1px solid var(--color-success-border);
+  box-shadow: none;
+}
+
+.base-button--ghost-green:hover:not(.base-button--disabled) {
+  background: var(--color-success-background);
+  border-color: var(--color-success-border-hover);
+  box-shadow: none;
+}
+
+.base-button--ghost-red {
+  background: none;
+  color: var(--color-danger-primary);
+  border: 1px solid var(--color-danger-border);
+  box-shadow: none;
+}
+
+.base-button--ghost-red:hover:not(.base-button--disabled) {
+  background: var(--color-danger-background);
+  border-color: var(--color-danger-border-hover);
+  box-shadow: none;
+}
+
 /* Disabled state */
 .base-button--disabled {
-  background: var(--gradient-button-gray) !important;
+  background: var(--gradient-button-gray);
   cursor: not-allowed;
   pointer-events: none;
   opacity: 0.6;
-  box-shadow: var(--shadow-button) !important;
+  box-shadow: var(--shadow-button);
+}
+
+/* Ghost button disabled state */
+.base-button--ghost-green.base-button--disabled,
+.base-button--ghost-red.base-button--disabled {
+  background: none;
+  color: var(--color-text-muted);
+  border-color: rgba(153, 153, 153, 0.3);
+  box-shadow: none;
 }
 </style>

@@ -1,16 +1,8 @@
 <script setup>
 import { ref } from 'vue'
-import CollapsibleText from './shared/CollapsibleText.vue'
+import BaseButton from './shared/BaseButton.vue'
 
 const props = defineProps({
-  showAppInfo: {
-    type: Boolean,
-    default: true
-  },
-  appInfoInitiallyOpen: {
-    type: Boolean,
-    default: true
-  },
   showInlineTitleInput: {
     type: Boolean,
     default: false
@@ -44,12 +36,10 @@ const emit = defineEmits([
 ])
 
 const appTitle = "Eyeshadow Palette Maker"
-const appDescription = "Create custom eyeshadow palettes by selecting colors from our curated collection. Drag colors from the carousel to your palette grid, or click to select and place them. You can drag colors out of the grid to remove them. Save your creations and load them anytime!"
 
 const updateInlineTitle = (event) => {
   emit('update:inline-palette-title', event.target.value)
 }
-
 
 // Inline title input focus state
 const isInlineTitleFocused = ref(false)
@@ -82,17 +72,8 @@ const handleCancelInlineTitle = () => {
 
 <template>
   <div class="app-header">
-    <!-- App Info Section -->
-    <div v-if="showAppInfo" class="app-info">
-      <CollapsibleText 
-        :title="appTitle"
-        :text="appDescription"
-        :initially-open="appInfoInitiallyOpen"
-      />
-    </div>
-
     <!-- Inline Title Input -->
-    <div v-else-if="showInlineTitleInput" class="inline-title-section">
+    <div v-if="showInlineTitleInput" class="inline-title-section">
       <h1 v-if="!loadedPaletteModified" class="app-title">{{ appTitle }}</h1>
       <div class="inline-title-input-container">
         <input
@@ -108,15 +89,21 @@ const handleCancelInlineTitle = () => {
         />
         <Transition name="inline-actions">
           <div v-if="isInlineTitleFocused || inlinePaletteTitle.trim()" class="edit-actions">
-            <button 
-              @click="handleSaveInlineTitle" 
+            <BaseButton
+              variant="green"
+              size="compact"
               :disabled="!inlinePaletteTitle.trim() || !isGridFull"
-              class="save-btn"
-              :class="{ 'btn-disabled': !inlinePaletteTitle.trim() || !isGridFull }"
+              @click="handleSaveInlineTitle"
             >
               ✓
-            </button>
-            <button @click="handleCancelInlineTitle" class="cancel-btn">✕</button>
+            </BaseButton>
+            <BaseButton
+              variant="red"
+              size="compact"
+              @click="handleCancelInlineTitle"
+            >
+              ✕
+            </BaseButton>
           </div>
         </Transition>
       </div>
@@ -136,32 +123,47 @@ const handleCancelInlineTitle = () => {
   width: 100%;
 }
 
-.app-info {
-  width: 100%;
-}
-
 .inline-title-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+}
+
+/* Desktop enhancements */
+@media (min-width: 481px) {
+  .inline-title-section {
+    gap: 16px;
+  }
 }
 
 .loaded-palette-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+}
+
+@media (min-width: 481px) {
+  .loaded-palette-section {
+    gap: 16px;
+  }
 }
 
 .app-title {
   font-size: var(--font-size-xl);
-  line-height: var(--line-height-tight);
+  line-height: var(--line-height-very-tight);
   margin: 0;
   font-family: var(--font-family-heading);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
   text-align: center;
+}
+
+@media (min-width: 600px) {
+  .app-title {
+    line-height: var(--line-height-tight);
+  }
 }
 
 .inline-title-input {
@@ -193,7 +195,9 @@ const handleCancelInlineTitle = () => {
   width: 100%;
   max-width: 400px;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: 12px;
 }
 
@@ -225,48 +229,29 @@ const handleCancelInlineTitle = () => {
   text-align: center;
 }
 
-
 .edit-actions {
   display: flex;
   gap: 8px;
-}
-
-.save-btn,
-.cancel-btn {
-  background: none;
-  border: 1px solid rgba(139, 129, 165, 0.3);
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.05);
   border-radius: var(--radius-sm);
-  padding: 6px 10px;
-  cursor: pointer;
-  font-size: var(--font-size-sm);
-  transition: all 0.2s ease;
+  border: 1px solid rgba(139, 129, 165, 0.1);
 }
 
-.save-btn {
-  color: #228B22;
-  border-color: rgba(34, 139, 34, 0.3);
+/* Mobile base styles - edit actions centered when wrapped */
+.edit-actions {
+  flex: 1 1 auto;
+  justify-content: center;
+  min-width: 120px;
 }
 
-.save-btn:hover:not(:disabled) {
-  background: rgba(34, 139, 34, 0.1);
-  border-color: rgba(34, 139, 34, 0.5);
+/* Desktop enhancements - edit actions align normally */
+@media (min-width: 481px) {
+  .edit-actions {
+    flex: 0 1 auto;
+    justify-content: flex-start;
+    min-width: auto;
+  }
 }
 
-.save-btn:disabled,
-.save-btn.btn-disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  color: #999;
-  border-color: rgba(153, 153, 153, 0.3);
-}
-
-.cancel-btn {
-  color: #DC143C;
-  border-color: rgba(220, 20, 60, 0.3);
-}
-
-.cancel-btn:hover {
-  background: rgba(220, 20, 60, 0.1);
-  border-color: rgba(220, 20, 60, 0.5);
-}
 </style>

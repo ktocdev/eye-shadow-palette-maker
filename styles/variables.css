@@ -32,6 +32,7 @@
   --font-weight-black: 900;
   
   /* Line Heights */
+  --line-height-very-tight: 1;
   --line-height-tight: 1.1;
   --line-height-snug: 1.25;
   --line-height-normal: 1.5;
@@ -59,6 +60,17 @@
   --color-hover: rgba(0, 0, 0, 0.05);
   --color-focus: rgba(106, 90, 205, 0.3);
   --color-active: rgba(106, 90, 205, 0.1);
+  
+  /* State Colors */
+  --color-success-primary: #228B22;
+  --color-success-border: rgba(34, 139, 34, 0.3);
+  --color-success-border-hover: rgba(34, 139, 34, 0.5);
+  --color-success-background: rgba(34, 139, 34, 0.1);
+  
+  --color-danger-primary: #DC143C;
+  --color-danger-border: rgba(220, 20, 60, 0.3);
+  --color-danger-border-hover: rgba(220, 20, 60, 0.5);
+  --color-danger-background: rgba(220, 20, 60, 0.1);
   
   /* Box Shadow Variables */
   /* Button Shadows */
