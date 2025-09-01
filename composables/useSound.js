@@ -48,9 +48,9 @@ export function useSound() {
   }
   
   /**
-   * Play drag start sound - a gentle upward sweep (for carousel swatches)
+   * Play upward frequency sweep - a gentle rising tone
    */
-  const playDragStart = () => {
+  const playUpSweep = () => {
     if (!isEnabled.value) return
     
     initAudioContext()
@@ -77,9 +77,9 @@ export function useSound() {
   }
   
   /**
-   * Play drag out sound - a gentle downward sweep (for palette grid swatches)
+   * Play downward frequency sweep - a gentle falling tone
    */
-  const playDragOut = () => {
+  const playDownSweep = () => {
     if (!isEnabled.value) return
     
     initAudioContext()
@@ -106,9 +106,9 @@ export function useSound() {
   }
   
   /**
-   * Play drop success sound - a light click like something clicking into place
+   * Play soft click sound - a crisp, filtered click tone
    */
-  const playDropSuccess = () => {
+  const playSoftClick = () => {
     if (!isEnabled.value) return
     
     initAudioContext()
@@ -150,9 +150,9 @@ export function useSound() {
   }
   
   /**
-   * Play removal sound - a paper crumple effect like Mac recycle bin
+   * Play crumple sound - textured paper crinkle effect
    */
-  const playRemoval = () => {
+  const playCrumple = () => {
     if (!isEnabled.value) return
     
     initAudioContext()
@@ -217,9 +217,9 @@ export function useSound() {
   }
 
   /**
-   * Play navigation sound - a higher-pitched click for arrow buttons
+   * Play sharp click sound - a bright, high-pitched click tone
    */
-  const playNavigation = () => {
+  const playSharpClick = () => {
     if (!isEnabled.value) return
     
     initAudioContext()
@@ -263,9 +263,9 @@ export function useSound() {
   }
 
   /**
-   * Play a clear sweet bell sound for notifications
+   * Play soft bell sound - a gentle, harmonic bell tone
    */
-  const playBell = () => {
+  const playSoftBell = () => {
     if (!isEnabled.value) return
     
     initAudioContext()
@@ -279,13 +279,13 @@ export function useSound() {
     const oscillators = []
     const gainNodes = []
     
-    // Bell harmonics with much softer amplitudes
+    // Bell harmonics with very gentle amplitudes
     const harmonics = [
-      { freq: fundamentalFreq, amp: 0.08 },      // Fundamental - much softer
-      { freq: fundamentalFreq * 2, amp: 0.05 },   // Octave
-      { freq: fundamentalFreq * 3, amp: 0.03 },   // Perfect fifth
-      { freq: fundamentalFreq * 4, amp: 0.015 },  // Second octave
-      { freq: fundamentalFreq * 5, amp: 0.008 }   // Major third
+      { freq: fundamentalFreq, amp: 0.03 },      // Fundamental - very gentle
+      { freq: fundamentalFreq * 2, amp: 0.02 },   // Octave
+      { freq: fundamentalFreq * 3, amp: 0.012 },  // Perfect fifth
+      { freq: fundamentalFreq * 4, amp: 0.006 },  // Second octave
+      { freq: fundamentalFreq * 5, amp: 0.003 }   // Major third
     ]
     
     harmonics.forEach((harmonic, index) => {
@@ -314,9 +314,9 @@ export function useSound() {
   }
 
   /**
-   * Play a subtle click sound
+   * Play subtle click sound - a quiet, simple beep tone
    */
-  const playClick = () => {
+  const playSubtleClick = () => {
     createBeep(800, 50, 0.05)
   }
   
@@ -343,13 +343,13 @@ export function useSound() {
   
   return {
     isEnabled,
-    playDragStart,
-    playDragOut,
-    playDropSuccess,
-    playRemoval,
-    playNavigation,
-    playClick,
-    playBell,
+    playUpSweep,
+    playDownSweep,
+    playSoftClick,
+    playCrumple,
+    playSharpClick,
+    playSubtleClick,
+    playSoftBell,
     createBeep,
     toggleSound,
     enableSound,
