@@ -33,7 +33,8 @@ const props = defineProps({
 const emit = defineEmits([
   'update:inline-palette-title',
   'inline-title-saved',
-  'inline-title-cancelled'
+  'inline-title-cancelled',
+  'new-palette'
 ])
 
 const appTitle = "Eyeshadow Palette Maker"
@@ -92,6 +93,11 @@ const handleCancelInlineTitle = () => {
   isInlineTitleFocused.value = false
 }
 
+const handleNewPalette = () => {
+  playSoftClick()
+  emit('new-palette')
+}
+
 </script>
 
 <template>
@@ -139,8 +145,15 @@ const handleCancelInlineTitle = () => {
 
     <!-- Loaded Palette Title -->
     <div v-else-if="showLoadedPaletteTitle" class="loaded-palette-section">
-      <h1 v-if="!loadedPaletteModified" class="app-title">{{ appTitle }}</h1>
-      <h2 class="loaded-palette-title">{{ loadedPaletteTitle }}</h2>
+      <h1 class="loaded-palette-title">{{ loadedPaletteTitle }}</h1>
+      <BaseButton
+        variant="purple"
+        size="compact"
+        @click="handleNewPalette"
+        class="new-palette-btn"
+      >
+        Start New Palette
+      </BaseButton>
     </div>
   </div>
 </template>
@@ -277,10 +290,8 @@ const handleCancelInlineTitle = () => {
   transform: translateX(0);
 }
 
-
 .loaded-palette-title {
   font-size: var(--font-size-lg);
-  margin: 0;
   font-family: var(--font-family-primary);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);

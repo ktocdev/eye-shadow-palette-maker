@@ -178,6 +178,13 @@ const handleInlineTitleCancelled = () => {
   inlinePaletteTitle.value = ''
 }
 
+const handleNewPalette = () => {
+  // Clear the grid and reset to new palette state
+  paletteGridRef.value?.clearGrid()
+  clearPalette()
+  updateGridTracker()
+}
+
 // Grid data computed property
 const gridData = computed(() => {
   // Access gridChangeTracker to ensure reactivity
@@ -213,10 +220,8 @@ const handleSavePalette = async (title = '') => {
     // Close save modal if it was open
     showSavePaletteModal.value = false
     
-    // Clear the grid after successful save
-    paletteGridRef.value?.clearGrid()
-    clearPalette()
-    updateGridTracker()
+    // Instead of clearing, load the saved palette to show it as the current palette
+    loadPalette(savedPalette)
     
   } catch (error) {
     console.error('Failed to save palette:', error)
@@ -460,6 +465,7 @@ onUnmounted(() => {
               @title-edit-cancelled="() => {}"
               @inline-title-saved="handleInlineTitleSaved"
               @inline-title-cancelled="handleInlineTitleCancelled"
+              @new-palette="handleNewPalette"
               @start-title-edit="() => {}"
             />
           </div>
