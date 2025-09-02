@@ -7,10 +7,18 @@ const props = defineProps({
   modelValue: {
     type: Boolean,
     default: false
+  },
+  canSave: {
+    type: Boolean,
+    default: false
+  },
+  savedPaletteData: {
+    type: Object,
+    default: null
   }
 })
 
-const emit = defineEmits(['update:modelValue', 'save'])
+const emit = defineEmits(['update:modelValue', 'save', 'view-saved-palettes', 'load-palette'])
 
 // Use sound composable
 const { playSubtleClick, playSoftClick } = useSound()
@@ -48,9 +56,9 @@ const handleTitleInputFocus = () => {
     <div class="dialog-actions">
       <button 
         @click="handleSavePalette"
-        :disabled="!paletteTitle.trim()"
+        :disabled="!paletteTitle.trim() || !canSave"
         class="btn btn-compact btn-gradient-green"
-        :class="{ 'btn-disabled': !paletteTitle.trim() }"
+        :class="{ 'btn-disabled': !paletteTitle.trim() || !canSave }"
       >
         Save Palette
       </button>

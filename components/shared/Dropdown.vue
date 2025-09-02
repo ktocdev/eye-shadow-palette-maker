@@ -89,6 +89,7 @@ onUnmounted(() => {
       >
         <span class="dropdown-icon">{{ item.icon }}</span>
         <span class="dropdown-label">{{ item.label }}</span>
+        <span v-if="item.badge" class="dropdown-badge">{{ item.badge }}</span>
       </button>
     </div>
   </div>
@@ -115,6 +116,8 @@ onUnmounted(() => {
   color: var(--color-text-secondary);
   transition: all 0.2s ease;
   box-shadow: var(--shadow-swatch);
+  position: relative;
+  z-index: 1;
 }
 
 .dropdown-toggle:hover,
@@ -127,7 +130,7 @@ onUnmounted(() => {
 
 .dropdown-menu {
   position: absolute;
-  z-index: 1000;
+  z-index: 1050;
   background: white;
   border: 1px solid rgba(139, 129, 165, 0.3);
   border-radius: var(--radius-md);
@@ -195,6 +198,20 @@ onUnmounted(() => {
   font-family: var(--font-family-primary);
   font-weight: var(--font-weight-medium);
   text-align: left;
+}
+
+.dropdown-badge {
+  display: inline-block;
+  background: var(--gradient-button-purple);
+  color: var(--color-text-white);
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+  margin-left: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 /* Mobile adjustments */

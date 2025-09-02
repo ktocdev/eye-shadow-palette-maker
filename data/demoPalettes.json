@@ -1,28 +1,28 @@
 {
   "palettes": [
     {
-      "title": "Golden Hour",
+      "title": "Safari Adventurista",
       "gridSize": 2,
       "colors": [
-        { "index": 0, "hex": "#FFD700" },
-        { "index": 1, "hex": "#D9A441" },
-        { "index": 2, "hex": "#A65C3A" },
-        { "index": 3, "hex": "#3E1F0F" }
+        { "index": 0, "hex": "#954535" },
+        { "index": 1, "hex": "#00CED1" },
+        { "index": 2, "hex": "#E6AC27" },
+        { "index": 3, "hex": "#FFEFD5" }
       ]
     },
     {
-      "title": "Midnight Carnival",
+      "title": "Fall Festival",
       "gridSize": 3,
       "colors": [
-        { "index": 0, "hex": "#6A5ACD" },
-        { "index": 1, "hex": "#00CED1" },
-        { "index": 2, "hex": "#A0E7E5" },
-        { "index": 3, "hex": "#FFD700" },
-        { "index": 4, "hex": "#3E1F0F" },
-        { "index": 5, "hex": "#6B0F1A" },
-        { "index": 6, "hex": "#A65C3A" },
-        { "index": 7, "hex": "#FF69B4" },
-        { "index": 8, "hex": "#2C2A4A" }
+        { "index": 0, "hex": "#F6F6F0" },
+        { "index": 1, "hex": "#FDF6E3" },
+        { "index": 2, "hex": "#F2E3C6" },
+        { "index": 3, "hex": "#FFB6C1" },
+        { "index": 4, "hex": "#C65D07" },
+        { "index": 5, "hex": "#228B22" },
+        { "index": 6, "hex": "#C04000" },
+        { "index": 7, "hex": "#6B0F1A" },
+        { "index": 8, "hex": "#301934" }
       ]
     },
     {

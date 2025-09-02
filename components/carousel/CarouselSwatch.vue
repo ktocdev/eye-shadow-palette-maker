@@ -32,7 +32,7 @@ const props = defineProps({
 const emit = defineEmits(['swipe-left', 'swipe-right', 'click'])
 
 // Use sound composable
-const { playUpSweep } = useSound()
+const { playUpSweep, playSharpClick } = useSound()
 
 // Use color selection composable
 const { selectColor, isColorSelected, clearSelection } = useColorSelection()
@@ -70,6 +70,7 @@ const colorData = computed(() => ({
 const handleClick = (e) => {
   // Only emit click if it's not a drag operation
   // Select the color instead of immediately placing it
+  playSharpClick() // Sharp click for precise color selection
   selectColor(colorData.value)
   emit('click', colorData.value)
 }

@@ -1,6 +1,7 @@
 <script setup>
 import { reactive, computed, watch } from 'vue'
 import Modal from './Modal.vue'
+import { usePaletteStorage } from '../../composables/usePaletteStorage.js'
 // Import tab components
 import SavedPalettesGrid from './SavedPalettesGrid.vue'
 import EyePreviewCanvas from './EyePreviewCanvas.vue' 
@@ -22,6 +23,9 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue', 'load-palette'])
+
+// Use palette storage to get palette details
+const { findPaletteById } = usePaletteStorage()
 
 // Modal state
 const modalState = reactive({
@@ -48,7 +52,13 @@ const goBackToSaved = () => {
 const getModalTitle = () => {
   switch(modalState.currentTab) {
     case 'saved': return 'Your Saved Palettes'
-    case 'preview': return 'Eye Preview'
+    case 'preview': {
+      if (modalState.selectedPaletteId) {
+        const palette = findPaletteById(modalState.selectedPaletteId)
+        return palette?.title || 'Eye Preview'
+      }
+      return 'Eye Preview'
+    }
     case 'share': return 'Share Palette'
     default: return 'Palette Manager'
   }

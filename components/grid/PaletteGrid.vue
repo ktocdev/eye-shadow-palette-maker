@@ -104,6 +104,7 @@ const handleCellClick = (index, event) => {
     emit('grid-updated')
   } else {
     // No color selected - emit grid-cell-click to show carousel
+    playSoftClick() // Play soft drop sound when clicking empty cell
     const cellRect = event?.target?.getBoundingClientRect()
     emit('grid-cell-click', index, cellRect)
   }

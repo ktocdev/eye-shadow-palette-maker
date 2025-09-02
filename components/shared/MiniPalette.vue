@@ -33,13 +33,13 @@ const emit = defineEmits(['palette-action'])
 const { getEffectClasses } = useColorEffects()
 
 // Use sound composable
-const { playSoftClick, playDownSweep } = useSound()
+const { playSoftClick, playDownSweep, playSharpClick } = useSound()
 
 // Dropdown menu items - conditionally include delete and share based on props
 const dropdownItems = computed(() => {
   const items = [
     { label: 'Load Palette', icon: '', action: 'load' },
-    { label: 'Eye Preview', icon: '', action: 'eye-preview' }
+    { label: 'Preview', icon: '', action: 'eye-preview', badge: 'Beta' }
   ]
   
   if (props.showShare) {
@@ -59,7 +59,7 @@ const handleAction = (action) => {
   if (action === 'delete') {
     playDownSweep() // Downward swoop for delete
   } else {
-    playSoftClick() // Success drop for load, share, eye-preview
+    playSharpClick() // Sharp click for precise menu selections (load, share, eye-preview)
   }
   
   if (!props.paletteData?.id) {
@@ -171,7 +171,6 @@ const gridColumns = computed(() => {
   position: absolute;
   top: 4px;
   right: 4px;
-  z-index: 10;
 }
 
 .mini-palette-title {

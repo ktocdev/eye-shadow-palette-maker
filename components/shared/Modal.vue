@@ -147,6 +147,7 @@ watch(() => props.modelValue, (isOpen) => {
 .modal-inner-content h2 {
   margin: 0 36px 0 0;
   color: var(--color-text-primary);
+  font-size: var(--font-size-base);
 }
 
 .modal-inner-content p {
@@ -170,6 +171,10 @@ watch(() => props.modelValue, (isOpen) => {
     max-width: 700px;
     max-height: 85vh;
   }
+
+  .modal-inner-content h2 {
+    font-size: var(--font-size-lg);
+  }
   
   .modal-close {
     top: 32px;
@@ -180,7 +185,7 @@ watch(() => props.modelValue, (isOpen) => {
   }
   
   .modal-inner-content {
-    padding: 30px;
+    padding: 20px;
     margin: 18px;
   }
   

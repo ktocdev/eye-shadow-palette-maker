@@ -1,8 +1,7 @@
 <script setup>
-import { ref, nextTick } from 'vue'
+import { ref, computed } from 'vue'
 import BaseButton from './shared/BaseButton.vue'
 import { useSound } from '../composables/useSound.js'
-import { useTitleEditing } from '../composables/useTitleEditing.js'
 
 const props = defineProps({
   showInlineTitleInput: {
@@ -28,25 +27,14 @@ const props = defineProps({
   isGridFull: {
     type: Boolean,
     default: false
-  },
-  isEditingTitle: {
-    type: Boolean,
-    default: false
-  },
-  editedTitle: {
-    type: String,
-    default: ''
   }
 })
 
 const emit = defineEmits([
   'update:inline-palette-title',
-  'update:edited-title',
-  'title-saved',
-  'title-edit-cancelled',
   'inline-title-saved',
   'inline-title-cancelled',
-  'start-title-edit'
+  'new-palette'
 ])
 
 const appTitle = "Eyeshadow Palette Maker"
@@ -54,19 +42,28 @@ const appTitle = "Eyeshadow Palette Maker"
 // Use sound composable
 const { playSoftClick } = useSound()
 
-// Use title editing composable
-const {
-  startTitleEdit,
-  saveTitleEdit,
-  cancelTitleEdit
-} = useTitleEditing()
-
 const updateInlineTitle = (event) => {
   emit('update:inline-palette-title', event.target.value)
 }
 
 // Inline title input focus state
 const isInlineTitleFocused = ref(false)
+
+// Form helper message based on grid state and input content
+const formHelperMessage = computed(() => {
+  const hasTitle = props.inlinePaletteTitle.trim().length > 0
+  const isGridFull = props.isGridFull
+  
+  if (hasTitle && !isGridFull) {
+    return 'Fill the grid with swatches to save palette'
+  } else if (!hasTitle && isGridFull) {
+    return 'Add a title to save the palette'
+  } else if (!hasTitle && !isGridFull) {
+    return 'Fill the grid and add title to save palette'
+  }
+  
+  return 'Ready to save palette' // Both title and grid are complete
+})
 
 const handleInlineTitleFocus = () => {
   playSoftClick()
@@ -96,31 +93,11 @@ const handleCancelInlineTitle = () => {
   isInlineTitleFocused.value = false
 }
 
-// Title editing handlers (moved from SwatchesExplorer)
-const handleStartTitleEdit = async (currentTitle) => {
+const handleNewPalette = () => {
   playSoftClick()
-  startTitleEdit(currentTitle)
-  emit('start-title-edit', currentTitle)
-  // Focus the input after DOM update
-  await nextTick()
-  const input = document.querySelector('.palette-title-input')
-  input?.focus()
-  input?.select()
+  emit('new-palette')
 }
 
-const handleSaveTitleEdit = () => {
-  playSoftClick()
-  const result = saveTitleEdit()
-  if (result.success && result.hasChanged) {
-    emit('title-saved', { oldTitle: props.loadedPaletteTitle, newTitle: result.newTitle })
-  }
-}
-
-const handleCancelTitleEdit = () => {
-  playSoftClick()
-  cancelTitleEdit()
-  emit('title-edit-cancelled')
-}
 </script>
 
 <template>
@@ -137,11 +114,15 @@ const handleCancelTitleEdit = () => {
           type="text"
           placeholder="Add Palette Title Here"
           class="inline-title-input"
+          id="inline-palette-title-input"
           @keyup.enter="handleSaveInlineTitle"
           @keyup.escape="handleCancelInlineTitle"
         />
+        <div class="form-helper">
+          {{ formHelperMessage }}
+        </div>
         <Transition name="inline-actions">
-          <div v-if="isInlineTitleFocused || inlinePaletteTitle.trim()" class="edit-actions">
+          <div v-if="inlinePaletteTitle.trim() && isGridFull" class="edit-actions">
             <BaseButton
               variant="green"
               size="compact"
@@ -164,49 +145,15 @@ const handleCancelTitleEdit = () => {
 
     <!-- Loaded Palette Title -->
     <div v-else-if="showLoadedPaletteTitle" class="loaded-palette-section">
-      <div class="palette-title-container">
-        <div v-if="!isEditingTitle" class="title-display">
-          <h2 
-            class="loaded-palette-title" 
-            @click="handleStartTitleEdit(loadedPaletteTitle)"
-          >
-            {{ loadedPaletteTitle }}
-          </h2>
-          <button 
-            @click="handleStartTitleEdit(loadedPaletteTitle)"
-            class="edit-title-btn"
-          >
-            Edit
-          </button>
-        </div>
-        
-        <div v-else class="title-edit-form">
-          <input
-            :value="editedTitle"
-            @input="$emit('update:edited-title', $event.target.value)"
-            type="text"
-            class="palette-title-input"
-            @keyup.enter="handleSaveTitleEdit"
-            @keyup.escape="handleCancelTitleEdit"
-          />
-          <div class="edit-actions">
-            <BaseButton
-              variant="green"
-              size="compact"
-              @click="handleSaveTitleEdit"
-            >
-              ✓
-            </BaseButton>
-            <BaseButton
-              variant="red"
-              size="compact"
-              @click="handleCancelTitleEdit"
-            >
-              ✕
-            </BaseButton>
-          </div>
-        </div>
-      </div>
+      <h1 class="loaded-palette-title">{{ loadedPaletteTitle }}</h1>
+      <BaseButton
+        variant="purple"
+        size="compact"
+        @click="handleNewPalette"
+        class="new-palette-btn"
+      >
+        Start New Palette
+      </BaseButton>
     </div>
   </div>
 </template>
@@ -294,6 +241,37 @@ const handleCancelTitleEdit = () => {
   gap: 12px;
 }
 
+/* Form helper styles */
+.form-helper {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 4px 8px;
+  margin-top: 4px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(139, 129, 165, 0.2);
+}
+
+/* Transition for form helper */
+.form-helper-enter-active,
+.form-helper-leave-active {
+  transition: all 0.3s ease;
+}
+
+.form-helper-enter-from,
+.form-helper-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.form-helper-enter-to,
+.form-helper-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* Transition for inline actions */
 .inline-actions-enter-active,
 .inline-actions-leave-active {
@@ -312,78 +290,12 @@ const handleCancelTitleEdit = () => {
   transform: translateX(0);
 }
 
-
 .loaded-palette-title {
   font-size: var(--font-size-lg);
-  margin: 0;
   font-family: var(--font-family-primary);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
   text-align: center;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.loaded-palette-title:hover {
-  color: var(--color-success-primary);
-}
-
-.title-display {
-  position: relative;
-  display: inline-block;
-}
-
-.title-display:hover .edit-title-btn {
-  opacity: 1;
-}
-
-.edit-title-btn {
-  position: absolute;
-  top: 50%;
-  right: -35px;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(139, 129, 165, 0.3);
-  border-radius: var(--radius-sm);
-  padding: 4px 8px;
-  font-size: var(--font-size-s);
-  cursor: pointer;
-  opacity: 0;
-  transition: all 0.2s ease;
-  backdrop-filter: blur(5px);
-}
-
-.edit-title-btn:hover {
-  background: rgba(255, 255, 255, 1);
-  border-color: rgba(106, 90, 205, 0.4);
-  box-shadow: 0 2px 4px rgba(139, 129, 165, 0.2);
-}
-
-.title-edit-form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: center;
-}
-
-.palette-title-input {
-  width: 100%;
-  max-width: 400px;
-  padding: 12px 16px;
-  border: 1px solid rgba(139, 129, 165, 0.3);
-  border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.9);
-  font-family: var(--font-family-primary);
-  font-size: var(--font-size-base);
-  color: var(--color-text-primary);
-  text-align: center;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.palette-title-input:focus {
-  outline: none;
-  border-color: rgba(106, 90, 205, 0.5);
-  box-shadow: 0 0 0 3px rgba(106, 90, 205, 0.1);
 }
 
 .edit-actions {
@@ -393,10 +305,6 @@ const handleCancelTitleEdit = () => {
   background: rgba(255, 255, 255, 0.05);
   border-radius: var(--radius-sm);
   border: 1px solid rgba(139, 129, 165, 0.1);
-}
-
-/* Mobile base styles - edit actions centered when wrapped */
-.edit-actions {
   flex: 1 1 auto;
   justify-content: center;
   min-width: 120px;

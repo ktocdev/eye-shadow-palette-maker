@@ -1,7 +1,8 @@
 <script setup>
 import { ref, onMounted, watch, nextTick } from 'vue'
 import BaseButton from './BaseButton.vue'
-import { useEyeDrawing } from '../../composables/useEyeDrawing.js'
+import ShareEyeDrawingForm from './ShareEyeDrawingForm.vue'
+import { useEyeDrawing, SKIN_TONES, EYE_COLORS } from '../../composables/useEyeDrawing.js'
 import { useColorSelection } from '../../composables/useColorSelection.js'
 import { usePaletteStorage } from '../../composables/usePaletteStorage.js'
 
@@ -22,11 +23,15 @@ const {
   brushSize,
   brushOpacity,
   hasAnyColors,
+  skinTone,
+  eyeColor,
   initializeCanvas,
   startDrawing,
   continueDrawing,
   stopDrawing,
-  clearAllColors
+  clearAllColors,
+  setSkinTone,
+  setEyeColor
 } = useEyeDrawing()
 
 // Color selection
@@ -35,6 +40,7 @@ const { selectedColor: globalSelectedColor, selectColor } = useColorSelection()
 const canvasElement = ref(null)
 const activeColorIndex = ref(0)
 const paletteColors = ref([])
+const showShareForm = ref(false)
 
 // Color selection from palette
 const handleColorSelect = (colorData, index) => {
@@ -189,12 +195,50 @@ const setBrushSize = (size) => {
 const setBrushOpacity = (opacity) => {
   brushOpacity.value = opacity
 }
+
+// Handle skin tone selection
+const handleSkinToneSelect = (tone) => {
+  setSkinTone(tone.color)
+}
+
+// Handle eye color selection
+const handleEyeColorSelect = (color) => {
+  setEyeColor(color.color)
+}
+
+// Handle share button
+const handleShare = () => {
+  showShareForm.value = true
+}
+
+// Handle back to preview
+const handleBackToPreview = () => {
+  showShareForm.value = false
+}
 </script>
 
 <template>
-    <p class="eye-preview-description">
-      Select a color from your palette, then click and drag (or touch and drag) on the eye to paint eyeshadow.
-    </p>
+    <div v-if="showShareForm" class="share-section">
+      <div class="share-header">
+        <button @click="handleBackToPreview" class="back-button">
+          ← Back to Preview
+        </button>
+        <h3>Share Your Eye Look</h3>
+      </div>
+      <ShareEyeDrawingForm 
+        v-if="canvasElement"
+        :palette-id="paletteId"
+        :canvas-ref="canvasElement"
+      />
+      <div v-else class="loading-message">
+        <p>Preparing canvas...</p>
+      </div>
+    </div>
+    
+    <div v-else class="preview-section">
+      <p class="eye-preview-description">
+        Select a color from your palette, then click and drag (or touch and drag) on the eye to paint eyeshadow.
+      </p>
     
     <!-- Main eye preview area -->
     <div class="eye-canvas-container">
@@ -234,10 +278,77 @@ const setBrushOpacity = (opacity) => {
         </div>
       </div>
       
+      <!-- Skin & Eye Color Selection -->
+      <div class="appearance-controls-section">
+        <h3>Appearance</h3>
+        <div class="appearance-controls">
+          <div class="appearance-control-group">
+            <label>Skin Tone</label>
+            <div class="color-options">
+              <button
+                v-for="tone in SKIN_TONES"
+                :key="tone.name"
+                @click="handleSkinToneSelect(tone)"
+                class="appearance-swatch"
+                :class="{ 'active': skinTone === tone.color }"
+                :style="{ backgroundColor: tone.color }"
+                :title="tone.name"
+              >
+                <span class="appearance-swatch__check" v-if="skinTone === tone.color">✓</span>
+              </button>
+            </div>
+          </div>
+          
+          <div class="appearance-control-group">
+            <label>Eye Color</label>
+            <div class="color-options">
+              <button
+                v-for="color in EYE_COLORS"
+                :key="color.name"
+                @click="handleEyeColorSelect(color)"
+                class="appearance-swatch"
+                :class="{ 'active': eyeColor === color.color }"
+                :style="{ backgroundColor: color.color }"
+                :title="color.name"
+              >
+                <span class="appearance-swatch__check" v-if="eyeColor === color.color">✓</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <!-- Brush controls -->
       <div class="brush-controls-section">
         <h3>Brush Settings</h3>
         <div class="brush-controls">
+          <div class="brush-control-group">
+            <label>Size</label>
+            <div class="brush-buttons">
+              <button 
+                @click="setBrushSize(8)"
+                :class="{ 'active': brushSize === 8 }"
+                class="brush-btn"
+              >
+                Small
+              </button>
+              <button 
+                @click="setBrushSize(15)"
+                :class="{ 'active': brushSize === 15 }"
+                class="brush-btn"
+              >
+                Medium
+              </button>
+              <button 
+                @click="setBrushSize(25)"
+                :class="{ 'active': brushSize === 25 }"
+                class="brush-btn"
+              >
+                Large
+              </button>
+            </div>
+          </div>
+          
           <div class="brush-control-group">
             <label>Opacity</label>
             <div class="brush-buttons">
@@ -271,6 +382,14 @@ const setBrushOpacity = (opacity) => {
       <div class="action-buttons-section">
         <div class="action-buttons">
           <BaseButton
+            @click="handleShare"
+            :disabled="!hasAnyColors"
+            variant="blue"
+            size="compact"
+          >
+            Share Look
+          </BaseButton>
+          <BaseButton
             @click="clearAllColors"
             :disabled="!hasAnyColors"
             variant="red"
@@ -281,10 +400,60 @@ const setBrushOpacity = (opacity) => {
         </div>
       </div>
     </div>
+    </div>
 </template>
 
 <style scoped>
 /* Container styles applied to modal-content by parent */
+
+.share-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.share-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.back-button {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(139, 129, 165, 0.2);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(139, 129, 165, 0.4);
+}
+
+.share-header h3 {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.loading-message {
+  text-align: center;
+  padding: 40px;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.preview-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
 
 .eye-preview-description {
   text-align: center;
@@ -322,6 +491,7 @@ const setBrushOpacity = (opacity) => {
 }
 
 .color-selection-section h3,
+.appearance-controls-section h3,
 .brush-controls-section h3 {
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-semibold);
@@ -373,6 +543,57 @@ const setBrushOpacity = (opacity) => {
   border: 1px solid rgba(255, 193, 7, 0.2);
   border-radius: var(--radius-md);
   color: var(--color-text-secondary);
+}
+
+.appearance-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.appearance-control-group label {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: 8px;
+}
+
+.color-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+.appearance-swatch {
+  width: 32px;
+  height: 32px;
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.appearance-swatch:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.appearance-swatch.active {
+  border-color: rgba(106, 90, 205, 0.8);
+  box-shadow: 0 0 0 2px rgba(106, 90, 205, 0.2);
+}
+
+.appearance-swatch__check {
+  color: white;
+  font-weight: var(--font-weight-bold);
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+  font-size: var(--font-size-sm);
 }
 
 .brush-controls {
