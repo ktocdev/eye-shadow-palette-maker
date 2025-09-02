@@ -74,19 +74,20 @@ const handlePaletteAction = (action, paletteId) => {
     <div class="app-description">
       <h3>Create Your Perfect Eyeshadow Palette</h3>
       <p class="description-text">
-        Build custom eyeshadow palettes by selecting colors from the carousel and dragging or clicking to place them precisely where you want. 
-        Drag colors out of the grid to remove them. Choose from 2x2, 3x3, or 4x4 grid sizes to create anything from a compact travel palette to an extensive collection.
+        Build custom eyeshadow palettes by selecting colors from the carousel and placing them in your desired grid layout. Choose from 2x2, 3x3, or 4x4 grid sizes to create anything from a compact travel palette to an extensive collection.
       </p>
       
       <div class="how-to-use">
         <h4>How to Use:</h4>
         <ol class="instructions-list">
-          <li><strong>Select Colors:</strong> Click any eyeshadow in the color carousel to select it</li>
-          <li><strong>Place Precisely:</strong> Click on any grid cell to place your selected color exactly where you want it</li>
-          <li><strong>Drag & Drop:</strong> Alternatively, drag colors directly from the carousel to the grid</li>
-          <li><strong>Rearrange:</strong> Drag colors within the grid to swap positions or move to empty cells</li>
-          <li><strong>Save Your Work:</strong> Click "Save Palette" to store your creation with a custom name</li>
-          <li><strong>Load Examples:</strong> Try the demo palettes below by clicking the ⋯ menu and selecting "Load Palette"</li>
+          <li><strong>Add a Title:</strong> Enter a name for your palette in the title field</li>
+          <li><strong>Open Color Carousel:</strong> Click on any grid cell to open the floating color carousel</li>
+          <li><strong>Choose Colors:</strong> Click any eyeshadow in the carousel to place it in the selected cell</li>
+          <li><strong>Drag & Drop:</strong> Alternatively, drag colors from the open carousel to any grid cell, or rearrange colors within the grid</li>
+          <li><strong>Close Carousel:</strong> Click the × button or click outside to close the color carousel</li>
+          <li><strong>Save Your Palette:</strong> Once you have a title and colors, click the ✓ button to save</li>
+          <li><strong>Start Fresh:</strong> Click "Start New Palette" to clear everything and begin a new creation</li>
+          <li><strong>Try Examples:</strong> Load the demo palettes below by clicking the ⋯ menu and selecting "Load Palette"</li>
         </ol>
       </div>
     </div>

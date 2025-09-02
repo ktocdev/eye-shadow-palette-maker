@@ -32,12 +32,12 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'view-saved-palettes'])
 
 // Use sound composable
-const { playSoftClick, playSoftBell } = useSound()
+const { playSoftClick, playSoftBell, playSharpClick } = useSound()
 
 const timeoutId = ref(null)
 
 const handleClose = () => {
-  playSoftClick()
+  playSharpClick() // Sharp dismissal sound for precise close action
   if (timeoutId.value) {
     clearTimeout(timeoutId.value)
     timeoutId.value = null

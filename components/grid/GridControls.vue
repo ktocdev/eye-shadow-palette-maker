@@ -11,10 +11,14 @@ const props = defineProps({
 const emit = defineEmits(['size-change'])
 
 // Use sound composable
-const { playUpSweep } = useSound()
+const { playSoftClick, playDownSweep } = useSound()
+
+const handleSelectOpen = () => {
+  playSoftClick()
+}
 
 const handleSizeChange = (event) => {
-  playUpSweep()
+  playDownSweep()
   emit('size-change', parseInt(event.target.value))
 }
 </script>
@@ -25,6 +29,7 @@ const handleSizeChange = (event) => {
     <select 
       id="gridSize" 
       :value="gridSize"
+      @mousedown="handleSelectOpen"
       @change="handleSizeChange"
     >
       <option value="2">2×2</option>
