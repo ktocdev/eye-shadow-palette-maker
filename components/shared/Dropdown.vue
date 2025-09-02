@@ -115,6 +115,8 @@ onUnmounted(() => {
   color: var(--color-text-secondary);
   transition: all 0.2s ease;
   box-shadow: var(--shadow-swatch);
+  position: relative;
+  z-index: 1;
 }
 
 .dropdown-toggle:hover,
@@ -127,7 +129,7 @@ onUnmounted(() => {
 
 .dropdown-menu {
   position: absolute;
-  z-index: 1000;
+  z-index: 1050;
   background: white;
   border: 1px solid rgba(139, 129, 165, 0.3);
   border-radius: var(--radius-md);

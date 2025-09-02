@@ -15,7 +15,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['swatch-click'])
+const emit = defineEmits(['swatch-click', 'close'])
 
 // Use carousel composable
 const { 
@@ -29,7 +29,7 @@ const {
 } = useCarousel(computed(() => props.colors))
 
 // Use sound composable
-const { playSharpClick } = useSound()
+const { playSharpClick, playDownSweep } = useSound()
 
 // Handle arrow button clicks with sound
 const handlePrevClick = () => {
@@ -63,10 +63,19 @@ const handleSwipeRight = () => {
 const handleSwatchClick = (colorData) => {
   emit('swatch-click', colorData)
 }
+
+// Handle close button click
+const handleCloseClick = () => {
+  playDownSweep() // Same sound as modal close
+  emit('close')
+}
 </script>
 
 <template>
   <div class="color-carousel">
+    <button class="carousel-close" @click="handleCloseClick" aria-label="Close carousel">
+      ×
+    </button>
     <div class="carousel-container">
       <div class="carousel-left">
         <div class="carousel-info">{{ currentPage + 1 }} / {{ totalPages }}</div>
@@ -115,6 +124,31 @@ const handleSwatchClick = (colorData) => {
   border: var(--border-container);
   padding: var(--font-size-base);
   min-width: 280px;
+  position: relative;
+}
+
+.carousel-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-tight);
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-primary);
+  transition: background-color 0.2s ease;
+}
+
+.carousel-close:hover {
+  background: rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 400px) {

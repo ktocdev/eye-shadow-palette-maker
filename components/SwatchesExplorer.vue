@@ -87,8 +87,12 @@ const handleClear = () => {
 }
 
 const handleRandomize = () => {
+  // Preserve the inline title before clearing
+  const currentInlineTitle = inlinePaletteTitle.value
   paletteGridRef.value?.generateRandomPalette()
   clearPalette()
+  // Restore the inline title after clearing
+  inlinePaletteTitle.value = currentInlineTitle
   updateGridTracker()
 }
 
@@ -514,6 +518,7 @@ onUnmounted(() => {
         zIndex: 200
       }"
       @swatch-click="handleSwatchClick"
+      @close="showCarousel = false"
     />
     
     <!-- Save Palette Modal -->
