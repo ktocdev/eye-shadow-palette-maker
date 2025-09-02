@@ -50,6 +50,30 @@ export const ZONE_INFO = {
   }
 }
 
+// Predefined skin tones
+export const SKIN_TONES = [
+  { name: 'Fair', color: '#F4E4C1' },
+  { name: 'Light', color: '#F2D2A9' },
+  { name: 'Medium', color: '#E8B887' },
+  { name: 'Tan', color: '#D4A574' },
+  { name: 'Deep', color: '#B8956A' },
+  { name: 'Dark', color: '#8B6F47' },
+  { name: 'Rich', color: '#6D4C35' },
+  { name: 'Ebony', color: '#4A3429' }
+]
+
+// Predefined eye colors
+export const EYE_COLORS = [
+  { name: 'Gray', color: '#708090' },
+  { name: 'Light Blue', color: '#6BB6FF' },
+  { name: 'Blue', color: '#4A90A4' },
+  { name: 'Green', color: '#4A7C59' },
+  { name: 'Hazel', color: '#6f7a3eff' },
+  { name: 'Brown', color: '#914f20ff' },
+  { name: 'Medium Brown', color: '#66431fff' },
+  { name: 'Dark Brown', color: '#3d281dff' }
+]
+
 export function useEyeDrawing() {
   const canvasRef = ref(null)
   const canvasContext = ref(null)
@@ -60,6 +84,8 @@ export function useEyeDrawing() {
   const lastDrawPosition = ref({ x: 0, y: 0 })
   const eyeLayer = ref(null) // Store the base eye drawing
   const hasDrawnOnCanvas = ref(false) // Track if user has drawn anything
+  const skinTone = ref(SKIN_TONES[0].color) // Default to fair skin
+  const eyeColor = ref(EYE_COLORS[3].color) // Default to blue eyes
 
   /**
    * Initialize the canvas and draw the base eye shape
@@ -113,7 +139,7 @@ export function useEyeDrawing() {
       console.log('Canvas cleared')
       
       // Draw base skin tone
-      ctx.fillStyle = '#F4E4C1'
+      ctx.fillStyle = skinTone.value
       ctx.fillRect(0, 0, 400, 300)
       console.log('Base skin tone drawn')
       
@@ -123,7 +149,7 @@ export function useEyeDrawing() {
       
       // === LAYER 1: UPPER EYE MASK (SHALLOW U SHAPE) ===
       ctx.beginPath()
-      ctx.fillStyle = '#F4E4C1' // Base skin tone
+      ctx.fillStyle = skinTone.value // Base skin tone
       ctx.moveTo(centerX - 100, centerY - 50) // Top left
       ctx.lineTo(centerX + 100, centerY - 50) // Top right  
       ctx.lineTo(centerX + 100, centerY - 5) // Right side down
@@ -135,7 +161,7 @@ export function useEyeDrawing() {
       
       // === LAYER 1: LOWER EYE MASK (INVERTED SHALLOW U SHAPE) ===
       ctx.beginPath()
-      ctx.fillStyle = '#F4E4C1' // Base skin tone
+      ctx.fillStyle = skinTone.value // Base skin tone
       ctx.moveTo(centerX - 100, centerY + 5)
       ctx.quadraticCurveTo(centerX - 40, centerY + 15, centerX, centerY + 12)
       ctx.quadraticCurveTo(centerX + 40, centerY + 15, centerX + 100, centerY + 5)
@@ -158,7 +184,7 @@ export function useEyeDrawing() {
       
       // === IRIS ===
       ctx.beginPath()
-      ctx.fillStyle = '#4A90A4' // Blue-green iris
+      ctx.fillStyle = eyeColor.value // Customizable iris color
       ctx.arc(centerX, centerY, 25, 0, Math.PI * 2)
       ctx.fill()
       
@@ -319,6 +345,26 @@ export function useEyeDrawing() {
     return hasDrawnOnCanvas.value
   })
 
+  /**
+   * Update skin tone and redraw base eye
+   */
+  const setSkinTone = (color) => {
+    skinTone.value = color
+    if (canvasContext.value) {
+      drawBaseEye()
+    }
+  }
+
+  /**
+   * Update eye color and redraw base eye
+   */
+  const setEyeColor = (color) => {
+    eyeColor.value = color
+    if (canvasContext.value) {
+      drawBaseEye()
+    }
+  }
+
   return {
     // Refs
     canvasRef,
@@ -327,6 +373,8 @@ export function useEyeDrawing() {
     selectedColor,
     brushSize,
     brushOpacity,
+    skinTone,
+    eyeColor,
     
     // Computed
     hasAnyColors,
@@ -337,6 +385,8 @@ export function useEyeDrawing() {
     startDrawing,
     continueDrawing,
     stopDrawing,
-    clearAllColors
+    clearAllColors,
+    setSkinTone,
+    setEyeColor
   }
 }

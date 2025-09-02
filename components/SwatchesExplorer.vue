@@ -504,7 +504,6 @@ onUnmounted(() => {
               @open-save-modal="handleOpenSaveModal"
               @view-saved-palettes="handleViewSavedPalettes"
               @open-about-modal="handleOpenAboutModal"
-              @open-eye-preview="handleOpenEyePreview"
             />
           </div>
         </div>
