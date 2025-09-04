@@ -23,6 +23,8 @@ const {
   brushSize,
   brushOpacity,
   hasAnyColors,
+  canUndo,
+  canRedo,
   skinTone,
   eyeColor,
   initializeCanvas,
@@ -30,6 +32,8 @@ const {
   continueDrawing,
   stopDrawing,
   clearAllColors,
+  undoLastAction,
+  redoLastAction,
   setSkinTone,
   setEyeColor
 } = useEyeDrawing()
@@ -255,11 +259,33 @@ const handleBackToPreview = () => {
       ></canvas>
     </div>
     
-    <!-- Controls section -->
-    <div class="eye-controls">
-      <!-- Color palette selection -->
-      <div class="color-selection-section">
-        <h3>Select Color</h3>
+    <!-- Primary controls row -->
+    <div class="primary-controls-row">
+      <!-- Undo/Redo buttons -->
+      <div class="control-group">
+        <div class="undo-redo-buttons">
+          <BaseButton
+            @click="undoLastAction"
+            :disabled="!canUndo"
+            variant="gray"
+            size="compact"
+          >
+            ↶ Undo
+          </BaseButton>
+          <BaseButton
+            @click="redoLastAction"
+            :disabled="!canRedo"
+            variant="gray"
+            size="compact"
+          >
+            ↷ Redo
+          </BaseButton>
+        </div>
+      </div>
+      
+      <!-- Color selection -->
+      <div class="control-group">
+        <h4>Select Color</h4>
         <div v-if="paletteColors.length > 0" class="color-palette">
           <button
             v-for="(color, index) in paletteColors"
@@ -277,6 +303,63 @@ const handleBackToPreview = () => {
           <p>No colors found in this palette.</p>
         </div>
       </div>
+      
+      <!-- Brush size -->
+      <div class="control-group">
+        <h4>Brush Size</h4>
+        <div class="brush-buttons">
+          <button 
+            @click="setBrushSize(8)"
+            :class="{ 'active': brushSize === 8 }"
+            class="brush-btn"
+          >
+            Small
+          </button>
+          <button 
+            @click="setBrushSize(15)"
+            :class="{ 'active': brushSize === 15 }"
+            class="brush-btn"
+          >
+            Medium
+          </button>
+          <button 
+            @click="setBrushSize(25)"
+            :class="{ 'active': brushSize === 25 }"
+            class="brush-btn"
+          >
+            Large
+          </button>
+        </div>
+        
+        <h4>Brush Opacity</h4>
+        <div class="brush-buttons">
+          <button 
+            @click="setBrushOpacity(0.3)"
+            :class="{ 'active': brushOpacity === 0.3 }"
+            class="brush-btn"
+          >
+            Light
+          </button>
+          <button 
+            @click="setBrushOpacity(0.6)"
+            :class="{ 'active': brushOpacity === 0.6 }"
+            class="brush-btn"
+          >
+            Medium
+          </button>
+          <button 
+            @click="setBrushOpacity(1.0)"
+            :class="{ 'active': brushOpacity === 1.0 }"
+            class="brush-btn"
+          >
+            Full
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Secondary controls -->
+    <div class="eye-controls">
       
       <!-- Skin & Eye Color Selection -->
       <div class="appearance-controls-section">
@@ -312,66 +395,6 @@ const handleBackToPreview = () => {
                 :title="color.name"
               >
                 <span class="appearance-swatch__check" v-if="eyeColor === color.color">✓</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Brush controls -->
-      <div class="brush-controls-section">
-        <h3>Brush Settings</h3>
-        <div class="brush-controls">
-          <div class="brush-control-group">
-            <label>Size</label>
-            <div class="brush-buttons">
-              <button 
-                @click="setBrushSize(8)"
-                :class="{ 'active': brushSize === 8 }"
-                class="brush-btn"
-              >
-                Small
-              </button>
-              <button 
-                @click="setBrushSize(15)"
-                :class="{ 'active': brushSize === 15 }"
-                class="brush-btn"
-              >
-                Medium
-              </button>
-              <button 
-                @click="setBrushSize(25)"
-                :class="{ 'active': brushSize === 25 }"
-                class="brush-btn"
-              >
-                Large
-              </button>
-            </div>
-          </div>
-          
-          <div class="brush-control-group">
-            <label>Opacity</label>
-            <div class="brush-buttons">
-              <button 
-                @click="setBrushOpacity(0.3)"
-                :class="{ 'active': brushOpacity === 0.3 }"
-                class="brush-btn"
-              >
-                Light
-              </button>
-              <button 
-                @click="setBrushOpacity(0.6)"
-                :class="{ 'active': brushOpacity === 0.6 }"
-                class="brush-btn"
-              >
-                Medium
-              </button>
-              <button 
-                @click="setBrushOpacity(1.0)"
-                :class="{ 'active': brushOpacity === 1.0 }"
-                class="brush-btn"
-              >
-                Full
               </button>
             </div>
           </div>
@@ -484,13 +507,61 @@ const handleBackToPreview = () => {
   background: white;
 }
 
+.primary-controls-row {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
+.control-group:first-child {
+  flex: 0 0 auto;
+  min-width: 100px;
+}
+
+.control-group:nth-child(2) {
+  flex: 2;
+  min-width: 0;
+}
+
+.control-group:nth-child(3) {
+  flex: 1.5;
+  min-width: 200px;
+}
+
+.control-group h4 {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.undo-redo-buttons {
+  display: flex;
+  gap: 8px;
+  flex-direction: column;
+}
+
 .eye-controls {
   display: grid;
   grid-template-columns: 1fr;
   gap: 24px;
 }
 
-.color-selection-section h3,
+.appearance-controls-section {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
 .appearance-controls-section h3,
 .brush-controls-section h3 {
   font-size: var(--font-size-base);
@@ -503,7 +574,7 @@ const handleBackToPreview = () => {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .color-swatch {
@@ -612,19 +683,22 @@ const handleBackToPreview = () => {
 
 .brush-buttons {
   display: flex;
-  gap: 8px;
-  justify-content: center;
+  gap: 6px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
 }
 
 .brush-btn {
-  padding: 8px 16px;
+  padding: 6px 12px;
   background: rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(139, 129, 165, 0.2);
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   color: var(--color-text-primary);
+  flex: 1;
+  min-width: 0;
 }
 
 .brush-btn:hover {

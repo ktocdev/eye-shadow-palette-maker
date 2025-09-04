@@ -153,8 +153,6 @@ const handleDemoPaletteEyePreview = (paletteId) => {
   showPaletteManager.value = true
 }
 
-
-
 // New title editing handlers (receive events from AppHeader)
 const handleTitleSaved = ({ oldTitle, newTitle }) => {
   updateLoadedPaletteTitle(newTitle)
