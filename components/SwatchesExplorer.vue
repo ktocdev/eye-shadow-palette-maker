@@ -16,6 +16,7 @@ import ToastNotification from './shared/ToastNotification.vue'
 // Composables
 import { useColorData } from '../composables/useColorData.js'
 import { usePaletteState } from '../composables/usePaletteState.js'
+import { useTheme } from '../composables/useTheme.js'
 import { usePaletteStorage } from '../composables/usePaletteStorage.js'
 import { useSound } from '../composables/useSound.js'
 import { useTitleEditing } from '../composables/useTitleEditing.js'
@@ -429,9 +430,13 @@ const eyePreviewColors = computed(() => {
   }
 })
 
+// Initialize theme
+const { initializeTheme } = useTheme()
+
 // Load saved palettes on mount
 onMounted(() => {
   loadSavedPalettes()
+  initializeTheme()
   // Add document click listener to hide carousel when clicking outside
   document.addEventListener('click', handleDocumentClick)
 })

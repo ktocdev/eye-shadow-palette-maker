@@ -155,7 +155,7 @@ const onMiniSwatchTouchEnd = (e) => {
 .palette-color-name {
   font-family: var(--font-family-primary);
   font-weight: var(--font-weight-normal);
-  color: var(--color-text-primary);
+  color: #333333; /* Default dark text for light swatches */
   text-align: center;
   pointer-events: none;
   position: absolute;
@@ -167,7 +167,7 @@ const onMiniSwatchTouchEnd = (e) => {
 }
 
 .palette-swatch-container:has(.palette-swatch.dark-palette-swatch) .palette-color-name {
-  color: #f8f9fa;
+  color: #f8f9fa; /* Light text for dark swatches */
 }
 
 /* Mobile first - base styles (smallest screens) */

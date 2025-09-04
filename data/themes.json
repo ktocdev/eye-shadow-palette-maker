@@ -1,0 +1,160 @@
+{
+  "themes": {
+    "purple": {
+      "name": "Purple Dreams",
+      "colors": {
+        "primary": "#6A5ACD",
+        "primaryLight": "#bcb3de",
+        "primaryMedium": "#8b81a5",
+        "primaryDark": "#6a5a8d",
+        "accent": "#9370DB",
+        "background": "#f5f2f8",
+        "backgroundSecondary": "#e8e4f0",
+        "backgroundMuted": "#d6d0e0",
+        "surface": "#ffffff",
+        "surfaceHover": "rgba(106, 90, 205, 0.1)",
+        "border": "rgba(139, 129, 165, 0.3)",
+        "borderLight": "rgba(139, 129, 165, 0.2)",
+        "borderHover": "rgba(106, 90, 205, 0.5)",
+        "focus": "rgba(106, 90, 205, 0.3)",
+        "shadow": "rgba(139, 129, 165, 0.15)",
+        "shadowHover": "rgba(139, 129, 165, 0.2)"
+      },
+      "gradients": {
+        "main": "radial-gradient(circle at 30% 20%, rgba(188, 179, 222, 0.4) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(188, 179, 222, 0.3) 0%, transparent 50%), radial-gradient(circle at 40% 90%, rgba(255, 255, 255, 0.2) 0%, transparent 40%), radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.15) 0%, transparent 30%), linear-gradient(135deg, #bcb3de 0%, #e8e4f0 50%, #f5f2f8 100%)",
+        "container": "linear-gradient(145deg, #e8e4f0, #d6d0e0)",
+        "button": "linear-gradient(135deg, rgba(106, 90, 205, 0.7), rgba(44, 42, 74, 0.8))"
+      }
+    },
+    "turquoise": {
+      "name": "Ocean Breeze",
+      "colors": {
+        "primary": "#20B2AA",
+        "primaryLight": "#7FDBDA",
+        "primaryMedium": "#4ECDC4",
+        "primaryDark": "#17A2B8",
+        "accent": "#00CED1",
+        "background": "#f0fdfc",
+        "backgroundSecondary": "#e0f7f7",
+        "backgroundMuted": "#ccf2f4",
+        "surface": "#ffffff",
+        "surfaceHover": "rgba(32, 178, 170, 0.1)",
+        "border": "rgba(32, 178, 170, 0.3)",
+        "borderLight": "rgba(32, 178, 170, 0.2)",
+        "borderHover": "rgba(32, 178, 170, 0.5)",
+        "focus": "rgba(32, 178, 170, 0.3)",
+        "shadow": "rgba(32, 178, 170, 0.15)",
+        "shadowHover": "rgba(32, 178, 170, 0.2)"
+      },
+      "gradients": {
+        "main": "radial-gradient(circle at 30% 20%, rgba(127, 219, 218, 0.4) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(127, 219, 218, 0.3) 0%, transparent 50%), radial-gradient(circle at 40% 90%, rgba(255, 255, 255, 0.2) 0%, transparent 40%), radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.15) 0%, transparent 30%), linear-gradient(135deg, #7FDBDA 0%, #e0f7f7 50%, #f0fdfc 100%)",
+        "container": "linear-gradient(145deg, #e0f7f7, #ccf2f4)",
+        "button": "linear-gradient(135deg, rgba(32, 178, 170, 0.7), rgba(23, 162, 184, 0.8))"
+      }
+    },
+    "gold": {
+      "name": "Golden Sunset",
+      "colors": {
+        "primary": "#D2691E",
+        "primaryLight": "#F4D4A7",
+        "primaryMedium": "#E6A873",
+        "primaryDark": "#B8572B",
+        "accent": "#FF8C00",
+        "background": "#fffaf0",
+        "backgroundSecondary": "#faf0e6",
+        "backgroundMuted": "#f0c674",
+        "surface": "#ffffff",
+        "surfaceHover": "rgba(210, 105, 30, 0.1)",
+        "border": "rgba(210, 105, 30, 0.3)",
+        "borderLight": "rgba(210, 105, 30, 0.2)",
+        "borderHover": "rgba(210, 105, 30, 0.5)",
+        "focus": "rgba(210, 105, 30, 0.3)",
+        "shadow": "rgba(210, 105, 30, 0.15)",
+        "shadowHover": "rgba(210, 105, 30, 0.2)"
+      },
+      "gradients": {
+        "main": "radial-gradient(circle at 30% 20%, rgba(244, 212, 167, 0.4) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(244, 212, 167, 0.3) 0%, transparent 50%), radial-gradient(circle at 40% 90%, rgba(255, 255, 255, 0.2) 0%, transparent 40%), radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.15) 0%, transparent 30%), linear-gradient(135deg, #F4D4A7 0%, #faf0e6 50%, #fffaf0 100%)",
+        "container": "linear-gradient(145deg, #faf0e6, #f0c674)",
+        "button": "linear-gradient(135deg, rgba(210, 105, 30, 0.7), rgba(184, 87, 43, 0.8))"
+      }
+    },
+    "darkgray": {
+      "name": "Midnight Steel",
+      "colors": {
+        "primary": "#6B7280",
+        "primaryLight": "#9CA3AF",
+        "primaryMedium": "#6B7280",
+        "primaryDark": "#374151",
+        "accent": "#8B94A3",
+        "background": "#1F2937",
+        "backgroundSecondary": "#374151",
+        "backgroundMuted": "#4B5563",
+        "surface": "#2D3748",
+        "surfaceHover": "rgba(107, 114, 128, 0.1)",
+        "border": "rgba(107, 114, 128, 0.3)",
+        "borderLight": "rgba(107, 114, 128, 0.2)",
+        "borderHover": "rgba(107, 114, 128, 0.5)",
+        "focus": "rgba(139, 148, 163, 0.3)",
+        "shadow": "rgba(0, 0, 0, 0.25)",
+        "shadowHover": "rgba(0, 0, 0, 0.35)"
+      },
+      "gradients": {
+        "main": "radial-gradient(circle at 30% 20%, rgba(55, 65, 81, 0.4) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(75, 85, 99, 0.3) 0%, transparent 50%), radial-gradient(circle at 40% 90%, rgba(107, 114, 128, 0.1) 0%, transparent 40%), linear-gradient(135deg, #1F2937 0%, #374151 50%, #4B5563 100%)",
+        "container": "linear-gradient(145deg, #374151, #2D3748)",
+        "button": "linear-gradient(135deg, rgba(107, 114, 128, 0.7), rgba(55, 65, 81, 0.8))"
+      }
+    },
+    "taupe": {
+      "name": "Warm Earth",
+      "colors": {
+        "primary": "#8B7355",
+        "primaryLight": "#B5A081",
+        "primaryMedium": "#9C8465",
+        "primaryDark": "#6B5A42",
+        "accent": "#A0845C",
+        "background": "#FAF7F2",
+        "backgroundSecondary": "#F2EDE5",
+        "backgroundMuted": "#E8DDD0",
+        "surface": "#FFFFFF",
+        "surfaceHover": "rgba(139, 115, 85, 0.1)",
+        "border": "rgba(139, 115, 85, 0.3)",
+        "borderLight": "rgba(139, 115, 85, 0.2)",
+        "borderHover": "rgba(139, 115, 85, 0.5)",
+        "focus": "rgba(160, 132, 92, 0.3)",
+        "shadow": "rgba(107, 90, 66, 0.15)",
+        "shadowHover": "rgba(107, 90, 66, 0.2)"
+      },
+      "gradients": {
+        "main": "radial-gradient(circle at 30% 20%, rgba(181, 160, 129, 0.4) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(181, 160, 129, 0.3) 0%, transparent 50%), radial-gradient(circle at 40% 90%, rgba(255, 255, 255, 0.2) 0%, transparent 40%), radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.15) 0%, transparent 30%), linear-gradient(135deg, #B5A081 0%, #F2EDE5 50%, #FAF7F2 100%)",
+        "container": "linear-gradient(145deg, #F2EDE5, #E8DDD0)",
+        "button": "linear-gradient(135deg, rgba(139, 115, 85, 0.7), rgba(107, 90, 66, 0.8))"
+      }
+    },
+    "eggplant": {
+      "name": "Royal Eggplant",
+      "colors": {
+        "primary": "#614051",
+        "primaryLight": "#8B6B7A",
+        "primaryMedium": "#725464",
+        "primaryDark": "#4A2C3A",
+        "accent": "#7D4E65",
+        "background": "#F9F6F8",
+        "backgroundSecondary": "#F1EBF0",
+        "backgroundMuted": "#E6D9E2",
+        "surface": "#FFFFFF",
+        "surfaceHover": "rgba(97, 64, 81, 0.1)",
+        "border": "rgba(97, 64, 81, 0.3)",
+        "borderLight": "rgba(97, 64, 81, 0.2)",
+        "borderHover": "rgba(97, 64, 81, 0.5)",
+        "focus": "rgba(125, 78, 101, 0.3)",
+        "shadow": "rgba(74, 44, 58, 0.15)",
+        "shadowHover": "rgba(74, 44, 58, 0.2)"
+      },
+      "gradients": {
+        "main": "radial-gradient(circle at 30% 20%, rgba(139, 107, 122, 0.4) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(139, 107, 122, 0.3) 0%, transparent 50%), radial-gradient(circle at 40% 90%, rgba(255, 255, 255, 0.2) 0%, transparent 40%), radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.15) 0%, transparent 30%), linear-gradient(135deg, #8B6B7A 0%, #F1EBF0 50%, #F9F6F8 100%)",
+        "container": "linear-gradient(145deg, #F1EBF0, #E6D9E2)",
+        "button": "linear-gradient(135deg, rgba(97, 64, 81, 0.7), rgba(74, 44, 58, 0.8))"
+      }
+    }
+  }
+}
