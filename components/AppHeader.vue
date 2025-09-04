@@ -209,25 +209,29 @@ const handleNewPalette = () => {
 .inline-title-input {
   width: 100%;
   max-width: 400px;
-  padding: 12px 16px;
-  border: 1px solid rgba(139, 129, 165, 0.3);
-  border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.9);
-  font-family: var(--font-family-primary);
-  font-size: var(--font-size-base);
+  padding: 16px 20px;
+  border: 2px solid rgba(139, 129, 165, 0.3);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.95);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-lg);
   color: var(--color-text-primary);
   text-align: center;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .inline-title-input:focus {
   outline: none;
-  border-color: rgba(106, 90, 205, 0.5);
-  box-shadow: 0 0 0 3px rgba(106, 90, 205, 0.1);
+  border-color: rgba(106, 90, 205, 0.6);
+  box-shadow: 0 0 0 4px rgba(106, 90, 205, 0.15), 0 4px 12px rgba(139, 129, 165, 0.2);
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-1px);
 }
 
 .inline-title-input::placeholder {
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-normal);
+  opacity: 0.7;
 }
 
 .inline-title-input-container {
@@ -245,7 +249,7 @@ const handleNewPalette = () => {
 .form-helper {
   font-family: var(--font-family-primary);
   font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   text-align: center;
   padding: 4px 8px;
   margin-top: 4px;

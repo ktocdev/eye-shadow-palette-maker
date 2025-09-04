@@ -86,6 +86,11 @@ export function useEyeDrawing() {
   const hasDrawnOnCanvas = ref(false) // Track if user has drawn anything
   const skinTone = ref(SKIN_TONES[0].color) // Default to fair skin
   const eyeColor = ref(EYE_COLORS[3].color) // Default to blue eyes
+  
+  // Undo/Redo functionality
+  const undoHistory = ref([]) // Stack of canvas states
+  const redoHistory = ref([]) // Stack of undone states for redo
+  const maxUndoSteps = 20 // Limit history to prevent memory issues
 
   /**
    * Initialize the canvas and draw the base eye shape
@@ -229,6 +234,13 @@ export function useEyeDrawing() {
       // Reset drawn state when drawing base eye
       hasDrawnOnCanvas.value = false
       
+      // Clear undo and redo history when redrawing base eye
+      undoHistory.value = []
+      redoHistory.value = []
+      
+      // Save initial state to undo history
+      saveStateToUndoHistory()
+      
       console.log('Simplified eye drawing completed successfully')
       return true
       
@@ -260,10 +272,16 @@ export function useEyeDrawing() {
   }
 
   /**
-   * Stop drawing
+   * Stop drawing and save state for undo
    */
   const stopDrawing = () => {
-    isDrawing.value = false
+    if (isDrawing.value) {
+      isDrawing.value = false
+      // Clear redo history when new action is performed
+      redoHistory.value = []
+      // Save state to undo history after drawing is complete
+      saveStateToUndoHistory()
+    }
   }
 
   /**
@@ -365,6 +383,85 @@ export function useEyeDrawing() {
     }
   }
 
+  /**
+   * Save current canvas state to undo history
+   */
+  const saveStateToUndoHistory = () => {
+    const ctx = canvasContext.value
+    if (!ctx) return
+    
+    const imageData = ctx.getImageData(0, 0, 400, 300)
+    undoHistory.value.push(imageData)
+    
+    // Limit history size to prevent memory issues
+    if (undoHistory.value.length > maxUndoSteps) {
+      undoHistory.value.shift() // Remove oldest state
+    }
+  }
+
+  /**
+   * Undo the last drawing action
+   */
+  const undoLastAction = () => {
+    const ctx = canvasContext.value
+    if (!ctx || undoHistory.value.length <= 1) return // Keep at least base state
+    
+    // Save current state to redo history before undoing
+    const currentState = undoHistory.value.pop()
+    if (currentState) {
+      redoHistory.value.push(currentState)
+      
+      // Limit redo history size
+      if (redoHistory.value.length > maxUndoSteps) {
+        redoHistory.value.shift()
+      }
+    }
+    
+    // Restore previous state
+    const previousState = undoHistory.value[undoHistory.value.length - 1]
+    if (previousState) {
+      ctx.putImageData(previousState, 0, 0)
+      
+      // Update drawn state based on whether we're back to base state
+      hasDrawnOnCanvas.value = undoHistory.value.length > 1
+    }
+  }
+
+  /**
+   * Redo the last undone action
+   */
+  const redoLastAction = () => {
+    const ctx = canvasContext.value
+    if (!ctx || redoHistory.value.length === 0) return
+    
+    // Get the state to redo
+    const stateToRedo = redoHistory.value.pop()
+    if (stateToRedo) {
+      // Add current state back to undo history
+      undoHistory.value.push(stateToRedo)
+      
+      // Restore the redone state
+      ctx.putImageData(stateToRedo, 0, 0)
+      
+      // Update drawn state
+      hasDrawnOnCanvas.value = undoHistory.value.length > 1
+    }
+  }
+
+  /**
+   * Check if undo is available
+   */
+  const canUndo = computed(() => {
+    return undoHistory.value.length > 1 // More than just the base state
+  })
+
+  /**
+   * Check if redo is available
+   */
+  const canRedo = computed(() => {
+    return redoHistory.value.length > 0
+  })
+
   return {
     // Refs
     canvasRef,
@@ -378,6 +475,8 @@ export function useEyeDrawing() {
     
     // Computed
     hasAnyColors,
+    canUndo,
+    canRedo,
     
     // Methods
     initializeCanvas,
@@ -387,6 +486,8 @@ export function useEyeDrawing() {
     stopDrawing,
     clearAllColors,
     setSkinTone,
-    setEyeColor
+    setEyeColor,
+    undoLastAction,
+    redoLastAction
   }
 }

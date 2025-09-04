@@ -1,6 +1,8 @@
 <script setup>
 import BaseButton from './BaseButton.vue'
+import Select from './Select.vue'
 import { useSound } from '../../composables/useSound.js'
+import { useTheme } from '../../composables/useTheme.js'
 
 const props = defineProps({
   hasSavedPalettes: {
@@ -26,6 +28,9 @@ const emit = defineEmits(['clear', 'randomize', 'open-save-modal', 'view-saved-p
 // Use sound composable
 const { playSubtleClick, playSoftClick } = useSound()
 
+// Use theme composable
+const { currentTheme, themeOptions, setTheme } = useTheme()
+
 // Handle button clicks with sound
 const handleSaveClick = () => {
   playSoftClick()
@@ -50,6 +55,11 @@ const handleRandomizeClick = () => {
 const handleAboutClick = () => {
   playSoftClick()
   emit('open-about-modal')
+}
+
+const handleThemeChange = (themeKey) => {
+  playSoftClick()
+  setTheme(themeKey)
 }
 </script>
 
@@ -93,6 +103,17 @@ const handleAboutClick = () => {
     >
       About
     </BaseButton>
+    
+    <!-- Theme selector -->
+    <div class="theme-selector">
+      <Select
+        :value="currentTheme"
+        :options="themeOptions"
+        @change="handleThemeChange"
+        placeholder="Select Theme"
+        class="theme-dropdown"
+      />
+    </div>
   </div>
 </template>
 
@@ -112,6 +133,24 @@ const handleAboutClick = () => {
     flex-direction: row;
     gap: 20px;
   }
+}
+
+.theme-selector {
+  margin-top: 12px;
+  width: 100%;
+  max-width: 200px;
+}
+
+@media (min-width: 600px) {
+  .theme-selector {
+    margin-top: 0;
+    width: auto;
+    min-width: 150px;
+  }
+}
+
+.theme-dropdown {
+  width: 100%;
 }
 
 </style>
