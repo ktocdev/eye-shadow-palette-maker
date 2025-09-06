@@ -88,6 +88,7 @@ export function useEyeDrawing() {
   const brushSize = ref(15)
   const brushOpacity = ref(0.6)
   const lastDrawPosition = ref({ x: 0, y: 0 })
+  const isErasing = ref(false) // Track if eraser tool is active
   const eyeLayer = ref(null) // Store the SVG eye elements
   const hasDrawnOnCanvas = ref(false) // Track if user has drawn anything
   const skinTone = ref(SKIN_TONES[0].color) // Default to fair skin
@@ -197,7 +198,8 @@ export function useEyeDrawing() {
    * Start drawing at mouse position
    */
   const startDrawing = (x, y) => {
-    if (!selectedColor.value || !paintContext.value) return
+    if (!paintContext.value) return
+    if (!isErasing.value && !selectedColor.value) return // Need color for painting, but not for erasing
     
     isDrawing.value = true
     lastDrawPosition.value = { x, y }
@@ -208,7 +210,8 @@ export function useEyeDrawing() {
    * Continue drawing as mouse moves
    */
   const continueDrawing = (x, y) => {
-    if (!isDrawing.value || !selectedColor.value || !paintContext.value) return
+    if (!isDrawing.value || !paintContext.value) return
+    if (!isErasing.value && !selectedColor.value) return // Need color for painting, but not for erasing
     
     drawLine(lastDrawPosition.value.x, lastDrawPosition.value.y, x, y)
     lastDrawPosition.value = { x, y }
@@ -235,8 +238,18 @@ export function useEyeDrawing() {
     if (!ctx) return
 
     ctx.save()
-    ctx.globalAlpha = brushOpacity.value
-    ctx.fillStyle = selectedColor.value.bgColor
+    
+    if (isErasing.value) {
+      // Erase mode - remove paint
+      ctx.globalCompositeOperation = 'destination-out'
+      ctx.globalAlpha = 1.0 // Full opacity for erasing
+    } else {
+      // Paint mode - add color
+      ctx.globalCompositeOperation = 'source-over'
+      ctx.globalAlpha = brushOpacity.value
+      ctx.fillStyle = selectedColor.value.bgColor
+    }
+    
     ctx.beginPath()
     ctx.arc(x, y, brushSize.value / 2, 0, Math.PI * 2)
     ctx.fill()
@@ -254,8 +267,18 @@ export function useEyeDrawing() {
     if (!ctx) return
 
     ctx.save()
-    ctx.globalAlpha = brushOpacity.value
-    ctx.strokeStyle = selectedColor.value.bgColor
+    
+    if (isErasing.value) {
+      // Erase mode - remove paint
+      ctx.globalCompositeOperation = 'destination-out'
+      ctx.globalAlpha = 1.0 // Full opacity for erasing
+    } else {
+      // Paint mode - add color
+      ctx.globalCompositeOperation = 'source-over'
+      ctx.globalAlpha = brushOpacity.value
+      ctx.strokeStyle = selectedColor.value.bgColor
+    }
+    
     ctx.lineWidth = brushSize.value
     ctx.lineCap = 'round'
     ctx.lineJoin = 'round'
@@ -317,6 +340,21 @@ export function useEyeDrawing() {
     if (eyeContext.value) {
       await drawEyeLayer()
     }
+  }
+
+  /**
+   * Toggle eraser mode on/off
+   */
+  const toggleEraser = () => {
+    isErasing.value = !isErasing.value
+    console.log('Eraser mode:', isErasing.value ? 'ON' : 'OFF')
+  }
+
+  /**
+   * Set eraser mode explicitly
+   */
+  const setEraserMode = (enabled) => {
+    isErasing.value = enabled
   }
 
   /**
@@ -410,6 +448,7 @@ export function useEyeDrawing() {
     selectedColor,
     brushSize,
     brushOpacity,
+    isErasing,
     skinTone,
     eyeColor,
     
@@ -428,6 +467,8 @@ export function useEyeDrawing() {
     clearAllColors,
     setSkinTone,
     setEyeColor,
+    toggleEraser,
+    setEraserMode,
     undoLastAction,
     redoLastAction
   }

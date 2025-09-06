@@ -22,6 +22,7 @@ const {
   selectedColor,
   brushSize,
   brushOpacity,
+  isErasing,
   hasAnyColors,
   canUndo,
   canRedo,
@@ -36,7 +37,9 @@ const {
   undoLastAction,
   redoLastAction,
   setSkinTone,
-  setEyeColor
+  setEyeColor,
+  toggleEraser,
+  setEraserMode
 } = useEyeDrawing()
 
 // Color selection
@@ -379,6 +382,24 @@ const handleBackToPreview = () => {
             class="brush-btn"
           >
             Full
+          </button>
+        </div>
+        
+        <h4>Tool Mode</h4>
+        <div class="brush-buttons">
+          <button 
+            @click="setEraserMode(false)"
+            :class="{ 'active': !isErasing }"
+            class="brush-btn tool-btn"
+          >
+            🎨 Paint
+          </button>
+          <button 
+            @click="setEraserMode(true)"
+            :class="{ 'active': isErasing }"
+            class="brush-btn tool-btn eraser-btn"
+          >
+            🧽 Erase
           </button>
         </div>
       </div>
@@ -762,6 +783,17 @@ const handleBackToPreview = () => {
   background: rgba(106, 90, 205, 0.1);
   border-color: rgba(106, 90, 205, 0.4);
   color: rgba(106, 90, 205, 0.9);
+}
+
+.eraser-btn.active {
+  background: rgba(255, 107, 107, 0.1);
+  border-color: rgba(255, 107, 107, 0.4);
+  color: rgba(255, 107, 107, 0.9);
+}
+
+.tool-btn {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
 }
 
 .action-buttons {
