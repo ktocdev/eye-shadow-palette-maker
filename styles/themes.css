@@ -136,49 +136,49 @@
   box-shadow: 0 0 0 3px rgba(32, 178, 170, 0.3);
 }
 
-/* Gold Theme */
+/* Amazing Grace Theme */
 :root.theme-gold {
-  --theme-accent-color: #FF8C00;
-  --theme-hover-bg: rgba(210, 105, 30, 0.1);
-  --theme-focus-ring: rgba(210, 105, 30, 0.3);
+  --theme-accent-color: #C0C0C0;
+  --theme-hover-bg: rgba(192, 192, 192, 0.1);
+  --theme-focus-ring: rgba(169, 169, 169, 0.3);
 }
 
 .theme-gold .palette-grid-wrapper {
   background: var(--gradient-main-background);
-  border: 2px solid rgba(210, 105, 30, 0.3);
-  box-shadow: 0 8px 32px rgba(210, 105, 30, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 2px solid rgba(192, 192, 192, 0.3);
+  box-shadow: 0 8px 32px rgba(169, 169, 169, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 .theme-gold .palette-grid {
-  background: linear-gradient(145deg, #faf0e6, #f0c674);
-  box-shadow: 0 4px 16px rgba(210, 105, 30, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 2px 6px rgba(210, 105, 30, 0.2);
+  background: linear-gradient(145deg, #ffffff, #f5f5f5);
+  box-shadow: 0 4px 16px rgba(169, 169, 169, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 2px 6px rgba(192, 192, 192, 0.1);
 }
 
 .theme-gold .grid-cell {
-  border: 1px solid rgba(210, 105, 30, 0.2);
-  box-shadow: inset 0 1px 2px rgba(210, 105, 30, 0.05), inset 0 -1px 2px rgba(255, 255, 255, 0.5), inset 1px 0 2px rgba(210, 105, 30, 0.03), inset -1px 0 2px rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(192, 192, 192, 0.2);
+  box-shadow: inset 0 1px 2px rgba(169, 169, 169, 0.05), inset 0 -1px 2px rgba(255, 255, 255, 0.8), inset 1px 0 2px rgba(192, 192, 192, 0.03), inset -1px 0 2px rgba(255, 255, 255, 0.5);
 }
 
 .theme-gold .grid-cell:hover {
-  box-shadow: inset 0 1px 2px rgba(210, 105, 30, 0.12), inset 0 -1px 2px rgba(255, 255, 255, 0.6), inset 1px 0 2px rgba(210, 105, 30, 0.08), inset -1px 0 2px rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 1px 2px rgba(169, 169, 169, 0.12), inset 0 -1px 2px rgba(255, 255, 255, 0.9), inset 1px 0 2px rgba(192, 192, 192, 0.08), inset -1px 0 2px rgba(255, 255, 255, 0.6);
 }
 
 .theme-gold .palette-controls-segment {
-  background: linear-gradient(145deg, #faf0e6, #f0c674);
-  border: 1px solid rgba(210, 105, 30, 0.2);
-  box-shadow: 0 6px 20px rgba(210, 105, 30, 0.12), inset 0 2px 0 rgba(255, 255, 255, 0.7), inset 0 3px 8px rgba(210, 105, 30, 0.15);
+  background: linear-gradient(145deg, #ffffff, #f5f5f5);
+  border: 1px solid rgba(192, 192, 192, 0.2);
+  box-shadow: 0 6px 20px rgba(169, 169, 169, 0.12), inset 0 2px 0 rgba(255, 255, 255, 0.9), inset 0 3px 8px rgba(192, 192, 192, 0.1);
 }
 
 .theme-gold .color-carousel {
-  background: linear-gradient(145deg, #faf0e6, #f0c674);
-  border: 1px solid rgba(210, 105, 30, 0.3);
-  box-shadow: 0 4px 16px rgba(210, 105, 30, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 2px 6px rgba(210, 105, 30, 0.2);
+  background: linear-gradient(145deg, #ffffff, #f5f5f5);
+  border: 1px solid rgba(192, 192, 192, 0.3);
+  box-shadow: 0 4px 16px rgba(169, 169, 169, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 2px 6px rgba(192, 192, 192, 0.1);
 }
 
 .theme-gold .app-header-container {
-  background: rgba(255, 250, 240, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(210, 105, 30, 0.2);
+  border-bottom: 1px solid rgba(192, 192, 192, 0.2);
 }
 
 .theme-gold .app-header-container__inner {
@@ -191,22 +191,22 @@
 }
 
 .theme-gold .inline-title-input {
-  background: rgba(255, 250, 240, 0.95);
-  border: 2px solid rgba(210, 105, 30, 0.3);
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid rgba(192, 192, 192, 0.3);
 }
 
 .theme-gold .inline-title-input:focus {
-  border-color: rgba(210, 105, 30, 0.6);
-  box-shadow: 0 0 0 4px rgba(210, 105, 30, 0.15), 0 4px 12px rgba(210, 105, 30, 0.2);
+  border-color: rgba(169, 169, 169, 0.6);
+  box-shadow: 0 0 0 4px rgba(192, 192, 192, 0.15), 0 4px 12px rgba(169, 169, 169, 0.2);
 }
 
 .theme-gold .carousel-swatch:hover {
-  border-color: rgba(210, 105, 30, 0.6);
-  box-shadow: 0 4px 12px rgba(210, 105, 30, 0.2);
+  border-color: rgba(169, 169, 169, 0.6);
+  box-shadow: 0 4px 12px rgba(169, 169, 169, 0.2);
 }
 
 .theme-gold .base-button:focus {
-  box-shadow: 0 0 0 3px rgba(210, 105, 30, 0.3);
+  box-shadow: 0 0 0 3px rgba(169, 169, 169, 0.3);
 }
 
 /* Dark Gray Theme */
@@ -479,12 +479,6 @@
   box-shadow: 0 0 0 2px var(--theme-focus-ring);
 }
 
-[class*="theme-"] .grid-controls {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid var(--border-color-light);
-  backdrop-filter: blur(8px);
-}
-
 [class*="theme-"] .grid-size-btn.active {
   background: var(--theme-hover-bg);
   border-color: var(--theme-accent-color);
@@ -492,7 +486,11 @@
 }
 
 /* Form elements */
-[class*="theme-"] .form-helper {
+.theme-purple .form-helper,
+.theme-turquoise .form-helper,
+.theme-gold .form-helper,
+.theme-taupe .form-helper,
+.theme-eggplant .form-helper {
   background: rgba(255, 255, 255, 0.8);
   border: 1px solid var(--border-color-light);
 }

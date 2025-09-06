@@ -263,7 +263,7 @@ export function useSound() {
   }
 
   /**
-   * Play soft bell sound - a gentle, harmonic bell tone
+   * Play soft bell sound - a joyful, harp-like arpeggio
    */
   const playSoftBell = () => {
     if (!isEnabled.value) return
@@ -271,45 +271,76 @@ export function useSound() {
     initAudioContext()
     if (!audioContext.value) return
     
-    // Create a bell-like sound using multiple sine waves (harmonics)
-    const duration = 0.8 // 800ms for a nice bell resonance
-    const fundamentalFreq = 880 // A5 - sweet, clear frequency
+    // Create a pleasant harp-like arpeggio using warm frequencies
+    const baseFreq = 523.25 // C5 - warm, pleasant frequency
+    const duration = 1.2 // Longer for graceful arpeggio
     
-    // Create multiple oscillators for bell harmonics
-    const oscillators = []
-    const gainNodes = []
-    
-    // Bell harmonics with very gentle amplitudes
-    const harmonics = [
-      { freq: fundamentalFreq, amp: 0.03 },      // Fundamental - very gentle
-      { freq: fundamentalFreq * 2, amp: 0.02 },   // Octave
-      { freq: fundamentalFreq * 3, amp: 0.012 },  // Perfect fifth
-      { freq: fundamentalFreq * 4, amp: 0.006 },  // Second octave
-      { freq: fundamentalFreq * 5, amp: 0.003 }   // Major third
+    // Harp-like arpeggio notes (C major triad with octave)
+    const notes = [
+      { freq: baseFreq, delay: 0 },          // C5
+      { freq: baseFreq * 1.25, delay: 0.1 }, // E5 (major third)
+      { freq: baseFreq * 1.5, delay: 0.2 },  // G5 (perfect fifth)
+      { freq: baseFreq * 2, delay: 0.3 }     // C6 (octave)
     ]
     
-    harmonics.forEach((harmonic, index) => {
+    notes.forEach((note, index) => {
+      // Create oscillator for fundamental frequency
       const oscillator = audioContext.value.createOscillator()
       const gainNode = audioContext.value.createGain()
       
+      // Add subtle harmonics for warmth
+      const harmonic2 = audioContext.value.createOscillator()
+      const harmonic2Gain = audioContext.value.createGain()
+      
+      const harmonic3 = audioContext.value.createOscillator()
+      const harmonic3Gain = audioContext.value.createGain()
+      
+      // Connect nodes
       oscillator.connect(gainNode)
+      harmonic2.connect(harmonic2Gain)
+      harmonic3.connect(harmonic3Gain)
+      
       gainNode.connect(audioContext.value.destination)
+      harmonic2Gain.connect(audioContext.value.destination)
+      harmonic3Gain.connect(audioContext.value.destination)
       
-      // Use sine wave for pure bell tone
+      // Set frequencies
+      oscillator.frequency.setValueAtTime(note.freq, audioContext.value.currentTime + note.delay)
+      harmonic2.frequency.setValueAtTime(note.freq * 2, audioContext.value.currentTime + note.delay)
+      harmonic3.frequency.setValueAtTime(note.freq * 3, audioContext.value.currentTime + note.delay)
+      
+      // Use sine waves for pure, harp-like tones
       oscillator.type = 'sine'
-      oscillator.frequency.setValueAtTime(harmonic.freq, audioContext.value.currentTime)
+      harmonic2.type = 'sine'
+      harmonic3.type = 'sine'
       
-      // Bell-like envelope - quick attack, slow decay with slight resonance
-      gainNode.gain.setValueAtTime(0, audioContext.value.currentTime)
-      gainNode.gain.linearRampToValueAtTime(harmonic.amp, audioContext.value.currentTime + 0.01)
-      gainNode.gain.exponentialRampToValueAtTime(harmonic.amp * 0.5, audioContext.value.currentTime + 0.1)
-      gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.value.currentTime + duration)
+      // Harp pluck envelope - instant attack, gentle decay
+      const startTime = audioContext.value.currentTime + note.delay
+      const noteDecay = 0.8 - (index * 0.1) // Earlier notes ring longer
       
-      oscillator.start(audioContext.value.currentTime)
-      oscillator.stop(audioContext.value.currentTime + duration)
+      // Fundamental tone
+      gainNode.gain.setValueAtTime(0, startTime)
+      gainNode.gain.linearRampToValueAtTime(0.04, startTime + 0.005) // Quick pluck attack
+      gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + noteDecay)
       
-      oscillators.push(oscillator)
-      gainNodes.push(gainNode)
+      // Second harmonic (softer)
+      harmonic2Gain.gain.setValueAtTime(0, startTime)
+      harmonic2Gain.gain.linearRampToValueAtTime(0.01, startTime + 0.005)
+      harmonic2Gain.gain.exponentialRampToValueAtTime(0.001, startTime + noteDecay * 0.7)
+      
+      // Third harmonic (even softer, adds sparkle)
+      harmonic3Gain.gain.setValueAtTime(0, startTime)
+      harmonic3Gain.gain.linearRampToValueAtTime(0.004, startTime + 0.005)
+      harmonic3Gain.gain.exponentialRampToValueAtTime(0.001, startTime + noteDecay * 0.5)
+      
+      // Start and stop oscillators
+      oscillator.start(startTime)
+      harmonic2.start(startTime)
+      harmonic3.start(startTime)
+      
+      oscillator.stop(startTime + noteDecay)
+      harmonic2.stop(startTime + noteDecay * 0.7)
+      harmonic3.stop(startTime + noteDecay * 0.5)
     })
   }
 
