@@ -28,6 +28,7 @@ const {
   skinTone,
   eyeColor,
   initializeCanvas,
+  initializeCanvasLayers,
   startDrawing,
   continueDrawing,
   stopDrawing,
@@ -42,6 +43,8 @@ const {
 const { selectedColor: globalSelectedColor, selectColor } = useColorSelection()
 
 const canvasElement = ref(null)
+const paintCanvas = ref(null)
+const eyeCanvas = ref(null)
 const activeColorIndex = ref(0)
 const paletteColors = ref([])
 const showShareForm = ref(false)
@@ -86,13 +89,13 @@ onMounted(async () => {
   const maxAttempts = 10
   
   const tryInitialize = async () => {
-    if (canvasElement.value && attempts < maxAttempts) {
-      console.log('Attempting to initialize canvas, attempt:', attempts + 1)
-      const success = await initializeCanvas(canvasElement.value)
+    if (canvasElement.value && paintCanvas.value && eyeCanvas.value && attempts < maxAttempts) {
+      console.log('Attempting to initialize multi-layer canvas system, attempt:', attempts + 1)
+      const success = await initializeCanvasLayers(canvasElement.value, paintCanvas.value, eyeCanvas.value)
       
-      // Verify canvas was initialized properly
+      // Verify canvases were initialized properly
       if (success && canvasElement.value.getContext('2d')) {
-        console.log('Canvas initialized successfully')
+        console.log('Multi-layer canvas system initialized successfully')
         return
       }
     }
@@ -101,7 +104,7 @@ onMounted(async () => {
     if (attempts < maxAttempts) {
       setTimeout(tryInitialize, 50)
     } else {
-      console.error('Failed to initialize canvas after', maxAttempts, 'attempts')
+      console.error('Failed to initialize multi-layer canvas system after', maxAttempts, 'attempts')
     }
   }
   
@@ -246,17 +249,40 @@ const handleBackToPreview = () => {
     
     <!-- Main eye preview area -->
     <div class="eye-canvas-container" :style="{ backgroundColor: skinTone }">
-      <canvas
-        ref="canvasElement"
-        class="eye-canvas"
-        @mousedown="handleCanvasMouseDown"
-        @mousemove="handleCanvasMouseMove"
-        @mouseup="handleCanvasMouseUp"
-        @mouseleave="handleCanvasMouseUp"
-        @touchstart="handleCanvasTouchStart"
-        @touchmove="handleCanvasTouchMove"
-        @touchend="handleCanvasTouchEnd"
-      ></canvas>
+      <div class="canvas-stack">
+        <!-- Background layer: skin tone (handled by container background) -->
+        
+        <!-- Paint layer: user's eyeshadow drawing (erasable) -->
+        <canvas
+          ref="paintCanvas"
+          class="canvas-layer paint-layer"
+          width="600"
+          height="350"
+        ></canvas>
+        
+        <!-- Eye elements layer: SVG eye components (non-erasable) -->
+        <canvas
+          ref="eyeCanvas"
+          class="canvas-layer eye-layer"
+          width="600"
+          height="350"
+        ></canvas>
+        
+        <!-- Interaction layer: captures mouse events -->
+        <canvas
+          ref="canvasElement"
+          class="canvas-layer interaction-layer"
+          width="600"
+          height="350"
+          @mousedown="handleCanvasMouseDown"
+          @mousemove="handleCanvasMouseMove"
+          @mouseup="handleCanvasMouseUp"
+          @mouseleave="handleCanvasMouseUp"
+          @touchstart="handleCanvasTouchStart"
+          @touchmove="handleCanvasTouchMove"
+          @touchend="handleCanvasTouchEnd"
+        ></canvas>
+      </div>
     </div>
     
     <!-- Primary controls row -->
@@ -498,13 +524,39 @@ const handleBackToPreview = () => {
   transition: background-color 0.2s ease;
 }
 
-.eye-canvas {
-  width: 400px;
-  height: 300px;
+.canvas-stack {
+  position: relative;
+  width: 600px;
+  height: 350px;
   max-width: 100%;
   border: 2px solid rgba(139, 129, 165, 0.3);
   border-radius: var(--radius-sm);
+}
+
+.canvas-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 600px;
+  height: 350px;
+  max-width: 100%;
+}
+
+.paint-layer {
+  z-index: 1;
+  /* This layer will contain user's eyeshadow painting */
+}
+
+.eye-layer {
+  z-index: 2;
+  /* This layer contains SVG eye elements (non-erasable) */
+}
+
+.interaction-layer {
+  z-index: 3;
   cursor: crosshair;
+  /* This transparent layer captures mouse events */
+  background: transparent;
 }
 
 .primary-controls-row {

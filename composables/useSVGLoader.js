@@ -69,9 +69,18 @@ export function useSVGLoader() {
             // Clear canvas to transparent
             ctx.clearRect(0, 0, width, height)
             
-            // Draw SVG to canvas with scaling
-            ctx.drawImage(img, 0, 0, width, height)
-            console.log('SVG drawn to transparent canvas successfully')
+            // Center the SVG horizontally and position it in taller canvas
+            // SVG original aspect ratio: ~1.28:1, so for 300px height, width would be ~384px
+            // Center it in 600px width: (600 - 384) / 2 = 108px offset
+            // Keep SVG at original size (300px height) and position at top
+            const svgWidth = 384 // Approximate scaled width to maintain aspect ratio
+            const svgHeight = 300 // Keep original height, extra 50px below for lower eyeshadow
+            const offsetX = (width - svgWidth) / 2
+            const offsetY = 0 // Position at top, giving space below for lower lash drawing
+            
+            // Draw SVG to canvas with scaling and centering
+            ctx.drawImage(img, offsetX, offsetY, svgWidth, svgHeight)
+            console.log('SVG drawn to transparent canvas successfully, centered at offset:', offsetX, offsetY)
             
             // Get image data for layer storage
             const imageData = ctx.getImageData(0, 0, width, height)
