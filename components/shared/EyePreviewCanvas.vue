@@ -85,13 +85,13 @@ onMounted(async () => {
   let attempts = 0
   const maxAttempts = 10
   
-  const tryInitialize = () => {
+  const tryInitialize = async () => {
     if (canvasElement.value && attempts < maxAttempts) {
       console.log('Attempting to initialize canvas, attempt:', attempts + 1)
-      initializeCanvas(canvasElement.value)
+      const success = await initializeCanvas(canvasElement.value)
       
       // Verify canvas was initialized properly
-      if (canvasElement.value.getContext('2d')) {
+      if (success && canvasElement.value.getContext('2d')) {
         console.log('Canvas initialized successfully')
         return
       }
@@ -201,13 +201,13 @@ const setBrushOpacity = (opacity) => {
 }
 
 // Handle skin tone selection
-const handleSkinToneSelect = (tone) => {
-  setSkinTone(tone.color)
+const handleSkinToneSelect = async (tone) => {
+  await setSkinTone(tone.color)
 }
 
 // Handle eye color selection
-const handleEyeColorSelect = (color) => {
-  setEyeColor(color.color)
+const handleEyeColorSelect = async (color) => {
+  await setEyeColor(color.color)
 }
 
 // Handle share button

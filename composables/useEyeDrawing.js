@@ -1,8 +1,10 @@
 import { ref, computed } from 'vue'
+import { useSVGLoader } from './useSVGLoader.js'
+import eyeSvgUrl from '../src/assets/espm-eye.svg'
 
 /**
  * Composable for managing eye drawing operations on canvas
- * Handles eye anatomy zones, drawing, and color application
+ * Handles eye anatomy zones, drawing, and color application using SVG artwork
  */
 
 // Eye anatomy zones - these define where different eyeshadow colors can be applied
@@ -87,6 +89,14 @@ export function useEyeDrawing() {
   const skinTone = ref(SKIN_TONES[0].color) // Default to fair skin
   const eyeColor = ref(EYE_COLORS[3].color) // Default to blue eyes
   
+  // Layered rendering support
+  const backgroundLayer = ref(null) // SVG background (brow, sclera)
+  const foregroundLayer = ref(null) // SVG foreground (iris, eye details)
+  const paintLayer = ref(null) // User's eyeshadow drawing
+  
+  // SVG loader for artwork
+  const { loadSVGToCanvas, loadSVGAsLayers, isLoading: svgLoading, loadError: svgError } = useSVGLoader()
+  
   // Undo/Redo functionality
   const undoHistory = ref([]) // Stack of canvas states
   const redoHistory = ref([]) // Stack of undone states for redo
@@ -96,7 +106,7 @@ export function useEyeDrawing() {
    * Initialize the canvas and draw the base eye shape
    * @param {HTMLCanvasElement} canvas - The canvas element
    */
-  const initializeCanvas = (canvas) => {
+  const initializeCanvas = async (canvas) => {
     console.log('initializeCanvas called with:', canvas)
     
     if (!canvas) {
@@ -120,61 +130,120 @@ export function useEyeDrawing() {
     console.log('Canvas size set to:', canvas.width, 'x', canvas.height)
     
     // Draw the base eye
-    const drawResult = drawBaseEye()
+    const drawResult = await drawBaseEye()
     console.log('Base eye drawing completed:', drawResult)
     
-    return true
+    return drawResult
   }
 
   /**
-   * Draw the basic eye shape and anatomy based on almond eye reference
+   * Draw the base eye using SVG artwork with layered rendering
    */
-  const drawBaseEye = () => {
+  const drawBaseEye = async () => {
+    const canvas = canvasRef.value
     const ctx = canvasContext.value
-    console.log('drawBaseEye called, context:', ctx)
+    console.log('drawBaseEye called with SVG, canvas:', canvas, 'context:', ctx)
+    
+    if (!canvas || !ctx) {
+      console.error('No canvas or context available for drawing')
+      return false
+    }
+
+    try {
+      // Define iris color override
+      const styleOverrides = {
+        '.cls-2': {
+          fill: eyeColor.value
+        }
+      }
+
+      console.log('Loading SVG with basic rendering, iris color:', eyeColor.value)
+      
+      // Start with basic SVG rendering first
+      const imageData = await loadSVGToCanvas(eyeSvgUrl, canvas, styleOverrides)
+      eyeLayer.value = imageData
+      console.log('Basic SVG eye drawing completed successfully')
+      
+      // Reset drawn state when drawing base eye
+      hasDrawnOnCanvas.value = false
+      
+      // Clear undo and redo history when redrawing base eye
+      undoHistory.value = []
+      redoHistory.value = []
+      
+      // Save initial state to undo history
+      saveStateToUndoHistory()
+      
+      return true
+      
+    } catch (error) {
+      console.error('Error loading SVG eye:', error)
+      
+      // Fallback to programmatic drawing
+      console.log('Falling back to programmatic eye drawing')
+      return drawFallbackEye()
+    }
+  }
+
+  /**
+   * Render the layered eye composition (background + paint + foreground)
+   */
+  const renderLayeredEye = async () => {
+    const ctx = canvasContext.value
+    if (!ctx) return
+
+    // Clear canvas
+    ctx.clearRect(0, 0, 400, 300)
+
+    // 1. Draw background layer (brow, sclera)
+    if (backgroundLayer.value) {
+      ctx.putImageData(backgroundLayer.value, 0, 0)
+    }
+
+    // 2. Draw paint layer (user's eyeshadow) - this will be applied by the drawing functions
+    if (paintLayer.value) {
+      ctx.putImageData(paintLayer.value, 0, 0)
+    }
+
+    // 3. Draw foreground layer (iris, eye details) on top
+    if (foregroundLayer.value) {
+      // Use source-over to composite the foreground
+      const tempCanvas = document.createElement('canvas')
+      tempCanvas.width = 400
+      tempCanvas.height = 300
+      const tempCtx = tempCanvas.getContext('2d')
+      tempCtx.putImageData(foregroundLayer.value, 0, 0)
+      
+      ctx.drawImage(tempCanvas, 0, 0)
+    }
+
+    // Store the complete composition
+    eyeLayer.value = ctx.getImageData(0, 0, 400, 300)
+  }
+
+  /**
+   * Fallback eye drawing using the original programmatic approach
+   */
+  const drawFallbackEye = () => {
+    const ctx = canvasContext.value
     
     if (!ctx) {
-      console.error('No canvas context available for drawing')
+      console.error('No canvas context available for fallback drawing')
       return false
     }
 
     try {
       // Clear canvas
       ctx.clearRect(0, 0, 400, 300)
-      console.log('Canvas cleared')
+      console.log('Canvas cleared for fallback')
       
       // Draw base skin tone
       ctx.fillStyle = skinTone.value
       ctx.fillRect(0, 0, 400, 300)
-      console.log('Base skin tone drawn')
       
       // Eye coordinates (centered in 400x300 canvas)
       const centerX = 200
       const centerY = 150
-      
-      // === LAYER 1: UPPER EYE MASK (SHALLOW U SHAPE) ===
-      ctx.beginPath()
-      ctx.fillStyle = skinTone.value // Base skin tone
-      ctx.moveTo(centerX - 100, centerY - 50) // Top left
-      ctx.lineTo(centerX + 100, centerY - 50) // Top right  
-      ctx.lineTo(centerX + 100, centerY - 5) // Right side down
-      ctx.quadraticCurveTo(centerX + 40, centerY - 15, centerX, centerY - 12)
-      ctx.quadraticCurveTo(centerX - 40, centerY - 15, centerX - 100, centerY - 5)
-      ctx.lineTo(centerX - 100, centerY - 50)
-      ctx.closePath()
-      ctx.fill()
-      
-      // === LAYER 1: LOWER EYE MASK (INVERTED SHALLOW U SHAPE) ===
-      ctx.beginPath()
-      ctx.fillStyle = skinTone.value // Base skin tone
-      ctx.moveTo(centerX - 100, centerY + 5)
-      ctx.quadraticCurveTo(centerX - 40, centerY + 15, centerX, centerY + 12)
-      ctx.quadraticCurveTo(centerX + 40, centerY + 15, centerX + 100, centerY + 5)
-      ctx.lineTo(centerX + 100, centerY + 50)
-      ctx.lineTo(centerX - 100, centerY + 50)
-      ctx.lineTo(centerX - 100, centerY + 5)
-      ctx.closePath()
-      ctx.fill()
       
       // === EYE WHITE (SCLERA) ===
       ctx.beginPath()
@@ -189,7 +258,7 @@ export function useEyeDrawing() {
       
       // === IRIS ===
       ctx.beginPath()
-      ctx.fillStyle = eyeColor.value // Customizable iris color
+      ctx.fillStyle = eyeColor.value
       ctx.arc(centerX, centerY, 25, 0, Math.PI * 2)
       ctx.fill()
       
@@ -199,33 +268,22 @@ export function useEyeDrawing() {
       ctx.arc(centerX, centerY, 12, 0, Math.PI * 2)
       ctx.fill()
       
-      // === UPPER LASH LINE (PERFECTLY ALIGNED TO EYE SHAPE) ===
+      // === UPPER LASH LINE ===
       ctx.beginPath()
       ctx.strokeStyle = '#333333'
       ctx.lineWidth = 2
-      // Follow the exact same curve as the top of the eye white
-      ctx.moveTo(centerX - 80, centerY) // Left point (same as eye)
-      ctx.quadraticCurveTo(centerX - 40, centerY - 30, centerX, centerY - 25) // Top curve (same as eye)
-      ctx.quadraticCurveTo(centerX + 40, centerY - 30, centerX + 80, centerY) // Right point (same as eye)
+      ctx.moveTo(centerX - 80, centerY)
+      ctx.quadraticCurveTo(centerX - 40, centerY - 30, centerX, centerY - 25)
+      ctx.quadraticCurveTo(centerX + 40, centerY - 30, centerX + 80, centerY)
       ctx.stroke()
       
-      // === LOWER LASH LINE (PERFECTLY ALIGNED TO EYE SHAPE) ===
+      // === LOWER LASH LINE ===
       ctx.beginPath()
       ctx.strokeStyle = '#333333'
       ctx.lineWidth = 1.5
-      // Follow the exact same curve as the bottom of the eye white
-      ctx.moveTo(centerX - 80, centerY) // Left point (same as eye)
-      ctx.quadraticCurveTo(centerX - 40, centerY + 25, centerX, centerY + 20) // Bottom curve (same as eye)
-      ctx.quadraticCurveTo(centerX + 40, centerY + 25, centerX + 80, centerY) // Right point (same as eye)
-      ctx.stroke()
-      
-      // === CREASE LINE ===
-      ctx.beginPath()
-      ctx.strokeStyle = '#888888'
-      ctx.lineWidth = 1
-      ctx.moveTo(centerX - 70, centerY - 30)
-      ctx.quadraticCurveTo(centerX - 30, centerY - 40, centerX, centerY - 38)
-      ctx.quadraticCurveTo(centerX + 30, centerY - 40, centerX + 70, centerY - 30)
+      ctx.moveTo(centerX - 80, centerY)
+      ctx.quadraticCurveTo(centerX - 40, centerY + 25, centerX, centerY + 20)
+      ctx.quadraticCurveTo(centerX + 40, centerY + 25, centerX + 80, centerY)
       ctx.stroke()
       
       // Store the base eye for later restoration
@@ -241,11 +299,11 @@ export function useEyeDrawing() {
       // Save initial state to undo history
       saveStateToUndoHistory()
       
-      console.log('Simplified eye drawing completed successfully')
+      console.log('Fallback eye drawing completed successfully')
       return true
       
     } catch (error) {
-      console.error('Error drawing base eye:', error)
+      console.error('Error drawing fallback eye:', error)
       return false
     }
   }
@@ -327,9 +385,41 @@ export function useEyeDrawing() {
   }
 
   /**
+   * Update the paint layer with current user drawing
+   */
+  const updatePaintLayer = () => {
+    const ctx = canvasContext.value
+    if (!ctx || !backgroundLayer.value) return
+    
+    // Extract just the user's paint by subtracting background from current canvas
+    const currentCanvas = ctx.getImageData(0, 0, 400, 300)
+    
+    // Create a canvas to isolate paint layer
+    const paintCanvas = document.createElement('canvas')
+    paintCanvas.width = 400
+    paintCanvas.height = 300
+    const paintCtx = paintCanvas.getContext('2d')
+    
+    // Start with current canvas
+    paintCtx.putImageData(currentCanvas, 0, 0)
+    
+    // Subtract background to isolate paint
+    paintCtx.globalCompositeOperation = 'destination-out'
+    const tempCanvas = document.createElement('canvas')
+    tempCanvas.width = 400
+    tempCanvas.height = 300
+    const tempCtx = tempCanvas.getContext('2d')
+    tempCtx.putImageData(backgroundLayer.value, 0, 0)
+    paintCtx.drawImage(tempCanvas, 0, 0)
+    
+    // Store the isolated paint layer
+    paintLayer.value = paintCtx.getImageData(0, 0, 400, 300)
+  }
+
+  /**
    * Clear all drawing and restore base eye
    */
-  const clearAllColors = () => {
+  const clearAllColors = async () => {
     console.log('clearAllColors called')
     const ctx = canvasContext.value
     console.log('Canvas context:', ctx)
@@ -343,7 +433,7 @@ export function useEyeDrawing() {
     if (!eyeLayer.value) {
       console.warn('No eye layer available, redrawing base eye')
       // If eyeLayer is not available, redraw the base eye
-      drawBaseEye()
+      await drawBaseEye()
     } else {
       console.log('Restoring eye layer')
       // Restore the base eye layer
@@ -366,20 +456,20 @@ export function useEyeDrawing() {
   /**
    * Update skin tone and redraw base eye
    */
-  const setSkinTone = (color) => {
+  const setSkinTone = async (color) => {
     skinTone.value = color
     if (canvasContext.value) {
-      drawBaseEye()
+      await drawBaseEye()
     }
   }
 
   /**
    * Update eye color and redraw base eye
    */
-  const setEyeColor = (color) => {
+  const setEyeColor = async (color) => {
     eyeColor.value = color
     if (canvasContext.value) {
-      drawBaseEye()
+      await drawBaseEye()
     }
   }
 
