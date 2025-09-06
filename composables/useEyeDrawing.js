@@ -159,10 +159,27 @@ export function useEyeDrawing() {
 
       console.log('Loading SVG with basic rendering, iris color:', eyeColor.value)
       
-      // Start with basic SVG rendering first
+      // First, draw skin tone background
+      ctx.fillStyle = skinTone.value
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      console.log('Skin tone background applied:', skinTone.value)
+      
+      // Then render SVG on top
       const imageData = await loadSVGToCanvas(eyeSvgUrl, canvas, styleOverrides)
-      eyeLayer.value = imageData
-      console.log('Basic SVG eye drawing completed successfully')
+      
+      // Composite SVG onto skin background
+      const tempCanvas = document.createElement('canvas')
+      tempCanvas.width = canvas.width
+      tempCanvas.height = canvas.height
+      const tempCtx = tempCanvas.getContext('2d')
+      tempCtx.putImageData(imageData, 0, 0)
+      
+      // Draw SVG on top of skin background
+      ctx.drawImage(tempCanvas, 0, 0)
+      
+      // Store the complete composition
+      eyeLayer.value = ctx.getImageData(0, 0, canvas.width, canvas.height)
+      console.log('SVG eye with skin tone completed successfully')
       
       // Reset drawn state when drawing base eye
       hasDrawnOnCanvas.value = false

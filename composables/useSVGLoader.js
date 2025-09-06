@@ -66,12 +66,12 @@ export function useSVGLoader() {
             console.log('SVG image loaded successfully, dimensions:', img.width, 'x', img.height)
             const ctx = canvas.getContext('2d')
             
-            // Clear canvas
+            // Clear canvas to transparent
             ctx.clearRect(0, 0, width, height)
             
             // Draw SVG to canvas with scaling
             ctx.drawImage(img, 0, 0, width, height)
-            console.log('SVG drawn to canvas successfully')
+            console.log('SVG drawn to transparent canvas successfully')
             
             // Get image data for layer storage
             const imageData = ctx.getImageData(0, 0, width, height)

@@ -245,7 +245,7 @@ const handleBackToPreview = () => {
       </p>
     
     <!-- Main eye preview area -->
-    <div class="eye-canvas-container">
+    <div class="eye-canvas-container" :style="{ backgroundColor: skinTone }">
       <canvas
         ref="canvasElement"
         class="eye-canvas"
@@ -490,11 +490,12 @@ const handleBackToPreview = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(255, 255, 255, 0.9);
+  /* background color is now dynamic via :style binding */
   border: 1px solid rgba(139, 129, 165, 0.2);
   border-radius: var(--radius-md);
   padding: 20px;
   min-height: 320px;
+  transition: background-color 0.2s ease;
 }
 
 .eye-canvas {
@@ -504,7 +505,6 @@ const handleBackToPreview = () => {
   border: 2px solid rgba(139, 129, 165, 0.3);
   border-radius: var(--radius-sm);
   cursor: crosshair;
-  background: white;
 }
 
 .primary-controls-row {
