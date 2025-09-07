@@ -7,6 +7,7 @@ import { useColorSelection } from '../../composables/useColorSelection.js'
 import SavedPalettesGrid from './SavedPalettesGrid.vue'
 import EyePreviewCanvas from './EyePreviewCanvas.vue' 
 import SharePaletteForm from './SharePaletteForm.vue'
+import ShareEyeLookForm from './ShareEyeLookForm.vue'
 
 const props = defineProps({
   modelValue: {
@@ -35,7 +36,8 @@ const { clearSelection } = useColorSelection()
 const modalState = reactive({
   currentTab: props.initialTab || 'saved',
   selectedPaletteId: props.initialPaletteId || null,
-  previousTab: null // Track navigation history
+  previousTab: null, // Track navigation history
+  compositeCanvas: null // Store the canvas for sharing
 })
 
 // Watch for prop changes to update modal state
@@ -68,6 +70,7 @@ const getModalTitle = () => {
       return 'Eye Preview'
     }
     case 'share': return 'Share Palette'
+    case 'eye-share': return 'Share Eye Look'
     default: return 'Palette Manager'
   }
 }
@@ -81,6 +84,16 @@ const handleEyePreview = (paletteId) => {
 const handleShare = (paletteId) => {
   modalState.selectedPaletteId = paletteId
   modalState.currentTab = 'share'
+}
+
+const handleEyeShare = (compositeCanvas) => {
+  modalState.compositeCanvas = compositeCanvas
+  modalState.currentTab = 'eye-share'
+}
+
+const handleBackToPreview = () => {
+  modalState.currentTab = 'preview'
+  modalState.compositeCanvas = null
 }
 
 const handleLoad = (paletteId) => {
@@ -142,12 +155,21 @@ const handleClose = (isOpen) => {
       <EyePreviewCanvas 
         v-if="modalState.currentTab === 'preview'" 
         :palette-id="modalState.selectedPaletteId"
+        @eye-share="handleEyeShare"
       />
       
       <!-- Share Palette Form -->
       <SharePaletteForm 
         v-if="modalState.currentTab === 'share'" 
         :palette-id="modalState.selectedPaletteId"
+      />
+      
+      <!-- Share Eye Look Form -->
+      <ShareEyeLookForm 
+        v-if="modalState.currentTab === 'eye-share'" 
+        :palette-id="modalState.selectedPaletteId"
+        :composite-canvas="modalState.compositeCanvas"
+        @back-to-preview="handleBackToPreview"
       />
     </div>
   </Modal>
@@ -214,7 +236,6 @@ const handleClose = (isOpen) => {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  position: relative;
 }
 
 /* Mobile-first responsive back button text */

@@ -1,7 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import BaseButton from './BaseButton.vue'
-import ShareEyeDrawingForm from './ShareEyeDrawingForm.vue'
 import { useEyeDrawing, SKIN_TONES, EYE_COLORS } from '../../composables/useEyeDrawing.js'
 import { useColorSelection } from '../../composables/useColorSelection.js'
 import { usePaletteStorage } from '../../composables/usePaletteStorage.js'
@@ -12,6 +11,8 @@ const props = defineProps({
     required: true
   }
 })
+
+const emit = defineEmits(['eye-share'])
 
 // Palette storage to find palette by ID
 const { findPaletteById, loadSavedPalettes } = usePaletteStorage()
@@ -51,37 +52,6 @@ const paintCanvas = ref(null)
 const eyeCanvas = ref(null)
 const activeColorIndex = ref(0)
 const paletteColors = ref([])
-const showShareForm = ref(false)
-
-// Composite canvas for sharing - combines all layers
-const shareCanvas = computed(() => {
-  console.log('shareCanvas computed - showShareForm:', showShareForm.value)
-  console.log('Canvas availability:', {
-    paintCanvas: !!paintCanvas.value,
-    eyeCanvas: !!eyeCanvas.value,
-    canvasElement: !!canvasElement.value
-  })
-  
-  if (showShareForm.value) {
-    if (paintCanvas.value && eyeCanvas.value) {
-      console.log('Creating composite canvas for sharing')
-      try {
-        const composite = createCompositeCanvas(paintCanvas.value, eyeCanvas.value)
-        console.log('Composite canvas created successfully')
-        return composite
-      } catch (error) {
-        console.error('Error creating composite canvas:', error)
-        return canvasElement.value // Fallback
-      }
-    } else {
-      console.log('Canvas elements not available, using fallback')
-      return canvasElement.value // Fallback to interaction canvas
-    }
-  }
-  
-  // When not sharing, return null so ShareEyeDrawingForm doesn't render
-  return null
-})
 
 // Color selection from palette
 const handleColorSelect = (colorData, index) => {
@@ -249,554 +219,437 @@ const handleEyeColorSelect = async (color) => {
 
 // Handle share button
 const handleShare = () => {
-  showShareForm.value = true
-}
-
-// Handle back to preview
-const handleBackToPreview = () => {
-  showShareForm.value = false
+  // Create composite canvas for sharing
+  if (paintCanvas.value && eyeCanvas.value) {
+    console.log('Creating composite canvas for sharing')
+    try {
+      const composite = createCompositeCanvas(paintCanvas.value, eyeCanvas.value)
+      console.log('Composite canvas created successfully, emitting eye-share event')
+      emit('eye-share', composite)
+    } catch (error) {
+      console.error('Error creating composite canvas:', error)
+    }
+  } else {
+    console.log('Canvas elements not available for sharing')
+  }
 }
 </script>
 
 <template>
-    <div v-if="showShareForm" class="share-section">
-      <div class="share-header">
-        <button @click="handleBackToPreview" class="back-button">
-          ← Back to Preview
-        </button>
-        <h3>Share Your Eye Look</h3>
-      </div>
-      <ShareEyeDrawingForm 
-        v-if="shareCanvas"
-        :palette-id="paletteId"
-        :canvas-ref="shareCanvas"
-      />
-      <div v-else class="loading-message">
-        <p>Preparing canvas...</p>
-      </div>
-    </div>
-    
-    <div v-else class="preview-section">
-      <p class="eye-preview-description">
+    <div class="eye-preview-canvas">
+      <p class="eye-preview-canvas__description">
         Select a color from your palette, then click and drag (or touch and drag) on the eye to paint eyeshadow.
       </p>
+      <!-- Main eye preview area -->
+      <div class="eye-preview-canvas__canvas-container" :style="{ backgroundColor: skinTone }">
+        <div class="eye-preview-canvas__canvas-stack">
+          <!-- Paint layer: user's eyeshadow drawing (erasable) -->
+          <canvas
+            ref="paintCanvas"
+            class="eye-preview-canvas__canvas-layer eye-preview-canvas__canvas-layer--paint"
+            width="600"
+            height="350"
+          ></canvas>
+          
+          <!-- Eye elements layer: SVG eye components (non-erasable) -->
+          <canvas
+            ref="eyeCanvas"
+            class="eye-preview-canvas__canvas-layer eye-preview-canvas__canvas-layer--eye"
+            width="600"
+            height="350"
+          ></canvas>
+          
+          <!-- Interaction layer: captures mouse events -->
+          <canvas
+            ref="canvasElement"
+            class="eye-preview-canvas__canvas-layer eye-preview-canvas__canvas-layer--interaction"
+            width="600"
+            height="350"
+            @mousedown="handleCanvasMouseDown"
+            @mousemove="handleCanvasMouseMove"
+            @mouseup="handleCanvasMouseUp"
+            @mouseleave="handleCanvasMouseUp"
+            @touchstart="handleCanvasTouchStart"
+            @touchmove="handleCanvasTouchMove"
+            @touchend="handleCanvasTouchEnd"
+          ></canvas>
+        </div>
+      </div>
     
-    <!-- Main eye preview area -->
-    <div class="eye-canvas-container" :style="{ backgroundColor: skinTone }">
-      <div class="canvas-stack">
-        <!-- Background layer: skin tone (handled by container background) -->
-        
-        <!-- Paint layer: user's eyeshadow drawing (erasable) -->
-        <canvas
-          ref="paintCanvas"
-          class="canvas-layer paint-layer"
-          width="600"
-          height="350"
-        ></canvas>
-        
-        <!-- Eye elements layer: SVG eye components (non-erasable) -->
-        <canvas
-          ref="eyeCanvas"
-          class="canvas-layer eye-layer"
-          width="600"
-          height="350"
-        ></canvas>
-        
-        <!-- Interaction layer: captures mouse events -->
-        <canvas
-          ref="canvasElement"
-          class="canvas-layer interaction-layer"
-          width="600"
-          height="350"
-          @mousedown="handleCanvasMouseDown"
-          @mousemove="handleCanvasMouseMove"
-          @mouseup="handleCanvasMouseUp"
-          @mouseleave="handleCanvasMouseUp"
-          @touchstart="handleCanvasTouchStart"
-          @touchmove="handleCanvasTouchMove"
-          @touchend="handleCanvasTouchEnd"
-        ></canvas>
-      </div>
-    </div>
-    
-    <!-- Primary controls row -->
-    <div class="primary-controls-row">
-      <!-- Undo/Redo buttons -->
-      <div class="control-group">
-        <div class="undo-redo-buttons">
-          <BaseButton
-            @click="undoLastAction"
-            :disabled="!canUndo"
-            variant="gray"
-            size="compact"
-          >
-            ↶ Undo
-          </BaseButton>
-          <BaseButton
-            @click="redoLastAction"
-            :disabled="!canRedo"
-            variant="gray"
-            size="compact"
-          >
-            ↷ Redo
-          </BaseButton>
-        </div>
-      </div>
-      
-      <!-- Color selection -->
-      <div class="control-group">
-        <h4>Select Color</h4>
-        <div v-if="paletteColors.length > 0" class="color-palette">
-          <button
-            v-for="(color, index) in paletteColors"
-            :key="`eye-color-${index}`"
-            @click="handleColorSelect(color, index)"
-            class="color-swatch"
-            :class="{ 'color-swatch--active': activeColorIndex === index }"
-            :style="{ backgroundColor: color.bgColor }"
-            :title="`${color.colorName} - ${color.hexCode}`"
-          >
-            <span class="color-swatch__check" v-if="activeColorIndex === index">✓</span>
-          </button>
-        </div>
-        <div v-else class="no-colors-message">
-          <p>No colors found in this palette.</p>
-        </div>
-      </div>
-      
-      <!-- Brush size -->
-      <div class="control-group">
-        <h4>Brush Size</h4>
-        <div class="brush-buttons">
-          <button 
-            @click="setBrushSize(8)"
-            :class="{ 'active': brushSize === 8 }"
-            class="brush-btn"
-          >
-            Small
-          </button>
-          <button 
-            @click="setBrushSize(15)"
-            :class="{ 'active': brushSize === 15 }"
-            class="brush-btn"
-          >
-            Medium
-          </button>
-          <button 
-            @click="setBrushSize(25)"
-            :class="{ 'active': brushSize === 25 }"
-            class="brush-btn"
-          >
-            Large
-          </button>
+      <!-- Primary controls row -->
+      <div class="eye-preview-canvas__controls-primary">
+        <!-- Undo/Redo buttons -->
+        <div class="eye-preview-canvas__control-group eye-preview-canvas__control-group--undo">
+          <div class="eye-preview-canvas__undo-buttons">
+            <BaseButton
+              @click="undoLastAction"
+              :disabled="!canUndo"
+              variant="gray"
+              size="compact"
+            >
+              ↶ Undo
+            </BaseButton>
+            <BaseButton
+              @click="redoLastAction"
+              :disabled="!canRedo"
+              variant="gray"
+              size="compact"
+            >
+              ↷ Redo
+            </BaseButton>
+          </div>
         </div>
         
-        <h4>Brush Opacity</h4>
-        <div class="brush-buttons">
-          <button 
-            @click="setBrushOpacity(0.3)"
-            :class="{ 'active': brushOpacity === 0.3 }"
-            class="brush-btn"
-          >
-            Light
-          </button>
-          <button 
-            @click="setBrushOpacity(0.6)"
-            :class="{ 'active': brushOpacity === 0.6 }"
-            class="brush-btn"
-          >
-            Medium
-          </button>
-          <button 
-            @click="setBrushOpacity(1.0)"
-            :class="{ 'active': brushOpacity === 1.0 }"
-            class="brush-btn"
-          >
-            Full
-          </button>
+        <!-- Color selection -->
+        <div class="eye-preview-canvas__control-group eye-preview-canvas__control-group--colors">
+          <h4 class="eye-preview-canvas__control-title">Select Color</h4>
+          <div v-if="paletteColors.length > 0" class="eye-preview-canvas__color-palette">
+            <button
+              v-for="(color, index) in paletteColors"
+              :key="`eye-color-${index}`"
+              @click="handleColorSelect(color, index)"
+              class="eye-preview-canvas__color-swatch"
+              :class="{ 'eye-preview-canvas__color-swatch--active': activeColorIndex === index }"
+              :style="{ backgroundColor: color.bgColor }"
+              :title="`${color.colorName} - ${color.hexCode}`"
+            >
+              <span class="eye-preview-canvas__color-swatch-check" v-if="activeColorIndex === index">✓</span>
+            </button>
+          </div>
+          <div v-else class="eye-preview-canvas__no-colors">
+            <p>No colors found in this palette.</p>
+          </div>
         </div>
         
-        <h4>Tool Mode</h4>
-        <div class="brush-buttons">
-          <button 
-            @click="setEraserMode(false)"
-            :class="{ 'active': !isErasing }"
-            class="brush-btn tool-btn"
-          >
-            🎨 Paint
-          </button>
-          <button 
-            @click="setEraserMode(true)"
-            :class="{ 'active': isErasing }"
-            class="brush-btn tool-btn eraser-btn"
-          >
-            🧽 Erase
-          </button>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Secondary controls -->
-    <div class="eye-controls">
-      
-      <!-- Skin & Eye Color Selection -->
-      <div class="appearance-controls-section">
-        <h3>Appearance</h3>
-        <div class="appearance-controls">
-          <div class="appearance-control-group">
-            <label>Skin Tone</label>
-            <div class="color-options">
-              <button
-                v-for="tone in SKIN_TONES"
-                :key="tone.name"
-                @click="handleSkinToneSelect(tone)"
-                class="appearance-swatch"
-                :class="{ 'active': skinTone === tone.color }"
-                :style="{ backgroundColor: tone.color }"
-                :title="tone.name"
-              >
-                <span class="appearance-swatch__check" v-if="skinTone === tone.color">✓</span>
-              </button>
-            </div>
+        <!-- Brush size -->
+        <div class="eye-preview-canvas__control-group eye-preview-canvas__control-group--brush">
+          <h4 class="eye-preview-canvas__control-title">Brush Size</h4>
+          <div class="eye-preview-canvas__brush-buttons">
+            <button 
+              @click="setBrushSize(8)"
+              :class="{ 'eye-preview-canvas__brush-btn--active': brushSize === 8 }"
+              class="eye-preview-canvas__brush-btn"
+            >
+              Small
+            </button>
+            <button 
+              @click="setBrushSize(15)"
+              :class="{ 'eye-preview-canvas__brush-btn--active': brushSize === 15 }"
+              class="eye-preview-canvas__brush-btn"
+            >
+              Medium
+            </button>
+            <button 
+              @click="setBrushSize(25)"
+              :class="{ 'eye-preview-canvas__brush-btn--active': brushSize === 25 }"
+              class="eye-preview-canvas__brush-btn"
+            >
+              Large
+            </button>
           </div>
           
-          <div class="appearance-control-group">
-            <label>Eye Color</label>
-            <div class="color-options">
-              <button
-                v-for="color in EYE_COLORS"
-                :key="color.name"
-                @click="handleEyeColorSelect(color)"
-                class="appearance-swatch"
-                :class="{ 'active': eyeColor === color.color }"
-                :style="{ backgroundColor: color.color }"
-                :title="color.name"
-              >
-                <span class="appearance-swatch__check" v-if="eyeColor === color.color">✓</span>
-              </button>
-            </div>
+          <h4 class="eye-preview-canvas__control-title">Brush Opacity</h4>
+          <div class="eye-preview-canvas__brush-buttons">
+            <button 
+              @click="setBrushOpacity(0.3)"
+              :class="{ 'eye-preview-canvas__brush-btn--active': brushOpacity === 0.3 }"
+              class="eye-preview-canvas__brush-btn"
+            >
+              Light
+            </button>
+            <button 
+              @click="setBrushOpacity(0.6)"
+              :class="{ 'eye-preview-canvas__brush-btn--active': brushOpacity === 0.6 }"
+              class="eye-preview-canvas__brush-btn"
+            >
+              Medium
+            </button>
+            <button 
+              @click="setBrushOpacity(1.0)"
+              :class="{ 'eye-preview-canvas__brush-btn--active': brushOpacity === 1.0 }"
+              class="eye-preview-canvas__brush-btn"
+            >
+              Full
+            </button>
+          </div>
+          
+          <h4 class="eye-preview-canvas__control-title">Tool Mode</h4>
+          <div class="eye-preview-canvas__brush-buttons">
+            <button 
+              @click="setEraserMode(false)"
+              :class="{ 'eye-preview-canvas__brush-btn--active': !isErasing }"
+              class="eye-preview-canvas__brush-btn eye-preview-canvas__brush-btn--tool"
+            >
+              🎨 Paint
+            </button>
+            <button 
+              @click="setEraserMode(true)"
+              :class="{ 'eye-preview-canvas__brush-btn--active': isErasing }"
+              class="eye-preview-canvas__brush-btn eye-preview-canvas__brush-btn--tool eye-preview-canvas__brush-btn--eraser"
+            >
+              🧽 Erase
+            </button>
           </div>
         </div>
       </div>
-      
-      <!-- Action buttons -->
-      <div class="action-buttons-section">
-        <div class="action-buttons">
-          <BaseButton
-            @click="handleShare"
-            :disabled="!hasAnyColors"
-            variant="blue"
-            size="compact"
-          >
-            Share Look
-          </BaseButton>
-          <BaseButton
-            @click="clearAllColors"
-            :disabled="!hasAnyColors"
-            variant="red"
-            size="compact"
-          >
-            Clear All
-          </BaseButton>
+    
+      <!-- Secondary controls -->
+      <div class="eye-preview-canvas__controls-secondary">
+        
+        <!-- Skin & Eye Color Selection -->
+        <div class="eye-preview-canvas__appearance-section">
+          <h3 class="eye-preview-canvas__section-title">Appearance</h3>
+          <div class="eye-preview-canvas__appearance-controls">
+            <div class="eye-preview-canvas__appearance-control-group">
+              <label class="eye-preview-canvas__appearance-group-label">Skin Tone</label>
+              <div class="eye-preview-canvas__appearance-options">
+                <button
+                  v-for="tone in SKIN_TONES"
+                  :key="tone.name"
+                  @click="handleSkinToneSelect(tone)"
+                  class="eye-preview-canvas__appearance-swatch"
+                  :class="{ 'eye-preview-canvas__appearance-swatch--active': skinTone === tone.color }"
+                  :style="{ backgroundColor: tone.color }"
+                  :title="tone.name"
+                >
+                  <span class="eye-preview-canvas__appearance-swatch-check" v-if="skinTone === tone.color">✓</span>
+                </button>
+              </div>
+            </div>
+            
+            <div class="eye-preview-canvas__appearance-control-group">
+              <label class="eye-preview-canvas__appearance-group-label">Eye Color</label>
+              <div class="eye-preview-canvas__appearance-options">
+                <button
+                  v-for="color in EYE_COLORS"
+                  :key="color.name"
+                  @click="handleEyeColorSelect(color)"
+                  class="eye-preview-canvas__appearance-swatch"
+                  :class="{ 'eye-preview-canvas__appearance-swatch--active': eyeColor === color.color }"
+                  :style="{ backgroundColor: color.color }"
+                  :title="color.name"
+                >
+                  <span class="eye-preview-canvas__appearance-swatch-check" v-if="eyeColor === color.color">✓</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-    </div>
-
-    <!-- Canvas elements - always rendered, positioned dynamically -->
-    <div class="canvas-container" :class="{ 'canvas-for-preview': !showShareForm, 'canvas-hidden': showShareForm }">
-      <div class="canvas-stack">
-        <!-- Paint layer: user's eyeshadow drawing (erasable) -->
-        <canvas
-          ref="paintCanvas"
-          class="canvas-layer paint-layer"
-          width="600"
-          height="350"
-        ></canvas>
         
-        <!-- Eye elements layer: SVG eye components (non-erasable) -->
-        <canvas
-          ref="eyeCanvas"
-          class="canvas-layer eye-layer"
-          width="600"
-          height="350"
-        ></canvas>
-        
-        <!-- Interaction layer: captures mouse events -->
-        <canvas
-          ref="canvasElement"
-          class="canvas-layer interaction-layer"
-          width="600"
-          height="350"
-          @mousedown="handleCanvasMouseDown"
-          @mousemove="handleCanvasMouseMove"
-          @mouseup="handleCanvasMouseUp"
-          @mouseleave="handleCanvasMouseUp"
-          @touchstart="handleCanvasTouchStart"
-          @touchmove="handleCanvasTouchMove"
-          @touchend="handleCanvasTouchEnd"
-        ></canvas>
+        <!-- Action buttons -->
+        <div class="eye-preview-canvas__action-section">
+          <div class="eye-preview-canvas__action-buttons">
+            <BaseButton
+              @click="handleShare"
+              :disabled="!hasAnyColors"
+              variant="blue"
+              size="compact"
+            >
+              Share Look
+            </BaseButton>
+            <BaseButton
+              @click="clearAllColors"
+              :disabled="!hasAnyColors"
+              variant="red"
+              size="compact"
+            >
+              Clear All
+            </BaseButton>
+          </div>
+        </div>
       </div>
     </div>
 </template>
 
-<style scoped>
-/* Container styles applied to modal-content by parent */
+<style>
+/* ===== EYE PREVIEW CANVAS COMPONENT - BEM METHODOLOGY ===== */
 
-.share-section {
+.eye-preview-canvas {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-}
-
-.share-header {
-  display: flex;
-  align-items: center;
   gap: 16px;
-  margin-bottom: 8px;
 }
 
-.back-button {
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(139, 129, 165, 0.2);
-  border-radius: var(--radius-sm);
-  padding: 8px 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: var(--font-size-sm);
-  color: var(--color-text-primary);
+@media (min-width: 768px) {
+  .eye-preview-canvas {
+    gap: 24px;
+  }
 }
 
-.back-button:hover {
-  background: rgba(255, 255, 255, 1);
-  border-color: rgba(139, 129, 165, 0.4);
-}
-
-.share-header h3 {
-  margin: 0;
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
-}
-
-.loading-message {
-  text-align: center;
-  padding: 40px;
-  color: var(--color-text-secondary);
-  font-style: italic;
-}
-
-.preview-section {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.eye-preview-description {
+.eye-preview-canvas__description {
   text-align: center;
   color: var(--color-text-secondary);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   margin: 0;
+  padding: 0 8px;
 }
 
-.eye-canvas-container {
+@media (min-width: 768px) {
+  .eye-preview-canvas__description {
+    font-size: var(--font-size-sm);
+    padding: 0;
+  }
+}
+
+/* Canvas Container */
+.eye-preview-canvas__canvas-container {
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  /* background color is now dynamic via :style binding */
   border: 1px solid rgba(139, 129, 165, 0.2);
   border-radius: var(--radius-md);
-  padding: 20px;
-  min-height: 320px;
+  padding: 12px;
+  min-height: 200px;
   transition: background-color 0.2s ease;
 }
 
-.canvas-stack {
+@media (min-width: 480px) {
+  .eye-preview-canvas__canvas-container {
+    min-height: 280px;
+    padding: 16px;
+  }
+}
+
+@media (min-width: 768px) {
+  .eye-preview-canvas__canvas-container {
+    padding: 20px;
+    min-height: 320px;
+  }
+}
+
+.eye-preview-canvas__canvas-stack {
   position: relative;
-  width: 600px;
-  height: 350px;
-  max-width: 100%;
-  border: 2px solid rgba(139, 129, 165, 0.3);
+  width: 100%;
+  max-width: 400px;
+  height: 240px;
   border-radius: var(--radius-sm);
 }
 
-.canvas-layer {
+@media (min-width: 480px) {
+  .eye-preview-canvas__canvas-stack {
+    max-width: 500px;
+    height: 300px;
+  }
+}
+
+@media (min-width: 768px) {
+  .eye-preview-canvas__canvas-stack {
+    width: 600px;
+    height: 350px;
+    max-width: 600px;
+  }
+}
+
+.eye-preview-canvas__canvas-layer {
   position: absolute;
   top: 0;
   left: 0;
-  width: 600px;
-  height: 350px;
-  max-width: 100%;
+  width: 100%;
+  height: 100%;
 }
 
-.paint-layer {
+.eye-preview-canvas__canvas-layer--paint {
   z-index: 1;
-  /* This layer will contain user's eyeshadow painting */
 }
 
-.eye-layer {
+.eye-preview-canvas__canvas-layer--eye {
   z-index: 2;
-  /* This layer contains SVG eye elements (non-erasable) */
 }
 
-.interaction-layer {
+.eye-preview-canvas__canvas-layer--interaction {
   z-index: 3;
   cursor: crosshair;
-  /* This transparent layer captures mouse events */
   background: transparent;
 }
 
-/* Canvas container positioning */
-.canvas-container.canvas-for-preview {
-  /* Position inside the eye-canvas-container when in preview mode */
-  position: absolute;
-  top: 235px;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1;
-}
 
-.canvas-container.canvas-hidden {
-  /* Hide when sharing but keep in DOM for composite canvas creation */
-  position: absolute;
-  left: -9999px;
-  top: -9999px;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.primary-controls-row {
-  display: flex;
-  gap: 24px;
-  align-items: flex-start;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
-
-.control-group {
+/* Primary Controls */
+.eye-preview-canvas__controls-primary {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+@media (min-width: 768px) {
+  .eye-preview-canvas__controls-primary {
+    flex-direction: row;
+    gap: 24px;
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+}
+
+.eye-preview-canvas__control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   min-width: 0;
-  flex: 1;
 }
 
-.control-group:first-child {
-  flex: 0 0 auto;
-  min-width: 100px;
+@media (min-width: 768px) {
+  .eye-preview-canvas__control-group {
+    gap: 8px;
+    flex: 1;
+  }
+
+  .eye-preview-canvas__control-group--undo {
+    flex: 0 0 auto;
+    min-width: 100px;
+  }
+
+  .eye-preview-canvas__control-group--colors {
+    flex: 2;
+    min-width: 0;
+  }
+
+  .eye-preview-canvas__control-group--brush {
+    flex: 1.5;
+    min-width: 200px;
+  }
 }
 
-.control-group:nth-child(2) {
-  flex: 2;
-  min-width: 0;
-}
-
-.control-group:nth-child(3) {
-  flex: 1.5;
-  min-width: 200px;
-}
-
-.control-group h4 {
-  font-size: var(--font-size-sm);
+.eye-preview-canvas__control-title {
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
   margin: 0;
 }
 
-.undo-redo-buttons {
+@media (min-width: 768px) {
+  .eye-preview-canvas__control-title {
+    font-size: var(--font-size-sm);
+  }
+}
+
+.eye-preview-canvas__undo-buttons {
   display: flex;
-  gap: 8px;
-  flex-direction: column;
+  gap: 6px;
 }
 
-.eye-controls {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
+@media (min-width: 768px) {
+  .eye-preview-canvas__undo-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
 }
 
-.appearance-controls-section {
-  grid-column: 1 / -1;
-  width: 100%;
-}
-
-.appearance-controls-section h3,
-.brush-controls-section h3 {
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
-  margin: 0 0 12px 0;
-}
-
-.color-palette {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: flex-start;
-}
-
-.color-swatch {
-  width: 40px;
-  height: 40px;
-  border: 2px solid transparent;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-.color-swatch:hover {
-  transform: scale(1.05);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.color-swatch--active {
-  border-color: rgba(106, 90, 205, 0.8);
-  box-shadow: 0 0 0 2px rgba(106, 90, 205, 0.2);
-}
-
-.color-swatch__check {
-  color: white;
-  font-weight: var(--font-weight-bold);
-  text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
-  font-size: var(--font-size-base);
-}
-
-.no-colors-message {
-  text-align: center;
-  padding: 20px;
-  background: rgba(255, 193, 7, 0.1);
-  border: 1px solid rgba(255, 193, 7, 0.2);
-  border-radius: var(--radius-md);
-  color: var(--color-text-secondary);
-}
-
-.appearance-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.appearance-control-group label {
-  display: block;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
-  margin-bottom: 8px;
-}
-
-.color-options {
+/* Color Palette */
+.eye-preview-canvas__color-palette {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
-.appearance-swatch {
+@media (min-width: 768px) {
+  .eye-preview-canvas__color-palette {
+    gap: 8px;
+  }
+}
+
+.eye-preview-canvas__color-swatch {
   width: 32px;
   height: 32px;
   border: 2px solid transparent;
@@ -809,46 +662,68 @@ const handleBackToPreview = () => {
   position: relative;
 }
 
-.appearance-swatch:hover {
+@media (min-width: 768px) {
+  .eye-preview-canvas__color-swatch {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.eye-preview-canvas__color-swatch:hover {
   transform: scale(1.05);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.appearance-swatch.active {
+.eye-preview-canvas__color-swatch--active {
   border-color: rgba(106, 90, 205, 0.8);
   box-shadow: 0 0 0 2px rgba(106, 90, 205, 0.2);
 }
 
-.appearance-swatch__check {
+.eye-preview-canvas__color-swatch-check {
   color: white;
   font-weight: var(--font-weight-bold);
   text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
 }
 
-.brush-controls {
+@media (min-width: 768px) {
+  .eye-preview-canvas__color-swatch-check {
+    font-size: var(--font-size-base);
+  }
+}
+
+.eye-preview-canvas__no-colors {
+  text-align: center;
+  padding: 16px;
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.2);
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+@media (min-width: 768px) {
+  .eye-preview-canvas__no-colors {
+    padding: 20px;
+  }
+}
+
+/* Brush Controls */
+.eye-preview-canvas__brush-buttons {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.brush-control-group label {
-  display: block;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
-  margin-bottom: 8px;
-}
-
-.brush-buttons {
-  display: flex;
-  gap: 6px;
+  gap: 4px;
   justify-content: flex-start;
   flex-wrap: wrap;
 }
 
-.brush-btn {
-  padding: 6px 12px;
+@media (min-width: 768px) {
+  .eye-preview-canvas__brush-buttons {
+    gap: 6px;
+  }
+}
+
+.eye-preview-canvas__brush-btn {
+  padding: 4px 8px;
   background: rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(139, 129, 165, 0.2);
   border-radius: var(--radius-sm);
@@ -860,59 +735,177 @@ const handleBackToPreview = () => {
   min-width: 0;
 }
 
-.brush-btn:hover {
+@media (min-width: 768px) {
+  .eye-preview-canvas__brush-btn {
+    padding: 6px 12px;
+  }
+}
+
+.eye-preview-canvas__brush-btn:hover {
   background: rgba(255, 255, 255, 1);
   border-color: rgba(139, 129, 165, 0.4);
 }
 
-.brush-btn.active {
+.eye-preview-canvas__brush-btn--active {
   background: rgba(106, 90, 205, 0.1);
   border-color: rgba(106, 90, 205, 0.4);
   color: rgba(106, 90, 205, 0.9);
 }
 
-.eraser-btn.active {
+.eye-preview-canvas__brush-btn--tool {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+@media (min-width: 768px) {
+  .eye-preview-canvas__brush-btn--tool {
+    font-size: var(--font-size-sm);
+  }
+}
+
+.eye-preview-canvas__brush-btn--eraser.eye-preview-canvas__brush-btn--active {
   background: rgba(255, 107, 107, 0.1);
   border-color: rgba(255, 107, 107, 0.4);
   color: rgba(255, 107, 107, 0.9);
 }
 
-.tool-btn {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
+/* Secondary Controls */
+.eye-preview-canvas__controls-secondary {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
 }
 
-.action-buttons {
+@media (min-width: 768px) {
+  .eye-preview-canvas__controls-secondary {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+}
+
+.eye-preview-canvas__section-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0 0 8px 0;
+}
+
+@media (min-width: 768px) {
+  .eye-preview-canvas__section-title {
+    font-size: var(--font-size-base);
+    margin: 0 0 12px 0;
+  }
+}
+
+.eye-preview-canvas__appearance-section {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .eye-preview-canvas__appearance-section {
+    grid-column: auto;
+  }
+}
+
+.eye-preview-canvas__appearance-controls {
   display: flex;
+  flex-direction: column;
   gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .eye-preview-canvas__appearance-controls {
+    gap: 16px;
+  }
+}
+
+.eye-preview-canvas__appearance-group-label {
+  display: block;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: 6px;
+}
+
+@media (min-width: 768px) {
+  .eye-preview-canvas__appearance-group-label {
+    font-size: var(--font-size-sm);
+    margin-bottom: 8px;
+  }
+}
+
+.eye-preview-canvas__appearance-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
   justify-content: center;
 }
 
-
-@media (min-width: 600px) {
-  .eye-controls {
-    grid-template-columns: 1fr 1fr;
-  }
-  
-  .action-buttons-section {
-    grid-column: 1 / -1;
+@media (min-width: 768px) {
+  .eye-preview-canvas__appearance-options {
+    gap: 6px;
   }
 }
 
-@media (max-width: 480px) {
-  .eye-canvas-container {
-    padding: 12px;
-    min-height: 280px;
+.eye-preview-canvas__appearance-swatch {
+  width: 28px;
+  height: 28px;
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .eye-preview-canvas__appearance-swatch {
+    width: 32px;
+    height: 32px;
   }
-  
-  .color-swatch {
-    width: 35px;
-    height: 35px;
+}
+
+.eye-preview-canvas__appearance-swatch:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.eye-preview-canvas__appearance-swatch--active {
+  border-color: rgba(106, 90, 205, 0.8);
+  box-shadow: 0 0 0 2px rgba(106, 90, 205, 0.2);
+}
+
+.eye-preview-canvas__appearance-swatch-check {
+  color: white;
+  font-weight: var(--font-weight-bold);
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+  font-size: var(--font-size-xs);
+}
+
+@media (min-width: 768px) {
+  .eye-preview-canvas__appearance-swatch-check {
+    font-size: var(--font-size-sm);
   }
-  
-  .brush-btn {
-    padding: 6px 12px;
-    font-size: var(--font-size-xs);
+}
+
+/* Action Buttons */
+.eye-preview-canvas__action-section {
+  grid-column: 1 / -1;
+}
+
+.eye-preview-canvas__action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+@media (min-width: 768px) {
+  .eye-preview-canvas__action-buttons {
+    gap: 12px;
   }
 }
 </style>
