@@ -34,8 +34,9 @@
 }
 
 .theme-purple .color-carousel {
-  background: var(--gradient-carousel);
+  background: linear-gradient(145deg, #E8E4F0, #D6D0E0);
   border: 1px solid rgba(139, 129, 165, 0.3);
+  box-shadow: 0 4px 16px rgba(139, 129, 165, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 2px 6px rgba(139, 129, 165, 0.2);
 }
 
 .theme-purple .app-header-container {

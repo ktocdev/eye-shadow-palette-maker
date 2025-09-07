@@ -1,6 +1,6 @@
 <script setup>
-import BaseButton from './BaseButton.vue'
-import Select from './Select.vue'
+import BaseButton from '../ui/BaseButton.vue'
+import Select from '../ui/Select.vue'
 import { useSound } from '../../composables/useSound.js'
 import { useTheme } from '../../composables/useTheme.js'
 

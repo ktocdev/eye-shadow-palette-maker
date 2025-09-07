@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import Modal from './Modal.vue'
+import Modal from '../ui/Modal.vue'
 import { useSound } from '../../composables/useSound.js'
 
 const props = defineProps({

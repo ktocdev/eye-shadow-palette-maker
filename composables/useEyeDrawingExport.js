@@ -3,9 +3,23 @@ import { ref } from 'vue'
 export function useEyeDrawingExport() {
   const isExporting = ref(false)
   const exportError = ref(null)
+  
+  // Cache for generated export canvases
+  const exportCanvasCache = new Map()
+  let cacheKeyCounter = 0
 
   /**
-   * Generate a canvas element with the eye drawing and palette rendered on it
+   * Generate cache key for export canvas based on input parameters
+   */
+  const generateCacheKey = (eyeCanvas, paletteColors, paletteTitle, canvasWidth, canvasHeight) => {
+    // Use canvas data URL hash + palette info to create unique key
+    const eyeDataHash = eyeCanvas ? eyeCanvas.toDataURL().substring(0, 50) : 'no-canvas'
+    const paletteHash = paletteColors.map(c => c.hexCode).join('-')
+    return `${canvasWidth}x${canvasHeight}_${paletteTitle}_${paletteHash}_${eyeDataHash}`
+  }
+
+  /**
+   * Generate a canvas element with the eye drawing and palette rendered on it - Cached
    * @param {HTMLCanvasElement} eyeCanvas - The eye canvas with the drawing
    * @param {Array} paletteColors - Array of color data used in the palette
    * @param {string} paletteTitle - Palette title
@@ -14,6 +28,12 @@ export function useEyeDrawingExport() {
    * @returns {HTMLCanvasElement} Canvas element with the combined image
    */
   const generateEyeDrawingCanvas = (eyeCanvas, paletteColors, paletteTitle, canvasWidth = 1000, canvasHeight = 700) => {
+    // Check cache first
+    const cacheKey = generateCacheKey(eyeCanvas, paletteColors, paletteTitle, canvasWidth, canvasHeight)
+    if (exportCanvasCache.has(cacheKey)) {
+      console.log('Using cached export canvas')
+      return exportCanvasCache.get(cacheKey)
+    }
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
     
@@ -124,7 +144,25 @@ export function useEyeDrawingExport() {
     ctx.textAlign = 'right'
     ctx.fillText('Created with Eyeshadow Palette Maker', canvasWidth - 20, canvasHeight - 20)
     
+    // Cache the generated canvas for future use
+    exportCanvasCache.set(cacheKey, canvas)
+    
+    // Limit cache size to prevent memory issues
+    if (exportCanvasCache.size > 5) {
+      const firstKey = exportCanvasCache.keys().next().value
+      exportCanvasCache.delete(firstKey)
+    }
+    
+    console.log('Generated and cached new export canvas')
     return canvas
+  }
+
+  /**
+   * Clear export canvas cache (useful for memory management)
+   */
+  const clearExportCache = () => {
+    exportCanvasCache.clear()
+    console.log('Export canvas cache cleared')
   }
   
   /**
@@ -341,6 +379,7 @@ export function useEyeDrawingExport() {
     exportEyeDrawingAsJPG,
     copyEyeDrawingToClipboard,
     shareEyeDrawingViaWebAPI,
-    getEyeDrawingShareCapabilities
+    getEyeDrawingShareCapabilities,
+    clearExportCache
   }
 }

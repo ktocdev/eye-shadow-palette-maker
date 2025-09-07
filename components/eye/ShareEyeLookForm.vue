@@ -1,6 +1,6 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
-import BaseButton from './BaseButton.vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import BaseButton from '../ui/BaseButton.vue'
 import { useEyeDrawingExport } from '../../composables/useEyeDrawingExport.js'
 import { usePaletteStorage } from '../../composables/usePaletteStorage.js'
 
@@ -26,7 +26,8 @@ const {
   exportEyeDrawingAsJPG, 
   copyEyeDrawingToClipboard, 
   shareEyeDrawingViaWebAPI,
-  getEyeDrawingShareCapabilities 
+  getEyeDrawingShareCapabilities,
+  clearExportCache
 } = useEyeDrawingExport()
 
 const shareCapabilities = ref({})
@@ -34,12 +35,13 @@ const showSuccess = ref(false)
 const successMessage = ref('')
 const paletteData = ref(null)
 const previewCanvas = ref(null)
+const previewImageSrc = ref(null)
 
 // Get share capabilities on mount
 onMounted(() => {
   shareCapabilities.value = getEyeDrawingShareCapabilities()
   loadSavedPalettes()
-  updatePreview()
+  generatePreviewImage()
 })
 
 // Load palette data when paletteId changes
@@ -56,14 +58,18 @@ watch(() => props.paletteId, (paletteId) => {
   }
 }, { immediate: true })
 
-// Update preview when canvas or palette changes
-watch([() => props.compositeCanvas, paletteColors], updatePreview, { flush: 'post' })
-
 // Get palette colors for sharing
 const paletteColors = computed(() => {
   if (!paletteData.value) return []
   return paletteData.value.colors.map(({ colorData }) => colorData) || []
 })
+
+// Generate preview when canvas or palette changes
+watch([() => props.compositeCanvas, paletteColors], () => {
+  // Reset cached image when dependencies change
+  previewImageSrc.value = null
+  generatePreviewImage()
+}, { flush: 'post' })
 
 const paletteTitle = computed(() => {
   return paletteData.value ? paletteData.value.title : 'My Eye Look'
@@ -74,10 +80,11 @@ const getCanvasElement = () => {
   return props.compositeCanvas?.value || props.compositeCanvas
 }
 
-// Generate preview for display
-function updatePreview() {
-  if (hasValidData.value && previewCanvas.value) {
-    const canvas = previewCanvas.value
+// Generate and cache preview image
+function generatePreviewImage() {
+  // Only generate if we don't have a cached preview and have valid data
+  if (!previewImageSrc.value && hasValidData.value) {
+    const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
     
     // Set preview size
@@ -124,6 +131,9 @@ function updatePreview() {
     ctx.font = '12px Arial, sans-serif'
     ctx.textAlign = 'center'
     ctx.fillText(paletteTitle.value, canvas.width / 2, canvas.height - 10)
+    
+    // Cache as data URL
+    previewImageSrc.value = canvas.toDataURL('image/png')
   }
 }
 
@@ -169,6 +179,7 @@ const handleBackToPreview = () => {
 const handleShareAgain = () => {
   showSuccess.value = false
   successMessage.value = ''
+  // Preview image is already cached, no need to regenerate
 }
 
 // Computed properties for button states
@@ -183,6 +194,13 @@ const hasValidData = computed(() => {
 
 const canShare = computed(() => {
   return hasValidData.value && !isExporting.value
+})
+
+// Cleanup on component unmount
+onUnmounted(() => {
+  // Clear export cache to free memory
+  clearExportCache()
+  console.log('ShareEyeLookForm cleanup completed')
 })
 </script>
 
@@ -228,10 +246,15 @@ const canShare = computed(() => {
       
       <!-- Eye Drawing Preview -->
       <div class="share-eye-look__preview">
-        <canvas 
-          ref="previewCanvas"
-          class="share-eye-look__preview-canvas"
-        ></canvas>
+        <img 
+          v-if="previewImageSrc"
+          :src="previewImageSrc"
+          alt="Eye look preview"
+          class="share-eye-look__preview-image"
+        />
+        <div v-else class="share-eye-look__preview-placeholder">
+          <p>Generating preview...</p>
+        </div>
       </div>
       
       <!-- Share Options -->
@@ -331,16 +354,37 @@ const canShare = computed(() => {
   }
 }
 
-.share-eye-look__preview-canvas {
+.share-eye-look__preview-image {
   border: 1px solid rgba(139, 129, 165, 0.2);
   border-radius: var(--radius-sm);
   background: white;
   width: 250px;
   height: 167px;
+  object-fit: contain;
 }
 
 @media (min-width: 768px) {
-  .share-eye-look__preview-canvas {
+  .share-eye-look__preview-image {
+    width: 300px;
+    height: 200px;
+  }
+}
+
+.share-eye-look__preview-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(139, 129, 165, 0.2);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.8);
+  width: 250px;
+  height: 167px;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+@media (min-width: 768px) {
+  .share-eye-look__preview-placeholder {
     width: 300px;
     height: 200px;
   }

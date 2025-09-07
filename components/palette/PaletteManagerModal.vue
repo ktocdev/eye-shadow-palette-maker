@@ -1,13 +1,13 @@
 <script setup>
 import { reactive, computed, watch } from 'vue'
-import Modal from './Modal.vue'
+import Modal from '../ui/Modal.vue'
 import { usePaletteStorage } from '../../composables/usePaletteStorage.js'
 import { useColorSelection } from '../../composables/useColorSelection.js'
 // Import tab components
 import SavedPalettesGrid from './SavedPalettesGrid.vue'
-import EyePreviewCanvas from './EyePreviewCanvas.vue' 
+import EyePreviewCanvas from '../eye/EyePreviewCanvas.vue' 
 import SharePaletteForm from './SharePaletteForm.vue'
-import ShareEyeLookForm from './ShareEyeLookForm.vue'
+import ShareEyeLookForm from '../eye/ShareEyeLookForm.vue'
 
 const props = defineProps({
   modelValue: {
@@ -94,6 +94,8 @@ const handleEyeShare = (compositeCanvas) => {
 const handleBackToPreview = () => {
   modalState.currentTab = 'preview'
   modalState.compositeCanvas = null
+  // Clear any global color selection from eye preview to prevent contamination of grid cells
+  clearSelection()
 }
 
 const handleLoad = (paletteId) => {
@@ -108,10 +110,8 @@ const handleDelete = (paletteId) => {
 
 const handleClose = (isOpen) => {
   if (!isOpen) {
-    // Clear color selection when closing modal (especially from eye preview)
-    if (modalState.currentTab === 'preview') {
-      clearSelection()
-    }
+    // Clear color selection when closing modal to prevent contamination between sessions
+    clearSelection()
     // Reset state when closing
     modalState.currentTab = 'saved'
     modalState.selectedPaletteId = null
