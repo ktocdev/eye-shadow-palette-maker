@@ -1,8 +1,8 @@
 <script setup>
 import { computed } from 'vue'
 import Dropdown from '../ui/Dropdown.vue'
-import { useColorEffects } from '../../composables/useColorEffects.js'
-import { useSound } from '../../composables/useSound.js'
+import { useColorEffects } from '../../composables/color/useColorEffects.js'
+import { useSound } from '../../composables/utils/useSound.js'
 
 const props = defineProps({
   paletteData: {

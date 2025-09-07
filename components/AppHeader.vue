@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import BaseButton from './ui/BaseButton.vue'
-import { useSound } from '../composables/useSound.js'
+import { useSound } from '../composables/utils/useSound.js'
 
 const props = defineProps({
   showInlineTitleInput: {

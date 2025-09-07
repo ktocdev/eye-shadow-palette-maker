@@ -1,5 +1,5 @@
 <script setup>
-import { useSound } from '../../composables/useSound.js'
+import { useSound } from '../../composables/utils/useSound.js'
 
 const props = defineProps({
   gridSize: {

@@ -14,13 +14,13 @@ import LoaderOverlay from './ui/LoaderOverlay.vue'
 import ToastNotification from './ui/ToastNotification.vue'
 
 // Composables
-import { useColorData } from '../composables/useColorData.js'
-import { usePaletteState } from '../composables/usePaletteState.js'
-import { useTheme } from '../composables/useTheme.js'
-import { usePaletteStorage } from '../composables/usePaletteStorage.js'
-import { useSound } from '../composables/useSound.js'
-import { useTitleEditing } from '../composables/useTitleEditing.js'
-import { useColorSelection } from '../composables/useColorSelection.js'
+import { useColorData } from '../composables/color/useColorData.js'
+import { usePaletteState } from '../composables/palette/usePaletteState.js'
+import { useTheme } from '../composables/utils/useTheme.js'
+import { usePaletteStorage } from '../composables/palette/usePaletteStorage.js'
+import { useSound } from '../composables/utils/useSound.js'
+import { useTitleEditing } from '../composables/palette/useTitleEditing.js'
+import { useColorSelection } from '../composables/color/useColorSelection.js'
 
 // Use composables
 const { palette, allColors } = useColorData()

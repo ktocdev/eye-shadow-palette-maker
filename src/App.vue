@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted } from 'vue'
 import SwatchesExplorer from '../components/SwatchesExplorer.vue'
-import { useSound } from '../composables/useSound.js'
+import { useSound } from '../composables/utils/useSound.js'
 
 // Initialize sound system on user interaction
 const { initializeSoundSystem } = useSound()

@@ -2,8 +2,8 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import BaseButton from '../ui/BaseButton.vue'
 import MiniPalette from './MiniPalette.vue'
-import { usePaletteExport } from '../../composables/usePaletteExport.js'
-import { usePaletteStorage } from '../../composables/usePaletteStorage.js'
+import { usePaletteExport } from '../../composables/palette/usePaletteExport.js'
+import { usePaletteStorage } from '../../composables/palette/usePaletteStorage.js'
 
 const props = defineProps({
   paletteId: {

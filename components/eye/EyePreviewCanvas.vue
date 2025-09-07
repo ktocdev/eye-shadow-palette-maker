@@ -1,10 +1,10 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import BaseButton from '../ui/BaseButton.vue'
-import { useEyeDrawing, SKIN_TONES, EYE_COLORS } from '../../composables/useEyeDrawing.js'
-import { useColorSelection } from '../../composables/useColorSelection.js'
-import { usePaletteStorage } from '../../composables/usePaletteStorage.js'
-import { useResponsive } from '../../composables/useResponsive.js'
+import { useEyeDrawing, SKIN_TONES, EYE_COLORS } from '../../composables/eye/useEyeDrawing.js'
+import { useColorSelection } from '../../composables/color/useColorSelection.js'
+import { usePaletteStorage } from '../../composables/palette/usePaletteStorage.js'
+import { useResponsive } from '../../composables/utils/useResponsive.js'
 
 const props = defineProps({
   paletteId: {

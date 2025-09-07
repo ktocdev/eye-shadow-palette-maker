@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, onUnmounted, watch } from 'vue'
-import { useSound } from '../../composables/useSound.js'
+import { useSound } from '../../composables/utils/useSound.js'
 
 const props = defineProps({
   modelValue: {

@@ -1,5 +1,5 @@
 import { ref, computed, reactive } from 'vue'
-import { useEventCleanup } from './useEventCleanup.js'
+import { useEventCleanup } from '../utils/useEventCleanup.js'
 
 /**
  * Composable for managing palette grid state and operations

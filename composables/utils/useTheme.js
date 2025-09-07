@@ -1,5 +1,5 @@
 import { ref, computed, watch } from 'vue'
-import themesData from '../data/themes.json'
+import themesData from '../../data/themes.json'
 
 /**
  * Composable for managing site themes

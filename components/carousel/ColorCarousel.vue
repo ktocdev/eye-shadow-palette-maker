@@ -1,8 +1,8 @@
 <script setup>
 import { computed } from 'vue'
 import CarouselSwatch from './CarouselSwatch.vue'
-import { useCarousel } from '../../composables/useCarousel.js'
-import { useSound } from '../../composables/useSound.js'
+import { useCarousel } from '../../composables/carousel/useCarousel.js'
+import { useSound } from '../../composables/utils/useSound.js'
 
 const props = defineProps({
   colors: {

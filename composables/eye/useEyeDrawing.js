@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import { useSVGLoader } from './useSVGLoader.js'
-import eyeSvgUrl from '../src/assets/espm-eye.svg'
+import eyeSvgUrl from '../../src/assets/espm-eye.svg'
 
 /**
  * Composable for managing eye drawing operations on canvas

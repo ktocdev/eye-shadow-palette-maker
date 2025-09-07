@@ -2,8 +2,8 @@
 import { ref, onMounted } from 'vue'
 import MiniPalette from '../palette/MiniPalette.vue'
 import Modal from '../ui/Modal.vue'
-import { useColorData } from '../../composables/useColorData.js'
-import { usePaletteStorage } from '../../composables/usePaletteStorage.js'
+import { useColorData } from '../../composables/color/useColorData.js'
+import { usePaletteStorage } from '../../composables/palette/usePaletteStorage.js'
 import demoPalettesData from '../../data/demoPalettes.json'
 
 const props = defineProps({

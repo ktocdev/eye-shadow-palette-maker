@@ -1,9 +1,9 @@
 <script setup>
 import { computed } from 'vue'
-import { useDragDrop } from '../../composables/useDragDrop.js'
-import { useSound } from '../../composables/useSound.js'
-import { useColorSelection } from '../../composables/useColorSelection.js'
-import { useColorEffects } from '../../composables/useColorEffects.js'
+import { useDragDrop } from '../../composables/utils/useDragDrop.js'
+import { useSound } from '../../composables/utils/useSound.js'
+import { useColorSelection } from '../../composables/color/useColorSelection.js'
+import { useColorEffects } from '../../composables/color/useColorEffects.js'
 
 const props = defineProps({
   colorName: {

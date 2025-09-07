@@ -1,8 +1,8 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import BaseButton from '../ui/BaseButton.vue'
-import { useEyeDrawingExport } from '../../composables/useEyeDrawingExport.js'
-import { usePaletteStorage } from '../../composables/usePaletteStorage.js'
+import { useEyeDrawingExport } from '../../composables/eye/useEyeDrawingExport.js'
+import { usePaletteStorage } from '../../composables/palette/usePaletteStorage.js'
 
 const props = defineProps({
   paletteId: {
