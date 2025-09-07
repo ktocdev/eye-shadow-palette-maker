@@ -78,7 +78,6 @@ const debouncedCanvasResize = async () => {
   try {
     await nextTick()
     if (eyeCanvas.value) {
-      console.log('Redrawing eye layer after canvas resize')
       drawEyeLayer()
       // Also trigger pre-caching for new canvas size
       setTimeout(() => {
@@ -118,9 +117,7 @@ watch(() => props.paletteId, (paletteId) => {
     if (palette) {
       // Extract colorData from palette.colors structure: [{ index: 0, colorData: {...} }]
       paletteColors.value = palette.colors.map(({ colorData }) => colorData) || []
-      console.log('EyePreviewCanvas loaded palette:', palette.title, 'with colors:', paletteColors.value.length)
       if (paletteColors.value.length > 0) {
-        console.log('First color example:', paletteColors.value[0])
         // Auto-select first color
         handleColorSelect(paletteColors.value[0], 0)
       }
@@ -145,12 +142,10 @@ onMounted(async () => {
   
   const tryInitialize = async () => {
     if (canvasElement.value && paintCanvas.value && eyeCanvas.value && attempts < maxAttempts) {
-      console.log('Attempting to initialize multi-layer canvas system, attempt:', attempts + 1)
       const success = await initializeCanvasLayers(canvasElement.value, paintCanvas.value, eyeCanvas.value)
       
       // Verify canvases were initialized properly
       if (success && canvasElement.value.getContext('2d')) {
-        console.log('Multi-layer canvas system initialized successfully')
         return
       }
     }
@@ -177,7 +172,6 @@ onUnmounted(() => {
   // Clear global color selection to prevent cross-contamination
   clearSelection()
   
-  console.log('EyePreviewCanvas cleanup completed')
 })
 
 // Handle canvas mouse events for drawing
@@ -286,16 +280,13 @@ const handleEyeColorSelect = async (color) => {
 const handleShare = () => {
   // Create composite canvas for sharing using current dimensions
   if (paintCanvas.value && eyeCanvas.value) {
-    console.log('Creating composite canvas for sharing')
     try {
       const composite = createCompositeCanvas(paintCanvas.value, eyeCanvas.value)
-      console.log('Composite canvas created successfully, emitting eye-share event')
       emit('eye-share', composite)
     } catch (error) {
       console.error('Error creating composite canvas:', error)
     }
   } else {
-    console.log('Canvas elements not available for sharing')
   }
 }
 </script>

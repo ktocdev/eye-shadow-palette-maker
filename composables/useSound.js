@@ -42,7 +42,6 @@ const initializeAudioContext = async () => {
     // Handle context state changes
     audioContext.value.addEventListener('statechange', () => {
       contextState.value = audioContext.value.state
-      console.log('AudioContext state changed:', contextState.value)
     })
 
     // Try to resume context if suspended (common on mobile)
@@ -50,7 +49,6 @@ const initializeAudioContext = async () => {
       await audioContext.value.resume()
     }
 
-    console.log('AudioContext initialized:', audioContext.value.state)
     return true
   } catch (error) {
     console.error('Failed to initialize AudioContext:', error)
@@ -283,7 +281,6 @@ const generateSubtleClickBuffer = (context) => {
 const preGenerateSounds = async () => {
   if (!audioContext.value || isInitialized.value) return
   
-  console.log('Pre-generating sound buffers...')
   
   try {
     // Generate all sounds
@@ -300,7 +297,6 @@ const preGenerateSounds = async () => {
     }
     
     isInitialized.value = true
-    console.log(`Generated ${soundBuffers.value.size} sound buffers`)
   } catch (error) {
     console.error('Failed to pre-generate sounds:', error)
   }

@@ -53,15 +53,12 @@ export function useTheme() {
    * Set the current theme
    */
   const setTheme = (themeKey) => {
-    console.log('setTheme called with:', themeKey)
-    console.log('Available themes:', Object.keys(themes.value))
     
     if (!themes.value[themeKey]) {
       console.warn(`Theme '${themeKey}' not found`)
       return
     }
     
-    console.log('Setting theme to:', themeKey)
     currentTheme.value = themeKey
     saveTheme(themeKey)
     applyTheme(themes.value[themeKey])
@@ -71,7 +68,6 @@ export function useTheme() {
    * Apply theme CSS custom properties to document root
    */
   const applyTheme = (theme) => {
-    console.log('applyTheme called with theme:', theme.name || 'unknown')
     const root = document.documentElement
     
     // Map theme colors to existing CSS variables
@@ -91,7 +87,6 @@ export function useTheme() {
     // Apply color variable mappings
     Object.entries(colorMappings).forEach(([themeKey, cssVar]) => {
       if (theme.colors[themeKey]) {
-        console.log(`Setting ${cssVar} to ${theme.colors[themeKey]}`)
         root.style.setProperty(cssVar, theme.colors[themeKey])
         
         // Also set some derived colors for borders etc
@@ -110,7 +105,6 @@ export function useTheme() {
     // Set theme class for additional styling
     root.className = root.className.replace(/theme-\w+/g, '')
     root.classList.add(`theme-${currentTheme.value}`)
-    console.log('Theme class applied:', `theme-${currentTheme.value}`)
   }
   
   /**

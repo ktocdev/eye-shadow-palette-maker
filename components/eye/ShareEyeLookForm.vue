@@ -50,7 +50,6 @@ watch(() => props.paletteId, (paletteId) => {
     const palette = findPaletteById(paletteId)
     if (palette) {
       paletteData.value = palette
-      console.log('ShareEyeLookForm loaded palette:', palette.title)
     } else {
       console.error('Palette not found:', paletteId)
       paletteData.value = null
@@ -200,7 +199,6 @@ const canShare = computed(() => {
 onUnmounted(() => {
   // Clear export cache to free memory
   clearExportCache()
-  console.log('ShareEyeLookForm cleanup completed')
 })
 </script>
 

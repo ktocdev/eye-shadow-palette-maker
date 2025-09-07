@@ -77,7 +77,6 @@ const savedPaletteTitle = ref('')
 // Handle grid size changes
 const handleGridSizeChange = (newSize) => {
   currentGridSize.value = newSize
-  console.log('Grid size changed to:', newSize)
 }
 
 // Handle palette controls
@@ -146,7 +145,6 @@ const handleOpenAboutModal = () => {
 
 // Handle demo palette actions from AboutModal
 const handleDemoPaletteEyePreview = (paletteId) => {
-  console.log('Demo palette eye preview:', paletteId)
   showAboutModal.value = false
   // Set palette manager to open with eye preview tab
   paletteManagerTab.value = 'preview'
@@ -261,12 +259,10 @@ const handleLoadPalette = (paletteId) => {
   paletteData.colors.forEach(({ index, colorData }) => {
     if (index < totalCells) {
       // All palette data now uses standard format: {colorName, hexCode, bgColor, isDark, effect}
-      console.log('Loading palette color at index', index, 'colorData:', colorData)
       gridData[index] = colorData
     }
   })
   
-  console.log('Final gridData for import:', gridData)
   
   // Import the data into the grid
   paletteGridRef.value?.importGridData(gridData)
@@ -290,7 +286,6 @@ const handleSwatchClick = (colorData) => {
 
 // Handle grid cell click - show carousel positioned near the clicked cell
 const handleGridCellClick = (cellIndex, cellRect) => {
-  console.log('Grid cell clicked:', cellIndex, cellRect)
   
   // Store which cell opened the carousel for automatic placement
   targetCellIndex.value = cellIndex

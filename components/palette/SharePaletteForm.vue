@@ -42,7 +42,6 @@ watch(() => props.paletteId, (paletteId) => {
     const palette = findPaletteById(paletteId)
     if (palette) {
       paletteData.value = palette
-      console.log('SharePaletteForm loaded palette:', palette.title)
     } else {
       console.error('Palette not found:', paletteId)
       paletteData.value = null

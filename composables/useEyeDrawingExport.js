@@ -31,7 +31,6 @@ export function useEyeDrawingExport() {
     // Check cache first
     const cacheKey = generateCacheKey(eyeCanvas, paletteColors, paletteTitle, canvasWidth, canvasHeight)
     if (exportCanvasCache.has(cacheKey)) {
-      console.log('Using cached export canvas')
       return exportCanvasCache.get(cacheKey)
     }
     const canvas = document.createElement('canvas')
@@ -153,7 +152,6 @@ export function useEyeDrawingExport() {
       exportCanvasCache.delete(firstKey)
     }
     
-    console.log('Generated and cached new export canvas')
     return canvas
   }
 
@@ -162,7 +160,6 @@ export function useEyeDrawingExport() {
    */
   const clearExportCache = () => {
     exportCanvasCache.clear()
-    console.log('Export canvas cache cleared')
   }
   
   /**

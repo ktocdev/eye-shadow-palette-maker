@@ -105,7 +105,6 @@ const handleLoad = (paletteId) => {
 
 const handleDelete = (paletteId) => {
   // Handle delete logic (to be implemented)
-  console.log('Delete palette:', paletteId)
 }
 
 const handleClose = (isOpen) => {

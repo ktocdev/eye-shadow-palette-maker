@@ -46,7 +46,6 @@ watch(() => props.paletteId, (paletteId) => {
     const palette = findPaletteById(paletteId)
     if (palette) {
       paletteData.value = palette
-      console.log('ShareEyeDrawingForm loaded palette:', palette.title)
     } else {
       console.error('Palette not found:', paletteId)
       paletteData.value = null
@@ -116,12 +115,6 @@ const hasValidData = computed(() => {
   const hasPalette = !!paletteData.value
   const hasColors = paletteColors.value.length > 0
   
-  console.log('ShareEyeDrawingForm validation:', {
-    hasCanvas,
-    hasPalette,
-    hasColors,
-    canvas,
-    canvasRef: props.canvasRef,
     paletteData: paletteData.value,
     paletteColorsLength: paletteColors.value.length
   })

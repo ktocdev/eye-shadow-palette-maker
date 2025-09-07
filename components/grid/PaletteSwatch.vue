@@ -56,7 +56,6 @@ const onMiniSwatchDragEnd = (e) => {
   
   // If drag was not successful (dropped outside grid), remove this swatch
   if (!wasSuccessfulDrop) {
-    console.log('PaletteSwatch dragged outside grid, removing:', props.colorData.colorName)
     playCrumple() // Play paper crumple sound
     emit('clear-swatch')
   }
@@ -80,7 +79,6 @@ const onMiniSwatchTouchEnd = (e) => {
   
   // If touch ended outside grid, remove this swatch
   if (!gridCell) {
-    console.log('PaletteSwatch touch ended outside grid, removing:', props.colorData.colorName)
     playCrumple() // Play paper crumple sound
     emit('clear-swatch')
   }
