@@ -7,6 +7,16 @@
   --theme-accent-color: #9370DB;
   --theme-hover-bg: rgba(106, 90, 205, 0.1);
   --theme-focus-ring: rgba(106, 90, 205, 0.3);
+  
+  /* Theme Accent Opacity Variants */
+  --theme-accent-90: rgba(106, 90, 205, 0.9);
+  --theme-accent-80: rgba(106, 90, 205, 0.8);
+  --theme-accent-60: rgba(106, 90, 205, 0.6);
+  --theme-accent-50: rgba(106, 90, 205, 0.5);
+  --theme-accent-40: rgba(106, 90, 205, 0.4);
+  --theme-accent-20: rgba(106, 90, 205, 0.2);
+  --theme-accent-15: rgba(106, 90, 205, 0.15);
+  --theme-accent-10: rgba(106, 90, 205, 0.1);
 }
 
 .theme-purple .palette-grid-wrapper {
@@ -69,6 +79,16 @@
   --theme-accent-color: #00CED1;
   --theme-hover-bg: rgba(32, 178, 170, 0.1);
   --theme-focus-ring: rgba(32, 178, 170, 0.3);
+  
+  /* Theme Accent Opacity Variants */
+  --theme-accent-90: rgba(32, 178, 170, 0.9);
+  --theme-accent-80: rgba(32, 178, 170, 0.8);
+  --theme-accent-60: rgba(32, 178, 170, 0.6);
+  --theme-accent-50: rgba(32, 178, 170, 0.5);
+  --theme-accent-40: rgba(32, 178, 170, 0.4);
+  --theme-accent-20: rgba(32, 178, 170, 0.2);
+  --theme-accent-15: rgba(32, 178, 170, 0.15);
+  --theme-accent-10: rgba(32, 178, 170, 0.1);
 }
 
 .theme-turquoise .palette-grid-wrapper {
@@ -142,6 +162,16 @@
   --theme-accent-color: #C0C0C0;
   --theme-hover-bg: rgba(192, 192, 192, 0.1);
   --theme-focus-ring: rgba(169, 169, 169, 0.3);
+  
+  /* Theme Accent Opacity Variants */
+  --theme-accent-90: rgba(192, 192, 192, 0.9);
+  --theme-accent-80: rgba(192, 192, 192, 0.8);
+  --theme-accent-60: rgba(192, 192, 192, 0.6);
+  --theme-accent-50: rgba(192, 192, 192, 0.5);
+  --theme-accent-40: rgba(192, 192, 192, 0.4);
+  --theme-accent-20: rgba(192, 192, 192, 0.2);
+  --theme-accent-15: rgba(192, 192, 192, 0.15);
+  --theme-accent-10: rgba(192, 192, 192, 0.1);
 }
 
 .theme-gold .palette-grid-wrapper {
@@ -215,6 +245,16 @@
   --theme-accent-color: #8B94A3;
   --theme-hover-bg: rgba(107, 114, 128, 0.1);
   --theme-focus-ring: rgba(139, 148, 163, 0.3);
+  
+  /* Theme Accent Opacity Variants */
+  --theme-accent-90: rgba(107, 114, 128, 0.9);
+  --theme-accent-80: rgba(107, 114, 128, 0.8);
+  --theme-accent-60: rgba(107, 114, 128, 0.6);
+  --theme-accent-50: rgba(107, 114, 128, 0.5);
+  --theme-accent-40: rgba(107, 114, 128, 0.4);
+  --theme-accent-20: rgba(107, 114, 128, 0.2);
+  --theme-accent-15: rgba(107, 114, 128, 0.15);
+  --theme-accent-10: rgba(107, 114, 128, 0.1);
   
   /* Override text colors for dark theme */
   --color-text-primary: #F3F4F6;
@@ -353,6 +393,16 @@
   --theme-accent-color: #A0845C;
   --theme-hover-bg: rgba(139, 115, 85, 0.1);
   --theme-focus-ring: rgba(160, 132, 92, 0.3);
+  
+  /* Theme Accent Opacity Variants */
+  --theme-accent-90: rgba(139, 115, 85, 0.9);
+  --theme-accent-80: rgba(139, 115, 85, 0.8);
+  --theme-accent-60: rgba(139, 115, 85, 0.6);
+  --theme-accent-50: rgba(139, 115, 85, 0.5);
+  --theme-accent-40: rgba(139, 115, 85, 0.4);
+  --theme-accent-20: rgba(139, 115, 85, 0.2);
+  --theme-accent-15: rgba(139, 115, 85, 0.15);
+  --theme-accent-10: rgba(139, 115, 85, 0.1);
 }
 
 .theme-taupe .palette-grid-wrapper {
@@ -543,6 +593,16 @@ body {
   --theme-accent-color: #7D4E65;
   --theme-hover-bg: rgba(97, 64, 81, 0.1);
   --theme-focus-ring: rgba(125, 78, 101, 0.3);
+  
+  /* Theme Accent Opacity Variants */
+  --theme-accent-90: rgba(97, 64, 81, 0.9);
+  --theme-accent-80: rgba(97, 64, 81, 0.8);
+  --theme-accent-60: rgba(97, 64, 81, 0.6);
+  --theme-accent-50: rgba(97, 64, 81, 0.5);
+  --theme-accent-40: rgba(97, 64, 81, 0.4);
+  --theme-accent-20: rgba(97, 64, 81, 0.2);
+  --theme-accent-15: rgba(97, 64, 81, 0.15);
+  --theme-accent-10: rgba(97, 64, 81, 0.1);
 }
 
 .theme-eggplant .palette-grid-wrapper {

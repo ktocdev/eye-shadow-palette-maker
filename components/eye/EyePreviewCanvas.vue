@@ -731,8 +731,8 @@ const handleShare = () => {
 }
 
 .eye-preview-canvas__color-swatch--active {
-  border-color: rgba(106, 90, 205, 0.8);
-  box-shadow: 0 0 0 2px rgba(106, 90, 205, 0.2);
+  border-color: var(--color-accent-80);
+  box-shadow: 0 0 0 2px var(--color-accent-20);
 }
 
 .eye-preview-canvas__color-swatch-check {
@@ -803,15 +803,15 @@ const handleShare = () => {
 }
 
 .eye-preview-canvas__brush-btn--active {
-  background: rgba(106, 90, 205, 0.1);
-  border-color: rgba(106, 90, 205, 0.4);
-  color: rgba(106, 90, 205, 0.9);
+  background: var(--color-accent-10);
+  border-color: var(--color-accent-40);
+  color: var(--color-accent-90);
 }
 
 .eye-preview-canvas__brush-btn:hover.eye-preview-canvas__brush-btn--active {
-  background: rgba(106, 90, 205, 0.1);
-  border-color: rgba(106, 90, 205, 0.4);
-  color: rgba(106, 90, 205, 0.9);
+  background: var(--color-accent-10);
+  border-color: var(--color-accent-40);
+  color: var(--color-accent-90);
 }
 
 .eye-preview-canvas__brush-btn--tool {

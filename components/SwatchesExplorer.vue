@@ -637,9 +637,9 @@ onUnmounted(() => {
 
 .palette-title-input:focus {
   outline: none;
-  border-color: rgba(106, 90, 205, 0.6);
-  box-shadow: 0 0 0 4px rgba(106, 90, 205, 0.15), 0 4px 12px rgba(139, 129, 165, 0.2);
-  background: rgba(255, 255, 255, 1);
+  border-color: var(--color-accent-60);
+  box-shadow: 0 0 0 4px var(--color-accent-15), 0 4px 12px var(--border-color-primary-medium);
+  background: var(--color-white-full);
   transform: translateY(-1px);
 }
 
@@ -690,7 +690,7 @@ onUnmounted(() => {
 
 .edit-title-btn:hover {
   background: rgba(255, 255, 255, 1);
-  border-color: rgba(106, 90, 205, 0.4);
+  border-color: var(--color-accent-40);
   box-shadow: 0 2px 4px rgba(139, 129, 165, 0.2);
 }
 

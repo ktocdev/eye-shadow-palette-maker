@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import Modal from '../ui/Modal.vue'
+import BaseButton from '../ui/BaseButton.vue'
 import { useSound } from '../../composables/utils/useSound.js'
 
 const props = defineProps({
@@ -54,14 +55,14 @@ const handleTitleInputFocus = () => {
       />
     </div>
     <div class="dialog-actions">
-      <button 
+      <BaseButton
         @click="handleSavePalette"
         :disabled="!paletteTitle.trim() || !canSave"
-        class="btn btn-compact btn-gradient-green"
-        :class="{ 'btn-disabled': !paletteTitle.trim() || !canSave }"
+        variant="green"
+        size="compact"
       >
         Save Palette
-      </button>
+      </BaseButton>
     </div>
   </Modal>
 </template>
@@ -84,7 +85,7 @@ const handleTitleInputFocus = () => {
   padding: 12px 16px;
   border: 1px solid rgba(139, 129, 165, 0.3);
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--color-white-overlay-strong);
   font-family: var(--font-family-primary);
   font-size: var(--font-size-base);
   color: var(--color-text-primary);
@@ -93,8 +94,8 @@ const handleTitleInputFocus = () => {
 
 .form-input:focus {
   outline: none;
-  border-color: rgba(106, 90, 205, 0.5);
-  box-shadow: 0 0 0 3px rgba(106, 90, 205, 0.1);
+  border-color: var(--color-accent-50);
+  box-shadow: 0 0 0 3px var(--color-accent-10);
 }
 
 .form-input::placeholder {
