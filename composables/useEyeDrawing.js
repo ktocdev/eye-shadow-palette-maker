@@ -343,6 +343,36 @@ export function useEyeDrawing() {
   }
 
   /**
+   * Create a composite canvas with background + paint + eye layers for export/sharing
+   * @param {HTMLCanvasElement} paintCanvasEl - Paint canvas element
+   * @param {HTMLCanvasElement} eyeCanvasEl - Eye canvas element
+   * @returns {HTMLCanvasElement} Composite canvas with all layers combined
+   */
+  const createCompositeCanvas = (paintCanvasEl, eyeCanvasEl) => {
+    // Create output canvas
+    const composite = document.createElement('canvas')
+    composite.width = 600
+    composite.height = 350
+    const ctx = composite.getContext('2d')
+
+    // 1. Fill with skin tone background
+    ctx.fillStyle = skinTone.value
+    ctx.fillRect(0, 0, 600, 350)
+
+    // 2. Draw paint layer (user's eyeshadow)
+    if (paintCanvasEl) {
+      ctx.drawImage(paintCanvasEl, 0, 0)
+    }
+
+    // 3. Draw eye layer (SVG elements) on top
+    if (eyeCanvasEl) {
+      ctx.drawImage(eyeCanvasEl, 0, 0)
+    }
+
+    return composite
+  }
+
+  /**
    * Toggle eraser mode on/off
    */
   const toggleEraser = () => {
@@ -467,6 +497,7 @@ export function useEyeDrawing() {
     clearAllColors,
     setSkinTone,
     setEyeColor,
+    createCompositeCanvas,
     toggleEraser,
     setEraserMode,
     undoLastAction,
