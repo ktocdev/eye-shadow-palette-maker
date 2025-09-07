@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import Dropdown from './Dropdown.vue'
+import Dropdown from '../ui/Dropdown.vue'
 import { useColorEffects } from '../../composables/useColorEffects.js'
 import { useSound } from '../../composables/useSound.js'
 

@@ -1,13 +1,13 @@
 <script setup>
 import { reactive, computed, watch } from 'vue'
-import Modal from './Modal.vue'
+import Modal from '../ui/Modal.vue'
 import { usePaletteStorage } from '../../composables/usePaletteStorage.js'
 import { useColorSelection } from '../../composables/useColorSelection.js'
 // Import tab components
 import SavedPalettesGrid from './SavedPalettesGrid.vue'
-import EyePreviewCanvas from './EyePreviewCanvas.vue' 
+import EyePreviewCanvas from '../eye/EyePreviewCanvas.vue' 
 import SharePaletteForm from './SharePaletteForm.vue'
-import ShareEyeLookForm from './ShareEyeLookForm.vue'
+import ShareEyeLookForm from '../eye/ShareEyeLookForm.vue'
 
 const props = defineProps({
   modelValue: {

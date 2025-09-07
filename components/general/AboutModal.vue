@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import MiniPalette from './MiniPalette.vue'
-import Modal from './Modal.vue'
+import MiniPalette from '../palette/MiniPalette.vue'
+import Modal from '../ui/Modal.vue'
 import { useColorData } from '../../composables/useColorData.js'
 import { usePaletteStorage } from '../../composables/usePaletteStorage.js'
 import demoPalettesData from '../../data/demoPalettes.json'

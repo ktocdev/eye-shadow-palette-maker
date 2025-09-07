@@ -1,18 +1,14 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import BaseButton from './BaseButton.vue'
-import { useEyeDrawingExport } from '../../composables/useEyeDrawingExport.js'
+import BaseButton from '../ui/BaseButton.vue'
+import MiniPalette from './MiniPalette.vue'
+import { usePaletteExport } from '../../composables/usePaletteExport.js'
 import { usePaletteStorage } from '../../composables/usePaletteStorage.js'
 
 const props = defineProps({
   paletteId: {
     type: String,
     required: true
-  },
-  canvasRef: {
-    type: Object,
-    required: false,
-    default: () => ({ value: null })
   }
 })
 
@@ -22,11 +18,11 @@ const { findPaletteById, loadSavedPalettes } = usePaletteStorage()
 const { 
   isExporting, 
   exportError, 
-  exportEyeDrawingAsJPG, 
-  copyEyeDrawingToClipboard, 
-  shareEyeDrawingViaWebAPI,
-  getEyeDrawingShareCapabilities 
-} = useEyeDrawingExport()
+  exportAsJPG, 
+  copyToClipboard, 
+  shareViaWebAPI,
+  getShareCapabilities 
+} = usePaletteExport()
 
 const shareCapabilities = ref({})
 const showSuccess = ref(false)
@@ -35,7 +31,7 @@ const paletteData = ref(null)
 
 // Get share capabilities on mount
 onMounted(() => {
-  shareCapabilities.value = getEyeDrawingShareCapabilities()
+  shareCapabilities.value = getShareCapabilities()
   // Load saved palettes 
   loadSavedPalettes()
 })
@@ -46,7 +42,7 @@ watch(() => props.paletteId, (paletteId) => {
     const palette = findPaletteById(paletteId)
     if (palette) {
       paletteData.value = palette
-      console.log('ShareEyeDrawingForm loaded palette:', palette.title)
+      console.log('SharePaletteForm loaded palette:', palette.title)
     } else {
       console.error('Palette not found:', paletteId)
       paletteData.value = null
@@ -60,39 +56,23 @@ watch(() => props.paletteId, () => {
   successMessage.value = ''
 })
 
-// Get palette colors for sharing
-const paletteColors = computed(() => {
-  if (!paletteData.value) return []
-  
-  return paletteData.value.colors.map(({ colorData }) => colorData) || []
-})
-
-const paletteTitle = computed(() => {
-  return paletteData.value ? paletteData.value.title : 'My Eye Look'
-})
-
-// Get the actual canvas element
-const getCanvasElement = () => {
-  return props.canvasRef?.value || props.canvasRef
-}
-
 // Handle download as JPG
 const handleDownloadJPG = async () => {
   try {
-    await exportEyeDrawingAsJPG(getCanvasElement(), paletteColors.value, paletteTitle.value)
+    await exportAsJPG(actualGridData.value, actualGridSize.value, actualTitle.value)
     showSuccess.value = true
-    successMessage.value = 'Eye look downloaded successfully!'
+    successMessage.value = 'Palette downloaded successfully!'
   } catch (error) {
-    console.error('Failed to download eye look:', error)
+    console.error('Failed to download palette:', error)
   }
 }
 
 // Handle copy to clipboard
 const handleCopyToClipboard = async () => {
   try {
-    await copyEyeDrawingToClipboard(getCanvasElement(), paletteColors.value, paletteTitle.value)
+    await copyToClipboard(actualGridData.value, actualGridSize.value, actualTitle.value)
     showSuccess.value = true
-    successMessage.value = 'Eye look copied to clipboard!'
+    successMessage.value = 'Palette copied to clipboard!'
   } catch (error) {
     console.error('Failed to copy to clipboard:', error)
   }
@@ -101,104 +81,48 @@ const handleCopyToClipboard = async () => {
 // Handle web share
 const handleWebShare = async () => {
   try {
-    await shareEyeDrawingViaWebAPI(getCanvasElement(), paletteColors.value, paletteTitle.value)
+    await shareViaWebAPI(actualGridData.value, actualGridSize.value, actualTitle.value)
     showSuccess.value = true
-    successMessage.value = 'Eye look shared successfully!'
+    successMessage.value = 'Palette shared successfully!'
   } catch (error) {
     console.error('Failed to share:', error)
   }
 }
 
-// Computed properties for button states
-const hasValidData = computed(() => {
-  const canvas = getCanvasElement()
-  const hasCanvas = !!canvas && canvas instanceof HTMLCanvasElement
-  const hasPalette = !!paletteData.value
-  const hasColors = paletteColors.value.length > 0
+// Computed properties for actual data to use
+const actualGridData = computed(() => {
+  if (!paletteData.value) return []
   
-  console.log('ShareEyeDrawingForm validation:', {
-    hasCanvas,
-    hasPalette,
-    hasColors,
-    canvas,
-    canvasRef: props.canvasRef,
-    paletteData: paletteData.value,
-    paletteColorsLength: paletteColors.value.length
+  // Convert saved palette data to grid format
+  const gridSize = paletteData.value.gridSize || 2
+  const totalCells = gridSize * gridSize
+  const gridData = new Array(totalCells).fill(null)
+  
+  paletteData.value.colors.forEach(({ index, colorData }) => {
+    if (index < totalCells) {
+      gridData[index] = colorData
+    }
   })
   
-  return hasCanvas && hasPalette && hasColors
+  return gridData
+})
+
+const actualGridSize = computed(() => {
+  return paletteData.value ? paletteData.value.gridSize : 2
+})
+
+const actualTitle = computed(() => {
+  return paletteData.value ? paletteData.value.title : 'My Palette'
+})
+
+// Computed properties for button states
+const hasValidData = computed(() => {
+  const data = actualGridData.value
+  return data && data.length > 0 && data.some(cell => cell !== null)
 })
 
 const canShare = computed(() => {
   return hasValidData.value && !isExporting.value
-})
-
-// Generate preview for display
-const previewCanvas = ref(null)
-const updatePreview = () => {
-  if (hasValidData.value && previewCanvas.value) {
-    const canvas = previewCanvas.value
-    const ctx = canvas.getContext('2d')
-    
-    // Set small preview size
-    canvas.width = 300
-    canvas.height = 200
-    
-    // Clear with white background
-    ctx.fillStyle = '#ffffff'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
-    
-    // Draw scaled eye canvas
-    const eyeCanvas = getCanvasElement()
-    if (eyeCanvas) {
-      ctx.drawImage(eyeCanvas, 10, 10, 180, 135)
-      
-      // Add border
-      ctx.strokeStyle = '#cccccc'
-      ctx.lineWidth = 1
-      ctx.strokeRect(10, 10, 180, 135)
-    }
-    
-    // Draw mini palette swatches
-    const swatchSize = 20
-    const startX = 200
-    const startY = 15
-    
-    paletteColors.value.slice(0, 6).forEach((color, index) => {
-      const row = Math.floor(index / 2)
-      const col = index % 2
-      
-      const x = startX + col * (swatchSize + 4)
-      const y = startY + row * (swatchSize + 4)
-      
-      ctx.fillStyle = color.bgColor || '#f0f0f0'
-      ctx.fillRect(x, y, swatchSize, swatchSize)
-      
-      ctx.strokeStyle = '#cccccc'
-      ctx.lineWidth = 1
-      ctx.strokeRect(x, y, swatchSize, swatchSize)
-    })
-    
-    // Add title
-    ctx.fillStyle = '#333333'
-    ctx.font = '12px Arial, sans-serif'
-    ctx.textAlign = 'center'
-    ctx.fillText(paletteTitle.value, canvas.width / 2, canvas.height - 10)
-  }
-}
-
-// Update preview when data changes  
-watch([() => props.canvasRef, paletteColors, paletteTitle], updatePreview, { flush: 'post' })
-
-// Watch for canvas to become available
-watch(() => props.canvasRef, (newRef) => {
-  if (newRef && (newRef.value || newRef instanceof HTMLCanvasElement)) {
-    setTimeout(updatePreview, 100)
-  }
-}, { immediate: true, deep: true })
-
-onMounted(() => {
-  setTimeout(updatePreview, 200) // Increased delay to ensure canvas is ready
 })
 </script>
 
@@ -208,7 +132,7 @@ onMounted(() => {
     </div>
     
     <div v-else-if="!hasValidData" class="error-message">
-      <p>⚠️ No eye drawing or palette data to share.</p>
+      <p>⚠️ No palette data to share.</p>
     </div>
     
     <div v-else-if="showSuccess" class="success-section">
@@ -228,15 +152,16 @@ onMounted(() => {
     
     <div v-else class="share-options">
       <p class="share-description">
-        Choose how you'd like to share your "{{ paletteTitle }}" eye look:
+        Choose how you'd like to share your "{{ actualTitle }}":
       </p>
       
-      <!-- Eye Drawing Preview -->
-      <div class="preview-container">
-        <canvas 
-          ref="previewCanvas"
-          class="preview-canvas"
-        ></canvas>
+      <!-- Palette Preview -->
+      <div class="palette-preview">
+        <MiniPalette 
+          :palette-data="paletteData"
+          :size="140"
+          :show-actions="false"
+        />
       </div>
       
       <div class="share-buttons">
@@ -284,12 +209,14 @@ onMounted(() => {
       </div>
       
       <div v-if="isExporting" class="exporting-message">
-        <p>🎨 Creating your eye look image...</p>
+        <p>🎨 Creating your palette image...</p>
       </div>
     </div>
 </template>
 
 <style scoped>
+/* Container styles applied to modal-content by parent */
+
 .share-description {
   text-align: center;
   margin-bottom: 24px;
@@ -297,7 +224,7 @@ onMounted(() => {
   font-size: var(--font-size-base);
 }
 
-.preview-container {
+.palette-preview {
   display: flex;
   justify-content: center;
   margin-bottom: 24px;
@@ -305,12 +232,6 @@ onMounted(() => {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(139, 129, 165, 0.1);
   border-radius: var(--radius-md);
-}
-
-.preview-canvas {
-  border: 1px solid rgba(139, 129, 165, 0.2);
-  border-radius: var(--radius-sm);
-  background: white;
 }
 
 .share-buttons {
@@ -430,11 +351,6 @@ onMounted(() => {
   
   .share-btn-subtitle {
     font-size: var(--font-size-xs);
-  }
-  
-  .preview-canvas {
-    width: 250px;
-    height: 167px;
   }
 }
 </style>

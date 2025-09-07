@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
-import BaseButton from './shared/BaseButton.vue'
+import BaseButton from './ui/BaseButton.vue'
 import { useSound } from '../composables/useSound.js'
 
 const props = defineProps({

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
-import BaseButton from './BaseButton.vue'
+import BaseButton from '../ui/BaseButton.vue'
 import { useEyeDrawingExport } from '../../composables/useEyeDrawingExport.js'
 import { usePaletteStorage } from '../../composables/usePaletteStorage.js'
 
