@@ -27,12 +27,10 @@ export function useSVGLoader() {
       loadError.value = null
 
       // Fetch SVG content - handle both URLs and paths
-      console.log('Loading SVG from:', svgPath)
       let svgText
       
       if (svgPath.startsWith('data:') || svgPath.startsWith('blob:') || svgPath.includes('assets')) {
         // This is a Vite-processed asset URL, we can use it directly
-        console.log('Using Vite asset URL directly')
         // For Vite assets, we need to fetch the content to modify styles
         const response = await fetch(svgPath)
         if (!response.ok) {
@@ -50,7 +48,6 @@ export function useSVGLoader() {
         svgText = await response.text()
       }
       
-      console.log('SVG content loaded, length:', svgText.length)
 
       // Apply style overrides by modifying SVG content
       const modifiedSVG = applySVGStyleOverrides(svgText, styleOverrides)
@@ -63,7 +60,6 @@ export function useSVGLoader() {
       return new Promise((resolve, reject) => {
         img.onload = () => {
           try {
-            console.log('SVG image loaded successfully, dimensions:', img.width, 'x', img.height)
             const ctx = canvas.getContext('2d')
             
             // Clear canvas to transparent
@@ -93,7 +89,6 @@ export function useSVGLoader() {
             
             // Draw SVG to canvas with scaling and centering
             ctx.drawImage(img, offsetX, offsetY, svgWidth, svgHeight)
-            console.log('SVG drawn to transparent canvas successfully, centered at offset:', offsetX, offsetY)
             
             // Get image data for layer storage
             const imageData = ctx.getImageData(0, 0, width, height)
@@ -132,11 +127,9 @@ export function useSVGLoader() {
    */
   const applySVGStyleOverrides = (svgText, styleOverrides) => {
     if (!styleOverrides || Object.keys(styleOverrides).length === 0) {
-      console.log('No style overrides to apply')
       return svgText
     }
 
-    console.log('Applying style overrides:', styleOverrides)
 
     // Parse the SVG to modify styles
     const parser = new DOMParser()
@@ -152,7 +145,6 @@ export function useSVGLoader() {
     // Find the style element
     let styleElement = svgDoc.querySelector('style')
     if (!styleElement) {
-      console.log('Creating new style element')
       // Create style element if it doesn't exist
       styleElement = svgDoc.createElement('style')
       const defsElement = svgDoc.querySelector('defs') || svgDoc.querySelector('svg')
@@ -161,27 +153,22 @@ export function useSVGLoader() {
 
     // Get existing styles
     let styleContent = styleElement.textContent || ''
-    console.log('Original style content:', styleContent)
 
     // Apply overrides
     Object.entries(styleOverrides).forEach(([selector, styles]) => {
-      console.log(`Processing selector: ${selector}`, styles)
       Object.entries(styles).forEach(([property, value]) => {
         const regex = new RegExp(`(${selector.replace('.', '\\.')}\\s*{[^}]*)(${property}\\s*:[^;]*;?)`, 'g')
         const newProperty = `${property}: ${value};`
         
         if (regex.test(styleContent)) {
-          console.log(`Replacing existing ${property} for ${selector}`)
           // Replace existing property
           styleContent = styleContent.replace(regex, `$1${newProperty}`)
         } else {
           // Add property to existing selector or create new selector
           const selectorRegex = new RegExp(`(${selector.replace('.', '\\.')}\\s*{[^}]*)(})`, 'g')
           if (selectorRegex.test(styleContent)) {
-            console.log(`Adding ${property} to existing ${selector}`)
             styleContent = styleContent.replace(selectorRegex, `$1${newProperty}$2`)
           } else {
-            console.log(`Creating new ${selector} selector`)
             // Add new selector
             styleContent += `\n${selector} { ${newProperty} }`
           }
@@ -189,14 +176,12 @@ export function useSVGLoader() {
       })
     })
 
-    console.log('Modified style content:', styleContent)
 
     // Update style element
     styleElement.textContent = styleContent
 
     // Return modified SVG
     const modifiedSVG = new XMLSerializer().serializeToString(svgDoc)
-    console.log('Modified SVG length:', modifiedSVG.length)
     return modifiedSVG
   }
 

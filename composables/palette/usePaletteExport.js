@@ -241,14 +241,10 @@ export function usePaletteExport() {
             const sanitizedTitle = (title || 'My_Palette').replace(/[<>:"/\\|?*\s]/g, '_')
             const fileName = `${sanitizedTitle}.jpg`
             
-            console.log('Creating file with name:', fileName, 'blob size:', blob.size)
-            
             const file = new File([blob], fileName, { 
               type: 'image/jpeg',
               lastModified: Date.now()
             })
-            
-            console.log('File created:', file.name, file.size, file.type)
             
             // Check if we can share files
             if (navigator.canShare && !navigator.canShare({ files: [file] })) {

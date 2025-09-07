@@ -14,13 +14,12 @@ import LoaderOverlay from './ui/LoaderOverlay.vue'
 import ToastNotification from './ui/ToastNotification.vue'
 
 // Composables
-import { useColorData } from '../composables/useColorData.js'
-import { usePaletteState } from '../composables/usePaletteState.js'
-import { useTheme } from '../composables/useTheme.js'
-import { usePaletteStorage } from '../composables/usePaletteStorage.js'
-import { useSound } from '../composables/useSound.js'
-import { useTitleEditing } from '../composables/useTitleEditing.js'
-import { useColorSelection } from '../composables/useColorSelection.js'
+import { useColorData } from '../composables/color/useColorData.js'
+import { usePaletteState } from '../composables/palette/usePaletteState.js'
+import { useTheme } from '../composables/utils/useTheme.js'
+import { usePaletteStorage } from '../composables/palette/usePaletteStorage.js'
+import { useSound } from '../composables/utils/useSound.js'
+import { useColorSelection } from '../composables/color/useColorSelection.js'
 
 // Use composables
 const { palette, allColors } = useColorData()
@@ -41,11 +40,6 @@ const { playSubtleClick } = useSound()
 // Use color selection composable
 const { clearSelection } = useColorSelection()
 
-// Use title editing composable (only for state access, not handlers)
-const {
-  isEditingTitle,
-  editedTitle
-} = useTitleEditing()
 
 // Reference to PaletteGrid component
 const paletteGridRef = ref(null)
@@ -77,7 +71,6 @@ const savedPaletteTitle = ref('')
 // Handle grid size changes
 const handleGridSizeChange = (newSize) => {
   currentGridSize.value = newSize
-  console.log('Grid size changed to:', newSize)
 }
 
 // Handle palette controls
@@ -87,10 +80,36 @@ const handleClear = () => {
   updateGridTracker()
 }
 
+const generateRandomPalette = () => {
+  // Clear the grid first
+  paletteGridRef.value?.clearGrid()
+  
+  if (!allColors.value) return
+  
+  // Get available colors and shuffle them
+  const availableColors = [...allColors.value]
+  const shuffledColors = availableColors.sort(() => Math.random() - 0.5)
+  const totalCells = currentGridSize.value * currentGridSize.value
+  const colorsToUse = Math.min(totalCells, shuffledColors.length)
+  
+  // Fill grid with random colors
+  for (let i = 0; i < colorsToUse; i++) {
+    const selectedColor = shuffledColors[i]
+    const colorData = {
+      colorName: selectedColor.name,
+      hexCode: selectedColor.hex,
+      bgColor: selectedColor.hex,
+      isDark: selectedColor.is_dark,
+      effect: selectedColor.effect || 'matte'
+    }
+    paletteGridRef.value?.setCellData(i, colorData)
+  }
+}
+
 const handleRandomize = () => {
   // Preserve the inline title before clearing
   const currentInlineTitle = inlinePaletteTitle.value
-  paletteGridRef.value?.generateRandomPalette()
+  generateRandomPalette()
   clearPalette()
   // Restore the inline title after clearing
   inlinePaletteTitle.value = currentInlineTitle
@@ -146,7 +165,6 @@ const handleOpenAboutModal = () => {
 
 // Handle demo palette actions from AboutModal
 const handleDemoPaletteEyePreview = (paletteId) => {
-  console.log('Demo palette eye preview:', paletteId)
   showAboutModal.value = false
   // Set palette manager to open with eye preview tab
   paletteManagerTab.value = 'preview'
@@ -261,12 +279,10 @@ const handleLoadPalette = (paletteId) => {
   paletteData.colors.forEach(({ index, colorData }) => {
     if (index < totalCells) {
       // All palette data now uses standard format: {colorName, hexCode, bgColor, isDark, effect}
-      console.log('Loading palette color at index', index, 'colorData:', colorData)
       gridData[index] = colorData
     }
   })
   
-  console.log('Final gridData for import:', gridData)
   
   // Import the data into the grid
   paletteGridRef.value?.importGridData(gridData)
@@ -290,7 +306,6 @@ const handleSwatchClick = (colorData) => {
 
 // Handle grid cell click - show carousel positioned near the clicked cell
 const handleGridCellClick = (cellIndex, cellRect) => {
-  console.log('Grid cell clicked:', cellIndex, cellRect)
   
   // Store which cell opened the carousel for automatic placement
   targetCellIndex.value = cellIndex
@@ -399,8 +414,6 @@ const {
   inlinePaletteTitle,
   showInlineTitleInput,
   showLoadedPaletteTitle,
-  showAppInfo,
-  appInfoInitiallyOpen,
   canSavePalette,
   triggerUserInteraction,
   loadPalette,
@@ -460,16 +473,11 @@ onUnmounted(() => {
               :loaded-palette-title="loadedPaletteTitle"
               :loaded-palette-modified="loadedPaletteModified"
               :is-grid-full="isGridFull"
-              :is-editing-title="isEditingTitle"
-              :edited-title="editedTitle"
               @update:inline-palette-title="(value) => inlinePaletteTitle = value"
-              @update:edited-title="(value) => editedTitle = value"
               @title-saved="handleTitleSaved"
-              @title-edit-cancelled="() => {}"
               @inline-title-saved="handleInlineTitleSaved"
               @inline-title-cancelled="handleInlineTitleCancelled"
               @new-palette="handleNewPalette"
-              @start-title-edit="() => {}"
             />
           </div>
         </div>
@@ -629,9 +637,9 @@ onUnmounted(() => {
 
 .palette-title-input:focus {
   outline: none;
-  border-color: rgba(106, 90, 205, 0.6);
-  box-shadow: 0 0 0 4px rgba(106, 90, 205, 0.15), 0 4px 12px rgba(139, 129, 165, 0.2);
-  background: rgba(255, 255, 255, 1);
+  border-color: var(--color-accent-60);
+  box-shadow: 0 0 0 4px var(--color-accent-15), 0 4px 12px var(--border-color-primary-medium);
+  background: var(--color-white-full);
   transform: translateY(-1px);
 }
 
@@ -682,7 +690,7 @@ onUnmounted(() => {
 
 .edit-title-btn:hover {
   background: rgba(255, 255, 255, 1);
-  border-color: rgba(106, 90, 205, 0.4);
+  border-color: var(--color-accent-40);
   box-shadow: 0 2px 4px rgba(139, 129, 165, 0.2);
 }
 

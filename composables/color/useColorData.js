@@ -1,5 +1,5 @@
 import { computed } from 'vue'
-import colorsData from '../data/colors.json'
+import colorsData from '../../data/colors.json'
 
 /**
  * Composable for managing color data from the palette

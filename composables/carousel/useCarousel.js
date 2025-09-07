@@ -1,5 +1,5 @@
 import { ref, computed, watch } from 'vue'
-import { useResponsive } from './useResponsive.js'
+import { useResponsive } from '../utils/useResponsive.js'
 
 /**
  * Composable for managing carousel state and navigation

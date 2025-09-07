@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { useSound } from '../../composables/useSound.js'
+import { useSound } from '../../composables/utils/useSound.js'
 
 const props = defineProps({
   items: {

@@ -51,6 +51,13 @@
   --color-background-secondary: #f8f9fa;
   --color-background-muted: #e9ecef;
   
+  /* White Overlay Variations */
+  --color-white-overlay-strong: rgba(255, 255, 255, 0.95);
+  --color-white-overlay-medium: rgba(255, 255, 255, 0.8);
+  --color-white-overlay-light: rgba(255, 255, 255, 0.5);
+  --color-white-overlay-subtle: rgba(255, 255, 255, 0.05);
+  --color-white-full: rgba(255, 255, 255, 1);
+  
   /* Brand Colors */
   --color-purple-light: #bcb3de;
   --color-purple-medium: #8b81a5;
@@ -58,8 +65,19 @@
   
   /* Interactive Colors */
   --color-hover: rgba(0, 0, 0, 0.05);
-  --color-focus: rgba(106, 90, 205, 0.3);
-  --color-active: rgba(106, 90, 205, 0.1);
+  --color-focus: var(--theme-focus-ring);
+  --color-active: var(--theme-hover-bg);
+  
+  /* Theme-Agnostic Accent Colors */
+  --color-accent-primary: var(--theme-accent-color);
+  --color-accent-90: var(--theme-accent-90);
+  --color-accent-80: var(--theme-accent-80);
+  --color-accent-60: var(--theme-accent-60);
+  --color-accent-50: var(--theme-accent-50);
+  --color-accent-40: var(--theme-accent-40);
+  --color-accent-20: var(--theme-accent-20);
+  --color-accent-15: var(--theme-accent-15);
+  --color-accent-10: var(--theme-accent-10);
   
   /* State Colors */
   --color-success-primary: #228B22;
@@ -71,6 +89,17 @@
   --color-danger-border: rgba(220, 20, 60, 0.3);
   --color-danger-border-hover: rgba(220, 20, 60, 0.5);
   --color-danger-background: rgba(220, 20, 60, 0.1);
+  
+  /* Modal/Overlay Colors */
+  --color-modal-overlay: rgba(0, 0, 0, 0.6);
+  --color-modal-button-bg: rgba(0, 0, 0, 0.1);
+  --color-modal-button-bg-hover: rgba(0, 0, 0, 0.2);
+  
+  /* Canvas/Drawing Colors */
+  --color-canvas-background: #ffffff;
+  --color-canvas-grid: #cccccc;
+  --color-canvas-default: #f0f0f0;
+  --color-canvas-text: #333333;
   
   /* Box Shadow Variables */
   /* Button Shadows */
@@ -156,6 +185,12 @@
   --border-color-light: rgba(204, 204, 204, 1); /* #ccc */
   --border-color-medium: rgba(139, 129, 165, 0.3); /* Purple-tinted border */
   --border-color-dark: rgba(0, 0, 0, 0.1); /* Dark transparent border */
+  
+  /* Border Color Variations */
+  --border-color-primary-light: rgba(139, 129, 165, 0.1);
+  --border-color-primary-medium: rgba(139, 129, 165, 0.2);
+  --border-color-primary-strong: rgba(139, 129, 165, 0.4);
+  --border-color-primary-base: rgba(139, 129, 165, 0.3);
   
   /* Complete Border Styles */
   --border-standard: var(--border-width-thin) solid var(--border-color-light);

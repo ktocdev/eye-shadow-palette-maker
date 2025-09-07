@@ -1,8 +1,8 @@
 <script setup>
 import { computed } from 'vue'
-import { useDragDrop } from '../../composables/useDragDrop.js'
-import { useSound } from '../../composables/useSound.js'
-import { useColorEffects } from '../../composables/useColorEffects.js'
+import { useDragDrop } from '../../composables/utils/useDragDrop.js'
+import { useSound } from '../../composables/utils/useSound.js'
+import { useColorEffects } from '../../composables/color/useColorEffects.js'
 
 const props = defineProps({
   colorData: {
@@ -56,7 +56,6 @@ const onMiniSwatchDragEnd = (e) => {
   
   // If drag was not successful (dropped outside grid), remove this swatch
   if (!wasSuccessfulDrop) {
-    console.log('PaletteSwatch dragged outside grid, removing:', props.colorData.colorName)
     playCrumple() // Play paper crumple sound
     emit('clear-swatch')
   }
@@ -80,7 +79,6 @@ const onMiniSwatchTouchEnd = (e) => {
   
   // If touch ended outside grid, remove this swatch
   if (!gridCell) {
-    console.log('PaletteSwatch touch ended outside grid, removing:', props.colorData.colorName)
     playCrumple() // Play paper crumple sound
     emit('clear-swatch')
   }

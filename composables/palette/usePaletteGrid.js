@@ -1,5 +1,5 @@
 import { ref, computed, reactive } from 'vue'
-import { useEventCleanup } from './useEventCleanup.js'
+import { useEventCleanup } from '../utils/useEventCleanup.js'
 
 /**
  * Composable for managing palette grid state and operations
@@ -130,31 +130,6 @@ export function usePaletteGrid(colors) {
     return -1
   }
   
-  /**
-   * Generate random palette
-   */
-  const generateRandomPalette = () => {
-    clearGrid()
-    
-    if (!colors || !colors.value) return
-    
-    const availableColors = [...colors.value]
-    const shuffledColors = availableColors.sort(() => Math.random() - 0.5)
-    const colorsToUse = Math.min(totalCells.value, shuffledColors.length)
-    
-    for (let i = 0; i < colorsToUse; i++) {
-      const selectedColor = shuffledColors[i]
-      const colorData = {
-        colorName: selectedColor.name,
-        hexCode: selectedColor.hex,
-        bgColor: selectedColor.hex,
-        isDark: selectedColor.is_dark,
-        effect: selectedColor.effect || 'matte'
-      }
-      gridData.set(i, colorData) // Direct set without triggering for each one
-    }
-    gridDataTrigger.value++ // Single trigger at the end
-  }
   
   /**
    * Get grid data as array for export/serialization
@@ -211,7 +186,6 @@ export function usePaletteGrid(colors) {
     getOccupiedCells,
     swapOrMoveColors,
     findSourceCellIndex,
-    generateRandomPalette,
     exportGridData,
     importGridData,
     findFirstEmptyCell

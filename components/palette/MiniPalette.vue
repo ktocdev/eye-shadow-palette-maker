@@ -1,8 +1,8 @@
 <script setup>
 import { computed } from 'vue'
 import Dropdown from '../ui/Dropdown.vue'
-import { useColorEffects } from '../../composables/useColorEffects.js'
-import { useSound } from '../../composables/useSound.js'
+import { useColorEffects } from '../../composables/color/useColorEffects.js'
+import { useSound } from '../../composables/utils/useSound.js'
 
 const props = defineProps({
   paletteData: {
@@ -77,7 +77,6 @@ const tileSize = computed(() => {
 
 // Create grid array with colors placed at their indices
 const gridCells = computed(() => {
-  console.log('MiniPalette paletteData:', props.paletteData)
   
   // Safety check for gridSize
   const gridSize = props.paletteData?.gridSize || 2
@@ -91,13 +90,11 @@ const gridCells = computed(() => {
   
   // Place colors at their saved indices
   props.paletteData.colors.forEach(({ index, colorData }) => {
-    console.log('Processing color at index', index, 'colorData:', colorData)
     if (index < totalCells) {
       cells[index] = colorData
     }
   })
   
-  console.log('Final grid cells:', cells)
   return cells
 })
 

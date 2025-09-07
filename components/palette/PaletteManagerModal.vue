@@ -1,8 +1,8 @@
 <script setup>
 import { reactive, computed, watch } from 'vue'
 import Modal from '../ui/Modal.vue'
-import { usePaletteStorage } from '../../composables/usePaletteStorage.js'
-import { useColorSelection } from '../../composables/useColorSelection.js'
+import { usePaletteStorage } from '../../composables/palette/usePaletteStorage.js'
+import { useColorSelection } from '../../composables/color/useColorSelection.js'
 // Import tab components
 import SavedPalettesGrid from './SavedPalettesGrid.vue'
 import EyePreviewCanvas from '../eye/EyePreviewCanvas.vue' 
@@ -105,7 +105,6 @@ const handleLoad = (paletteId) => {
 
 const handleDelete = (paletteId) => {
   // Handle delete logic (to be implemented)
-  console.log('Delete palette:', paletteId)
 }
 
 const handleClose = (isOpen) => {

@@ -1,8 +1,9 @@
 <script setup>
 import { computed } from 'vue'
 import CarouselSwatch from './CarouselSwatch.vue'
-import { useCarousel } from '../../composables/useCarousel.js'
-import { useSound } from '../../composables/useSound.js'
+import BaseButton from '../ui/BaseButton.vue'
+import { useCarousel } from '../../composables/carousel/useCarousel.js'
+import { useSound } from '../../composables/utils/useSound.js'
 
 const props = defineProps({
   colors: {
@@ -79,14 +80,14 @@ const handleCloseClick = () => {
     <div class="carousel-container">
       <div class="carousel-left">
         <div class="carousel-info">{{ currentPage + 1 }} / {{ totalPages }}</div>
-        <button 
-          @click="handlePrevClick" 
-          class="btn carousel-arrow prev-arrow"
+        <BaseButton
+          @click="handlePrevClick"
           :disabled="!canGoPrev"
-          :class="{ disabled: !canGoPrev }"
+          variant="gray"
+          class="carousel-arrow prev-arrow"
         >
           ‹
-        </button>
+        </BaseButton>
       </div>
       
       <div class="carousel-swatches">
@@ -104,14 +105,14 @@ const handleCloseClick = () => {
         />
       </div>
       
-      <button 
-        @click="handleNextClick" 
-        class="btn carousel-arrow next-arrow"
+      <BaseButton
+        @click="handleNextClick"
         :disabled="!canGoNext"
-        :class="{ disabled: !canGoNext }"
+        variant="gray"
+        class="carousel-arrow next-arrow"
       >
         ›
-      </button>
+      </BaseButton>
     </div>
   </div>
 </template>
@@ -207,25 +208,29 @@ const handleCloseClick = () => {
 }
 
 .carousel-arrow {
-  background: var(--gradient-arrow);
-  color: var(--color-text-white);
+  background: var(--gradient-arrow) !important;
+  color: var(--color-text-white) !important;
   width: 40px;
   height: 40px;
-  border-radius: var(--radius-circle);
+  border-radius: var(--radius-circle) !important;
   font-size: var(--font-size-xl);
   flex-shrink: 0;
+  border: none !important;
+  box-shadow: var(--shadow-button) !important;
 }
 
-.carousel-arrow:hover:not(.disabled) {
-  background: var(--gradient-arrow-hover);
+.carousel-arrow:hover:not(.base-button--disabled) {
+  background: var(--gradient-arrow-hover) !important;
   transform: scale(1.05);
+  box-shadow: var(--shadow-button-hover) !important;
 }
 
-.carousel-arrow.disabled {
-  background: var(--color-background-muted);
-  color: var(--color-text-muted);
+.carousel-arrow.base-button--disabled {
+  background: var(--color-background-muted) !important;
+  color: var(--color-text-muted) !important;
   cursor: not-allowed;
   opacity: 0.5;
+  box-shadow: var(--shadow-button) !important;
 }
 
 .carousel-swatches {

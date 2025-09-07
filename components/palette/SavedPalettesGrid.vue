@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, watch } from 'vue'
 import MiniPalette from './MiniPalette.vue'
-import { usePaletteStorage } from '../../composables/usePaletteStorage.js'
+import { usePaletteStorage } from '../../composables/palette/usePaletteStorage.js'
 
 const props = defineProps({
   refreshTrigger: {

@@ -1,10 +1,10 @@
 <script setup>
 import { computed, onMounted, onUnmounted, watch } from 'vue'
 import GridCell from './GridCell.vue'
-import { usePaletteGrid } from '../../composables/usePaletteGrid.js'
-import { useEventCleanup } from '../../composables/useEventCleanup.js'
-import { useSound } from '../../composables/useSound.js'
-import { useColorSelection } from '../../composables/useColorSelection.js'
+import { usePaletteGrid } from '../../composables/palette/usePaletteGrid.js'
+import { useEventCleanup } from '../../composables/utils/useEventCleanup.js'
+import { useSound } from '../../composables/utils/useSound.js'
+import { useColorSelection } from '../../composables/color/useColorSelection.js'
 
 const props = defineProps({
   colors: {
@@ -38,7 +38,6 @@ const {
   clearGrid,
   findSourceCellIndex,
   swapOrMoveColors,
-  generateRandomPalette,
   getOccupiedCells,
   findFirstEmptyCell,
   importGridData
@@ -146,7 +145,6 @@ const gridCells = computed(() => {
 // Expose functions for parent component
 defineExpose({
   clearGrid,
-  generateRandomPalette,
   getOccupiedCells,
   importGridData,
   changeGridSize,

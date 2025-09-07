@@ -1,8 +1,8 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useDragDrop } from '../../composables/useDragDrop.js'
-import { useEventCleanup } from '../../composables/useEventCleanup.js'
-import { useColorSelection } from '../../composables/useColorSelection.js'
+import { useDragDrop } from '../../composables/utils/useDragDrop.js'
+import { useEventCleanup } from '../../composables/utils/useEventCleanup.js'
+import { useColorSelection } from '../../composables/color/useColorSelection.js'
 import PaletteSwatch from './PaletteSwatch.vue'
 
 const props = defineProps({

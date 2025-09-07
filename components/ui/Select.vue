@@ -63,7 +63,7 @@ const handleChange = (event) => {
   width: 100%;
   padding: 8px 32px 8px 12px;
   background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(139, 129, 165, 0.3);
+  border: 1px solid var(--border-color-primary-base);
   border-radius: var(--radius-sm);
   cursor: pointer;
   font-family: var(--font-family-primary);
@@ -80,8 +80,8 @@ const handleChange = (event) => {
 
 .select-input:focus {
   outline: none;
-  border-color: rgba(106, 90, 205, 0.5);
-  box-shadow: 0 0 0 3px rgba(106, 90, 205, 0.1);
+  border-color: var(--color-accent-50);
+  box-shadow: 0 0 0 3px var(--color-accent-10);
   background: rgba(255, 255, 255, 1);
 }
 

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import BaseButton from './ui/BaseButton.vue'
-import { useSound } from '../composables/useSound.js'
+import { useSound } from '../composables/utils/useSound.js'
 
 const props = defineProps({
   showInlineTitleInput: {
@@ -212,7 +212,7 @@ const handleNewPalette = () => {
   padding: 16px 20px;
   border: 2px solid rgba(139, 129, 165, 0.3);
   border-radius: var(--radius-lg);
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--color-white-overlay-strong);
   font-family: var(--font-family-heading);
   font-size: var(--font-size-lg);
   color: var(--color-text-primary);
@@ -222,9 +222,9 @@ const handleNewPalette = () => {
 
 .inline-title-input:focus {
   outline: none;
-  border-color: rgba(106, 90, 205, 0.6);
-  box-shadow: 0 0 0 4px rgba(106, 90, 205, 0.15), 0 4px 12px rgba(139, 129, 165, 0.2);
-  background: rgba(255, 255, 255, 1);
+  border-color: var(--color-accent-60);
+  box-shadow: 0 0 0 4px var(--color-accent-15), 0 4px 12px var(--border-color-primary-medium);
+  background: var(--color-white-full);
   transform: translateY(-1px);
 }
 
@@ -253,7 +253,7 @@ const handleNewPalette = () => {
   text-align: center;
   padding: 4px 8px;
   margin-top: 4px;
-  background: rgba(255, 255, 255, 0.5);
+  background: var(--color-white-overlay-light);
   border-radius: var(--radius-sm);
   border: 1px solid rgba(139, 129, 165, 0.2);
 }
@@ -306,7 +306,7 @@ const handleNewPalette = () => {
   display: flex;
   gap: 8px;
   padding: 8px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--color-white-overlay-subtle);
   border-radius: var(--radius-sm);
   border: 1px solid rgba(139, 129, 165, 0.1);
   flex: 1 1 auto;

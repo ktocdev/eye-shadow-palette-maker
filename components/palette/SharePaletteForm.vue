@@ -2,8 +2,8 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import BaseButton from '../ui/BaseButton.vue'
 import MiniPalette from './MiniPalette.vue'
-import { usePaletteExport } from '../../composables/usePaletteExport.js'
-import { usePaletteStorage } from '../../composables/usePaletteStorage.js'
+import { usePaletteExport } from '../../composables/palette/usePaletteExport.js'
+import { usePaletteStorage } from '../../composables/palette/usePaletteStorage.js'
 
 const props = defineProps({
   paletteId: {
@@ -42,7 +42,6 @@ watch(() => props.paletteId, (paletteId) => {
     const palette = findPaletteById(paletteId)
     if (palette) {
       paletteData.value = palette
-      console.log('SharePaletteForm loaded palette:', palette.title)
     } else {
       console.error('Palette not found:', paletteId)
       paletteData.value = null
@@ -318,14 +317,14 @@ const canShare = computed(() => {
 }
 
 .exporting-message {
-  background: rgba(106, 90, 205, 0.1);
-  color: rgba(106, 90, 205, 0.9);
+  background: var(--color-accent-10);
+  color: var(--color-accent-90);
   padding: 16px;
   border-radius: var(--radius-md);
   text-align: center;
   font-weight: var(--font-weight-semibold);
   margin-bottom: 16px;
-  border: 1px solid rgba(106, 90, 205, 0.2);
+  border: 1px solid var(--color-accent-20);
 }
 
 .exporting-message p {

@@ -11,7 +11,6 @@ export function usePaletteState(options = {}) {
   const loadedPaletteTitle = ref('')
   const loadedPaletteModified = ref(false)
   const hasUserInteracted = ref(false)
-  const shouldCollapseAppInfo = ref(false)
   const inlinePaletteTitle = ref('')
 
   const showInlineTitleInput = computed(() => {
@@ -24,14 +23,6 @@ export function usePaletteState(options = {}) {
     return loadedPaletteTitle.value !== '' && !loadedPaletteModified.value
   })
 
-  const showAppInfo = computed(() => {
-    // Never show app info - always show title input or loaded title instead
-    return false
-  })
-
-  const appInfoInitiallyOpen = computed(() => {
-    return !shouldCollapseAppInfo.value
-  })
 
   const canSavePalette = computed(() => {
     if (loadedPaletteTitle.value === '') {
@@ -52,14 +43,12 @@ export function usePaletteState(options = {}) {
   const loadPalette = (paletteData) => {
     loadedPaletteTitle.value = paletteData.title
     loadedPaletteModified.value = false
-    shouldCollapseAppInfo.value = true
     triggerUserInteraction()
   }
 
   const modifyPalette = () => {
     if (loadedPaletteTitle.value !== '') {
       loadedPaletteModified.value = true
-      shouldCollapseAppInfo.value = true
     }
     triggerUserInteraction()
   }
@@ -68,7 +57,6 @@ export function usePaletteState(options = {}) {
     loadedPaletteTitle.value = ''
     loadedPaletteModified.value = false
     inlinePaletteTitle.value = ''
-    shouldCollapseAppInfo.value = true
     triggerUserInteraction()
   }
 
@@ -82,14 +70,11 @@ export function usePaletteState(options = {}) {
     loadedPaletteTitle,
     loadedPaletteModified,
     hasUserInteracted,
-    shouldCollapseAppInfo,
     inlinePaletteTitle,
     
     // Computed
     showInlineTitleInput,
     showLoadedPaletteTitle,
-    showAppInfo,
-    appInfoInitiallyOpen,
     canSavePalette,
     
     // Methods

@@ -1,56 +1,11 @@
 import { ref, computed } from 'vue'
 import { useSVGLoader } from './useSVGLoader.js'
-import eyeSvgUrl from '../src/assets/espm-eye.svg'
+import eyeSvgUrl from '../../src/assets/espm-eye.svg'
 
 /**
  * Composable for managing eye drawing operations on canvas
- * Handles eye anatomy zones, drawing, and color application using SVG artwork
+ * Handles drawing and color application using SVG artwork
  */
-
-// Eye anatomy zones - these define where different eyeshadow colors can be applied
-export const EYE_ZONES = {
-  MOBILE_LID: 'mobile_lid',           // Main eyelid area
-  CREASE: 'crease',                   // Crease/transition area  
-  OUTER_V: 'outer_v',                 // Outer corner V-shape
-  INNER_CORNER: 'inner_corner',       // Inner corner highlight
-  BROW_BONE: 'brow_bone',            // Brow bone highlight
-  LOWER_LASH: 'lower_lash',          // Lower lash line
-  WATERLINE: 'waterline'              // Inner rim (optional)
-}
-
-// Zone descriptions for UI
-export const ZONE_INFO = {
-  [EYE_ZONES.MOBILE_LID]: {
-    name: 'Lid',
-    description: 'Main eyelid area - where most eyeshadow color goes',
-    color: '#E8F4FD'
-  },
-  [EYE_ZONES.CREASE]: {
-    name: 'Crease', 
-    description: 'Transition area above the lid - for depth and dimension',
-    color: '#D1E7DD'
-  },
-  [EYE_ZONES.OUTER_V]: {
-    name: 'Outer V',
-    description: 'Outer corner - for drama and eye shape definition',
-    color: '#F8D7DA'
-  },
-  [EYE_ZONES.INNER_CORNER]: {
-    name: 'Inner Corner',
-    description: 'Inner corner highlight - to brighten and open the eyes',
-    color: '#FFF3CD'
-  },
-  [EYE_ZONES.BROW_BONE]: {
-    name: 'Brow Bone',
-    description: 'Area under the brow - for highlighting and lifting',
-    color: '#E2E3E5'
-  },
-  [EYE_ZONES.LOWER_LASH]: {
-    name: 'Lower Lash',
-    description: 'Lower lash line - for definition and color coordination',
-    color: '#D4EDDA'
-  }
-}
 
 // Predefined skin tones
 export const SKIN_TONES = [
@@ -113,7 +68,6 @@ export function useEyeDrawing() {
    * @param {HTMLCanvasElement} eyeCanvas - The eye layer canvas
    */
   const initializeCanvasLayers = async (interactionCanvas, paintCanvas, eyeCanvas) => {
-    console.log('initializeCanvasLayers called')
     
     if (!interactionCanvas || !paintCanvas || !eyeCanvas) {
       console.error('One or more canvas elements are missing')
@@ -135,11 +89,9 @@ export function useEyeDrawing() {
       return false
     }
     
-    console.log('All canvas layers initialized successfully')
     
     // Draw the SVG eye on the eye layer
     const drawResult = await drawEyeLayer()
-    console.log('Eye layer drawing completed:', drawResult)
     
     // Initialize base state for undo system after a small delay
     setTimeout(() => {
@@ -160,7 +112,6 @@ export function useEyeDrawing() {
    * Legacy single canvas initialization for backward compatibility
    */
   const initializeCanvas = async (canvas) => {
-    console.log('Legacy initializeCanvas called - this should be updated to use multi-layer system')
     return initializeCanvasLayers(canvas, canvas, canvas)
   }
 
@@ -222,7 +173,6 @@ export function useEyeDrawing() {
     
     try {
       await Promise.all(cachePromises)
-      console.log('Pre-cached', EYE_COLORS.length, 'eye colors for', width, 'x', height, 'canvas')
     } catch (error) {
       console.error('Error pre-caching eye colors:', error)
     }
@@ -371,12 +321,10 @@ export function useEyeDrawing() {
     hasDrawnOnCanvas.value = true
   }
 
-
   /**
    * Clear all paint from the paint layer (erasable layer)
    */
   const clearAllColors = async () => {
-    console.log('clearAllColors called')
     const ctx = paintContext.value
     
     if (!ctx) {
@@ -384,7 +332,6 @@ export function useEyeDrawing() {
       return
     }
     
-    console.log('Clearing paint layer')
     // Clear only the paint layer - eye layer and skin tone remain intact
     const canvas = paintCanvasRef.value
     ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -392,7 +339,6 @@ export function useEyeDrawing() {
     // Reset the drawn state
     hasDrawnOnCanvas.value = false
     
-    console.log('Paint layer cleared successfully')
   }
 
   /**
@@ -409,7 +355,6 @@ export function useEyeDrawing() {
   const setSkinTone = async (color) => {
     skinTone.value = color
     // Skin tone is handled by the container background CSS
-    console.log('Skin tone updated to:', color)
   }
 
   /**
@@ -457,7 +402,6 @@ export function useEyeDrawing() {
    */
   const toggleEraser = () => {
     isErasing.value = !isErasing.value
-    console.log('Eraser mode:', isErasing.value ? 'ON' : 'OFF')
   }
 
   /**

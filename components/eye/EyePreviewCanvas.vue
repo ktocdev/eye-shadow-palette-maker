@@ -1,10 +1,10 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import BaseButton from '../ui/BaseButton.vue'
-import { useEyeDrawing, SKIN_TONES, EYE_COLORS } from '../../composables/useEyeDrawing.js'
-import { useColorSelection } from '../../composables/useColorSelection.js'
-import { usePaletteStorage } from '../../composables/usePaletteStorage.js'
-import { useResponsive } from '../../composables/useResponsive.js'
+import { useEyeDrawing, SKIN_TONES, EYE_COLORS } from '../../composables/eye/useEyeDrawing.js'
+import { useColorSelection } from '../../composables/color/useColorSelection.js'
+import { usePaletteStorage } from '../../composables/palette/usePaletteStorage.js'
+import { useResponsive } from '../../composables/utils/useResponsive.js'
 
 const props = defineProps({
   paletteId: {
@@ -78,7 +78,6 @@ const debouncedCanvasResize = async () => {
   try {
     await nextTick()
     if (eyeCanvas.value) {
-      console.log('Redrawing eye layer after canvas resize')
       drawEyeLayer()
       // Also trigger pre-caching for new canvas size
       setTimeout(() => {
@@ -118,9 +117,7 @@ watch(() => props.paletteId, (paletteId) => {
     if (palette) {
       // Extract colorData from palette.colors structure: [{ index: 0, colorData: {...} }]
       paletteColors.value = palette.colors.map(({ colorData }) => colorData) || []
-      console.log('EyePreviewCanvas loaded palette:', palette.title, 'with colors:', paletteColors.value.length)
       if (paletteColors.value.length > 0) {
-        console.log('First color example:', paletteColors.value[0])
         // Auto-select first color
         handleColorSelect(paletteColors.value[0], 0)
       }
@@ -145,12 +142,10 @@ onMounted(async () => {
   
   const tryInitialize = async () => {
     if (canvasElement.value && paintCanvas.value && eyeCanvas.value && attempts < maxAttempts) {
-      console.log('Attempting to initialize multi-layer canvas system, attempt:', attempts + 1)
       const success = await initializeCanvasLayers(canvasElement.value, paintCanvas.value, eyeCanvas.value)
       
       // Verify canvases were initialized properly
       if (success && canvasElement.value.getContext('2d')) {
-        console.log('Multi-layer canvas system initialized successfully')
         return
       }
     }
@@ -177,7 +172,6 @@ onUnmounted(() => {
   // Clear global color selection to prevent cross-contamination
   clearSelection()
   
-  console.log('EyePreviewCanvas cleanup completed')
 })
 
 // Handle canvas mouse events for drawing
@@ -286,16 +280,13 @@ const handleEyeColorSelect = async (color) => {
 const handleShare = () => {
   // Create composite canvas for sharing using current dimensions
   if (paintCanvas.value && eyeCanvas.value) {
-    console.log('Creating composite canvas for sharing')
     try {
       const composite = createCompositeCanvas(paintCanvas.value, eyeCanvas.value)
-      console.log('Composite canvas created successfully, emitting eye-share event')
       emit('eye-share', composite)
     } catch (error) {
       console.error('Error creating composite canvas:', error)
     }
   } else {
-    console.log('Canvas elements not available for sharing')
   }
 }
 </script>
@@ -740,8 +731,8 @@ const handleShare = () => {
 }
 
 .eye-preview-canvas__color-swatch--active {
-  border-color: rgba(106, 90, 205, 0.8);
-  box-shadow: 0 0 0 2px rgba(106, 90, 205, 0.2);
+  border-color: var(--color-accent-80);
+  box-shadow: 0 0 0 2px var(--color-accent-20);
 }
 
 .eye-preview-canvas__color-swatch-check {
@@ -812,15 +803,15 @@ const handleShare = () => {
 }
 
 .eye-preview-canvas__brush-btn--active {
-  background: rgba(106, 90, 205, 0.1);
-  border-color: rgba(106, 90, 205, 0.4);
-  color: rgba(106, 90, 205, 0.9);
+  background: var(--color-accent-10);
+  border-color: var(--color-accent-40);
+  color: var(--color-accent-90);
 }
 
 .eye-preview-canvas__brush-btn:hover.eye-preview-canvas__brush-btn--active {
-  background: rgba(106, 90, 205, 0.1);
-  border-color: rgba(106, 90, 205, 0.4);
-  color: rgba(106, 90, 205, 0.9);
+  background: var(--color-accent-10);
+  border-color: var(--color-accent-40);
+  color: var(--color-accent-90);
 }
 
 .eye-preview-canvas__brush-btn--tool {

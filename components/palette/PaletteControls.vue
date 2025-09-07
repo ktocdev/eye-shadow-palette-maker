@@ -1,8 +1,8 @@
 <script setup>
 import BaseButton from '../ui/BaseButton.vue'
 import Select from '../ui/Select.vue'
-import { useSound } from '../../composables/useSound.js'
-import { useTheme } from '../../composables/useTheme.js'
+import { useSound } from '../../composables/utils/useSound.js'
+import { useTheme } from '../../composables/utils/useTheme.js'
 
 const props = defineProps({
   hasSavedPalettes: {
