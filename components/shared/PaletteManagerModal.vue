@@ -214,6 +214,7 @@ const handleClose = (isOpen) => {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  position: relative;
 }
 
 /* Mobile-first responsive back button text */

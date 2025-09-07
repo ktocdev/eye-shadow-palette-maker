@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch, nextTick } from 'vue'
+import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import BaseButton from './BaseButton.vue'
 import ShareEyeDrawingForm from './ShareEyeDrawingForm.vue'
 import { useEyeDrawing, SKIN_TONES, EYE_COLORS } from '../../composables/useEyeDrawing.js'
@@ -38,6 +38,7 @@ const {
   redoLastAction,
   setSkinTone,
   setEyeColor,
+  createCompositeCanvas,
   toggleEraser,
   setEraserMode
 } = useEyeDrawing()
@@ -51,6 +52,36 @@ const eyeCanvas = ref(null)
 const activeColorIndex = ref(0)
 const paletteColors = ref([])
 const showShareForm = ref(false)
+
+// Composite canvas for sharing - combines all layers
+const shareCanvas = computed(() => {
+  console.log('shareCanvas computed - showShareForm:', showShareForm.value)
+  console.log('Canvas availability:', {
+    paintCanvas: !!paintCanvas.value,
+    eyeCanvas: !!eyeCanvas.value,
+    canvasElement: !!canvasElement.value
+  })
+  
+  if (showShareForm.value) {
+    if (paintCanvas.value && eyeCanvas.value) {
+      console.log('Creating composite canvas for sharing')
+      try {
+        const composite = createCompositeCanvas(paintCanvas.value, eyeCanvas.value)
+        console.log('Composite canvas created successfully')
+        return composite
+      } catch (error) {
+        console.error('Error creating composite canvas:', error)
+        return canvasElement.value // Fallback
+      }
+    } else {
+      console.log('Canvas elements not available, using fallback')
+      return canvasElement.value // Fallback to interaction canvas
+    }
+  }
+  
+  // When not sharing, return null so ShareEyeDrawingForm doesn't render
+  return null
+})
 
 // Color selection from palette
 const handleColorSelect = (colorData, index) => {
@@ -236,9 +267,9 @@ const handleBackToPreview = () => {
         <h3>Share Your Eye Look</h3>
       </div>
       <ShareEyeDrawingForm 
-        v-if="canvasElement"
+        v-if="shareCanvas"
         :palette-id="paletteId"
-        :canvas-ref="canvasElement"
+        :canvas-ref="shareCanvas"
       />
       <div v-else class="loading-message">
         <p>Preparing canvas...</p>
@@ -471,6 +502,42 @@ const handleBackToPreview = () => {
       </div>
     </div>
     </div>
+
+    <!-- Canvas elements - always rendered, positioned dynamically -->
+    <div class="canvas-container" :class="{ 'canvas-for-preview': !showShareForm, 'canvas-hidden': showShareForm }">
+      <div class="canvas-stack">
+        <!-- Paint layer: user's eyeshadow drawing (erasable) -->
+        <canvas
+          ref="paintCanvas"
+          class="canvas-layer paint-layer"
+          width="600"
+          height="350"
+        ></canvas>
+        
+        <!-- Eye elements layer: SVG eye components (non-erasable) -->
+        <canvas
+          ref="eyeCanvas"
+          class="canvas-layer eye-layer"
+          width="600"
+          height="350"
+        ></canvas>
+        
+        <!-- Interaction layer: captures mouse events -->
+        <canvas
+          ref="canvasElement"
+          class="canvas-layer interaction-layer"
+          width="600"
+          height="350"
+          @mousedown="handleCanvasMouseDown"
+          @mousemove="handleCanvasMouseMove"
+          @mouseup="handleCanvasMouseUp"
+          @mouseleave="handleCanvasMouseUp"
+          @touchstart="handleCanvasTouchStart"
+          @touchmove="handleCanvasTouchMove"
+          @touchend="handleCanvasTouchEnd"
+        ></canvas>
+      </div>
+    </div>
 </template>
 
 <style scoped>
@@ -578,6 +645,25 @@ const handleBackToPreview = () => {
   cursor: crosshair;
   /* This transparent layer captures mouse events */
   background: transparent;
+}
+
+/* Canvas container positioning */
+.canvas-container.canvas-for-preview {
+  /* Position inside the eye-canvas-container when in preview mode */
+  position: absolute;
+  top: 235px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+.canvas-container.canvas-hidden {
+  /* Hide when sharing but keep in DOM for composite canvas creation */
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .primary-controls-row {
