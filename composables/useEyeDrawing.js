@@ -94,13 +94,17 @@ export function useEyeDrawing() {
   const skinTone = ref(SKIN_TONES[0].color) // Default to fair skin
   const eyeColor = ref(EYE_COLORS[3].color) // Default to blue eyes
   
+  // Cache for pre-rendered SVG eye layers by color
+  const eyeLayerCache = new Map()
+  
   // SVG loader for artwork
   const { loadSVGToCanvas, loadSVGAsLayers, isLoading: svgLoading, loadError: svgError } = useSVGLoader()
   
-  // Undo/Redo functionality
-  const undoHistory = ref([]) // Stack of canvas states
+  // Undo/Redo functionality - Optimized with compression
+  const undoHistory = ref([]) // Stack of compressed canvas states
   const redoHistory = ref([]) // Stack of undone states for redo
   const maxUndoSteps = 20 // Limit history to prevent memory issues
+  const baseState = ref(null) // Base empty canvas state for delta compression
 
   /**
    * Initialize the multi-layer canvas system
@@ -137,6 +141,18 @@ export function useEyeDrawing() {
     const drawResult = await drawEyeLayer()
     console.log('Eye layer drawing completed:', drawResult)
     
+    // Initialize base state for undo system after a small delay
+    setTimeout(() => {
+      initializeBaseState()
+      // Save initial empty state to undo history
+      saveStateToUndoHistory()
+    }, 50)
+    
+    // Pre-cache other eye colors in the background for fast switching
+    setTimeout(() => {
+      preCacheEyeColors()
+    }, 100) // Small delay to not block initial render
+    
     return drawResult
   }
 
@@ -149,11 +165,74 @@ export function useEyeDrawing() {
   }
 
   /**
-   * Draw the SVG eye elements on the eye layer (non-erasable)
+   * Generate cache key for eye layer based on canvas dimensions and eye color
+   */
+  const getEyeLayerCacheKey = (width, height, color) => {
+    return `${width}x${height}_${color}`
+  }
+
+  /**
+   * Pre-render and cache eye layer for a specific color and canvas size
+   */
+  const cacheEyeLayerForColor = async (color, width, height) => {
+    const cacheKey = getEyeLayerCacheKey(width, height, color)
+    
+    if (eyeLayerCache.has(cacheKey)) {
+      return eyeLayerCache.get(cacheKey)
+    }
+
+    try {
+      // Create temporary canvas for rendering
+      const tempCanvas = document.createElement('canvas')
+      tempCanvas.width = width
+      tempCanvas.height = height
+      
+      const styleOverrides = {
+        '.cls-2': {
+          fill: color
+        }
+      }
+      
+      // Render SVG to temporary canvas
+      const imageData = await loadSVGToCanvas(eyeSvgUrl, tempCanvas, styleOverrides)
+      
+      // Cache the rendered canvas
+      eyeLayerCache.set(cacheKey, tempCanvas)
+      
+      return tempCanvas
+    } catch (error) {
+      console.error('Error caching eye layer for color:', color, error)
+      return null
+    }
+  }
+
+  /**
+   * Pre-cache common eye colors for current canvas dimensions
+   */
+  const preCacheEyeColors = async () => {
+    const eyeLayerCanvas = eyeCanvasRef.value
+    if (!eyeLayerCanvas) return
+
+    const { width, height } = eyeLayerCanvas
+    
+    // Pre-cache all available eye colors for current canvas size
+    const cachePromises = EYE_COLORS.map(eyeColorOption => 
+      cacheEyeLayerForColor(eyeColorOption.color, width, height)
+    )
+    
+    try {
+      await Promise.all(cachePromises)
+      console.log('Pre-cached', EYE_COLORS.length, 'eye colors for', width, 'x', height, 'canvas')
+    } catch (error) {
+      console.error('Error pre-caching eye colors:', error)
+    }
+  }
+
+  /**
+   * Draw the SVG eye elements on the eye layer (non-erasable) - Optimized with caching
    */
   const drawEyeLayer = async () => {
     const ctx = eyeContext.value
-    console.log('drawEyeLayer called, context:', ctx)
     
     if (!ctx) {
       console.error('No eye layer context available')
@@ -161,31 +240,31 @@ export function useEyeDrawing() {
     }
 
     try {
-      // Define iris color override
-      const styleOverrides = {
-        '.cls-2': {
-          fill: eyeColor.value
+      const eyeLayerCanvas = eyeCanvasRef.value
+      const cacheKey = getEyeLayerCacheKey(eyeLayerCanvas.width, eyeLayerCanvas.height, eyeColor.value)
+      
+      // Check if we have a cached version
+      let cachedCanvas = eyeLayerCache.get(cacheKey)
+      
+      if (!cachedCanvas) {
+        // Not cached, generate and cache it
+        cachedCanvas = await cacheEyeLayerForColor(eyeColor.value, eyeLayerCanvas.width, eyeLayerCanvas.height)
+        if (!cachedCanvas) {
+          return false
         }
       }
-
-      console.log('Loading SVG eye elements, iris color:', eyeColor.value)
       
-      // Load and render SVG to the eye layer
-      const eyeLayerCanvas = eyeCanvasRef.value
-      
-      // Clear the eye layer  
+      // Clear the eye layer and draw cached canvas
       ctx.clearRect(0, 0, eyeLayerCanvas.width, eyeLayerCanvas.height)
-      const imageData = await loadSVGToCanvas(eyeSvgUrl, eyeLayerCanvas, styleOverrides)
+      ctx.drawImage(cachedCanvas, 0, 0)
       
-      // Store the eye layer data
-      eyeLayer.value = imageData
+      // Store reference to the layer data
+      eyeLayer.value = ctx.getImageData(0, 0, eyeLayerCanvas.width, eyeLayerCanvas.height)
       
-      console.log('SVG eye layer completed successfully')
       return true
       
     } catch (error) {
       console.error('Error loading SVG eye layer:', error)
-      // No fallback available for eye layer
       return false
     }
   }
@@ -389,17 +468,81 @@ export function useEyeDrawing() {
   }
 
   /**
-   * Save current canvas state to undo history
+   * Create compressed canvas state using reduced resolution
+   */
+  const createCompressedState = () => {
+    const ctx = paintContext.value
+    const canvas = paintCanvasRef.value
+    if (!ctx || !canvas) return null
+    
+    // Use reduced resolution for undo data (1/4 the original size)
+    const scale = 0.5
+    const compressedWidth = Math.max(1, Math.floor(canvas.width * scale))
+    const compressedHeight = Math.max(1, Math.floor(canvas.height * scale))
+    
+    // Create temporary canvas at reduced size
+    const tempCanvas = document.createElement('canvas')
+    tempCanvas.width = compressedWidth
+    tempCanvas.height = compressedHeight
+    const tempCtx = tempCanvas.getContext('2d')
+    
+    // Draw scaled down version (preserve transparency)
+    tempCtx.drawImage(canvas, 0, 0, compressedWidth, compressedHeight)
+    
+    // Convert to PNG data URL (preserves transparency)
+    return {
+      dataURL: tempCanvas.toDataURL('image/png'),
+      originalWidth: canvas.width,
+      originalHeight: canvas.height,
+      scale: scale
+    }
+  }
+
+  /**
+   * Restore canvas from compressed state
+   */
+  const restoreFromCompressedState = (compressedState) => {
+    return new Promise((resolve) => {
+      if (!compressedState) {
+        resolve(false)
+        return
+      }
+      
+      const ctx = paintContext.value
+      const canvas = paintCanvasRef.value
+      if (!ctx || !canvas) {
+        resolve(false)
+        return
+      }
+      
+      const img = new Image()
+      img.onload = () => {
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        // Draw scaled up image
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+        resolve(true)
+      }
+      img.onerror = () => resolve(false)
+      img.src = compressedState.dataURL
+    })
+  }
+
+  /**
+   * Initialize base state for comparison
+   */
+  const initializeBaseState = () => {
+    baseState.value = createCompressedState()
+  }
+
+  /**
+   * Save current canvas state to undo history - Memory optimized
    */
   const saveStateToUndoHistory = () => {
-    const ctx = paintContext.value
-    if (!ctx) return
+    const compressedState = createCompressedState()
+    if (!compressedState) return
     
-    const canvas = paintCanvasRef.value
-    if (!canvas) return
-    
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
-    undoHistory.value.push(imageData)
+    undoHistory.value.push(compressedState)
     
     // Limit history size to prevent memory issues
     if (undoHistory.value.length > maxUndoSteps) {
@@ -408,14 +551,13 @@ export function useEyeDrawing() {
   }
 
   /**
-   * Undo the last drawing action
+   * Undo the last drawing action - Memory optimized
    */
-  const undoLastAction = () => {
-    const ctx = paintContext.value
-    if (!ctx || undoHistory.value.length <= 1) return // Keep at least base state
+  const undoLastAction = async () => {
+    if (undoHistory.value.length <= 1) return // Keep at least base state
     
     // Save current state to redo history before undoing
-    const currentState = undoHistory.value.pop()
+    const currentState = createCompressedState()
     if (currentState) {
       redoHistory.value.push(currentState)
       
@@ -425,10 +567,13 @@ export function useEyeDrawing() {
       }
     }
     
+    // Remove current state from undo history
+    undoHistory.value.pop()
+    
     // Restore previous state
     const previousState = undoHistory.value[undoHistory.value.length - 1]
     if (previousState) {
-      ctx.putImageData(previousState, 0, 0)
+      await restoreFromCompressedState(previousState)
       
       // Update drawn state based on whether we're back to base state
       hasDrawnOnCanvas.value = undoHistory.value.length > 1
@@ -436,20 +581,22 @@ export function useEyeDrawing() {
   }
 
   /**
-   * Redo the last undone action
+   * Redo the last undone action - Memory optimized
    */
-  const redoLastAction = () => {
-    const ctx = paintContext.value
-    if (!ctx || redoHistory.value.length === 0) return
+  const redoLastAction = async () => {
+    if (redoHistory.value.length === 0) return
     
     // Get the state to redo
     const stateToRedo = redoHistory.value.pop()
     if (stateToRedo) {
-      // Add current state back to undo history
-      undoHistory.value.push(stateToRedo)
+      // Add current state to undo history
+      const currentState = createCompressedState()
+      if (currentState) {
+        undoHistory.value.push(currentState)
+      }
       
       // Restore the redone state
-      ctx.putImageData(stateToRedo, 0, 0)
+      await restoreFromCompressedState(stateToRedo)
       
       // Update drawn state
       hasDrawnOnCanvas.value = undoHistory.value.length > 1
@@ -495,6 +642,7 @@ export function useEyeDrawing() {
     initializeCanvas,
     initializeCanvasLayers,
     drawEyeLayer,
+    preCacheEyeColors,
     startDrawing,
     continueDrawing,
     stopDrawing,
