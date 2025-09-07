@@ -2,6 +2,7 @@
 import { reactive, computed, watch } from 'vue'
 import Modal from './Modal.vue'
 import { usePaletteStorage } from '../../composables/usePaletteStorage.js'
+import { useColorSelection } from '../../composables/useColorSelection.js'
 // Import tab components
 import SavedPalettesGrid from './SavedPalettesGrid.vue'
 import EyePreviewCanvas from './EyePreviewCanvas.vue' 
@@ -27,6 +28,9 @@ const emit = defineEmits(['update:modelValue', 'load-palette'])
 // Use palette storage to get palette details
 const { findPaletteById } = usePaletteStorage()
 
+// Color selection composable to clear selection when leaving eye preview
+const { clearSelection } = useColorSelection()
+
 // Modal state
 const modalState = reactive({
   currentTab: props.initialTab || 'saved',
@@ -45,6 +49,10 @@ watch(() => [props.initialTab, props.initialPaletteId, props.modelValue], ([newT
 
 // Navigation methods
 const goBackToSaved = () => {
+  // Clear color selection when leaving eye preview
+  if (modalState.currentTab === 'preview') {
+    clearSelection()
+  }
   modalState.currentTab = 'saved'
   modalState.selectedPaletteId = null
 }
@@ -87,6 +95,10 @@ const handleDelete = (paletteId) => {
 
 const handleClose = (isOpen) => {
   if (!isOpen) {
+    // Clear color selection when closing modal (especially from eye preview)
+    if (modalState.currentTab === 'preview') {
+      clearSelection()
+    }
     // Reset state when closing
     modalState.currentTab = 'saved'
     modalState.selectedPaletteId = null
@@ -202,6 +214,7 @@ const handleClose = (isOpen) => {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  position: relative;
 }
 
 /* Mobile-first responsive back button text */

@@ -53,29 +53,29 @@
       }
     },
     "gold": {
-      "name": "Golden Sunset",
+      "name": "Amazing Grace",
       "colors": {
-        "primary": "#D2691E",
-        "primaryLight": "#F4D4A7",
-        "primaryMedium": "#E6A873",
-        "primaryDark": "#B8572B",
-        "accent": "#FF8C00",
-        "background": "#fffaf0",
-        "backgroundSecondary": "#faf0e6",
-        "backgroundMuted": "#f0c674",
+        "primary": "#A9A9A9",
+        "primaryLight": "#D3D3D3",
+        "primaryMedium": "#C0C0C0",
+        "primaryDark": "#808080",
+        "accent": "#C0C0C0",
+        "background": "#ffffff",
+        "backgroundSecondary": "#fbfbfb",
+        "backgroundMuted": "#f9f9f9",
         "surface": "#ffffff",
-        "surfaceHover": "rgba(210, 105, 30, 0.1)",
-        "border": "rgba(210, 105, 30, 0.3)",
-        "borderLight": "rgba(210, 105, 30, 0.2)",
-        "borderHover": "rgba(210, 105, 30, 0.5)",
-        "focus": "rgba(210, 105, 30, 0.3)",
-        "shadow": "rgba(210, 105, 30, 0.15)",
-        "shadowHover": "rgba(210, 105, 30, 0.2)"
+        "surfaceHover": "rgba(192, 192, 192, 0.1)",
+        "border": "rgba(192, 192, 192, 0.3)",
+        "borderLight": "rgba(192, 192, 192, 0.2)",
+        "borderHover": "rgba(169, 169, 169, 0.5)",
+        "focus": "rgba(169, 169, 169, 0.3)",
+        "shadow": "rgba(169, 169, 169, 0.15)",
+        "shadowHover": "rgba(169, 169, 169, 0.2)"
       },
       "gradients": {
-        "main": "radial-gradient(circle at 30% 20%, rgba(244, 212, 167, 0.4) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(244, 212, 167, 0.3) 0%, transparent 50%), radial-gradient(circle at 40% 90%, rgba(255, 255, 255, 0.2) 0%, transparent 40%), radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.15) 0%, transparent 30%), linear-gradient(135deg, #F4D4A7 0%, #faf0e6 50%, #fffaf0 100%)",
-        "container": "linear-gradient(145deg, #faf0e6, #f0c674)",
-        "button": "linear-gradient(135deg, rgba(210, 105, 30, 0.7), rgba(184, 87, 43, 0.8))"
+        "main": "radial-gradient(circle at 30% 20%, rgba(211, 211, 211, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(211, 211, 211, 0.2) 0%, transparent 50%), radial-gradient(circle at 40% 90%, rgba(255, 255, 255, 0.4) 0%, transparent 40%), radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.3) 0%, transparent 30%), linear-gradient(135deg, #D3D3D3 0%, #fbfbfb 50%, #ffffff 100%)",
+        "container": "linear-gradient(145deg, #ffffff, #f9f9f9)",
+        "button": "linear-gradient(135deg, rgba(192, 192, 192, 0.7), rgba(128, 128, 128, 0.8))"
       }
     },
     "darkgray": {

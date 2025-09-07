@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch, nextTick } from 'vue'
+import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import BaseButton from './BaseButton.vue'
 import ShareEyeDrawingForm from './ShareEyeDrawingForm.vue'
 import { useEyeDrawing, SKIN_TONES, EYE_COLORS } from '../../composables/useEyeDrawing.js'
@@ -22,12 +22,14 @@ const {
   selectedColor,
   brushSize,
   brushOpacity,
+  isErasing,
   hasAnyColors,
   canUndo,
   canRedo,
   skinTone,
   eyeColor,
   initializeCanvas,
+  initializeCanvasLayers,
   startDrawing,
   continueDrawing,
   stopDrawing,
@@ -35,16 +37,51 @@ const {
   undoLastAction,
   redoLastAction,
   setSkinTone,
-  setEyeColor
+  setEyeColor,
+  createCompositeCanvas,
+  toggleEraser,
+  setEraserMode
 } = useEyeDrawing()
 
 // Color selection
 const { selectedColor: globalSelectedColor, selectColor } = useColorSelection()
 
 const canvasElement = ref(null)
+const paintCanvas = ref(null)
+const eyeCanvas = ref(null)
 const activeColorIndex = ref(0)
 const paletteColors = ref([])
 const showShareForm = ref(false)
+
+// Composite canvas for sharing - combines all layers
+const shareCanvas = computed(() => {
+  console.log('shareCanvas computed - showShareForm:', showShareForm.value)
+  console.log('Canvas availability:', {
+    paintCanvas: !!paintCanvas.value,
+    eyeCanvas: !!eyeCanvas.value,
+    canvasElement: !!canvasElement.value
+  })
+  
+  if (showShareForm.value) {
+    if (paintCanvas.value && eyeCanvas.value) {
+      console.log('Creating composite canvas for sharing')
+      try {
+        const composite = createCompositeCanvas(paintCanvas.value, eyeCanvas.value)
+        console.log('Composite canvas created successfully')
+        return composite
+      } catch (error) {
+        console.error('Error creating composite canvas:', error)
+        return canvasElement.value // Fallback
+      }
+    } else {
+      console.log('Canvas elements not available, using fallback')
+      return canvasElement.value // Fallback to interaction canvas
+    }
+  }
+  
+  // When not sharing, return null so ShareEyeDrawingForm doesn't render
+  return null
+})
 
 // Color selection from palette
 const handleColorSelect = (colorData, index) => {
@@ -85,14 +122,14 @@ onMounted(async () => {
   let attempts = 0
   const maxAttempts = 10
   
-  const tryInitialize = () => {
-    if (canvasElement.value && attempts < maxAttempts) {
-      console.log('Attempting to initialize canvas, attempt:', attempts + 1)
-      initializeCanvas(canvasElement.value)
+  const tryInitialize = async () => {
+    if (canvasElement.value && paintCanvas.value && eyeCanvas.value && attempts < maxAttempts) {
+      console.log('Attempting to initialize multi-layer canvas system, attempt:', attempts + 1)
+      const success = await initializeCanvasLayers(canvasElement.value, paintCanvas.value, eyeCanvas.value)
       
-      // Verify canvas was initialized properly
-      if (canvasElement.value.getContext('2d')) {
-        console.log('Canvas initialized successfully')
+      // Verify canvases were initialized properly
+      if (success && canvasElement.value.getContext('2d')) {
+        console.log('Multi-layer canvas system initialized successfully')
         return
       }
     }
@@ -101,7 +138,7 @@ onMounted(async () => {
     if (attempts < maxAttempts) {
       setTimeout(tryInitialize, 50)
     } else {
-      console.error('Failed to initialize canvas after', maxAttempts, 'attempts')
+      console.error('Failed to initialize multi-layer canvas system after', maxAttempts, 'attempts')
     }
   }
   
@@ -201,13 +238,13 @@ const setBrushOpacity = (opacity) => {
 }
 
 // Handle skin tone selection
-const handleSkinToneSelect = (tone) => {
-  setSkinTone(tone.color)
+const handleSkinToneSelect = async (tone) => {
+  await setSkinTone(tone.color)
 }
 
 // Handle eye color selection
-const handleEyeColorSelect = (color) => {
-  setEyeColor(color.color)
+const handleEyeColorSelect = async (color) => {
+  await setEyeColor(color.color)
 }
 
 // Handle share button
@@ -230,9 +267,9 @@ const handleBackToPreview = () => {
         <h3>Share Your Eye Look</h3>
       </div>
       <ShareEyeDrawingForm 
-        v-if="canvasElement"
+        v-if="shareCanvas"
         :palette-id="paletteId"
-        :canvas-ref="canvasElement"
+        :canvas-ref="shareCanvas"
       />
       <div v-else class="loading-message">
         <p>Preparing canvas...</p>
@@ -245,18 +282,41 @@ const handleBackToPreview = () => {
       </p>
     
     <!-- Main eye preview area -->
-    <div class="eye-canvas-container">
-      <canvas
-        ref="canvasElement"
-        class="eye-canvas"
-        @mousedown="handleCanvasMouseDown"
-        @mousemove="handleCanvasMouseMove"
-        @mouseup="handleCanvasMouseUp"
-        @mouseleave="handleCanvasMouseUp"
-        @touchstart="handleCanvasTouchStart"
-        @touchmove="handleCanvasTouchMove"
-        @touchend="handleCanvasTouchEnd"
-      ></canvas>
+    <div class="eye-canvas-container" :style="{ backgroundColor: skinTone }">
+      <div class="canvas-stack">
+        <!-- Background layer: skin tone (handled by container background) -->
+        
+        <!-- Paint layer: user's eyeshadow drawing (erasable) -->
+        <canvas
+          ref="paintCanvas"
+          class="canvas-layer paint-layer"
+          width="600"
+          height="350"
+        ></canvas>
+        
+        <!-- Eye elements layer: SVG eye components (non-erasable) -->
+        <canvas
+          ref="eyeCanvas"
+          class="canvas-layer eye-layer"
+          width="600"
+          height="350"
+        ></canvas>
+        
+        <!-- Interaction layer: captures mouse events -->
+        <canvas
+          ref="canvasElement"
+          class="canvas-layer interaction-layer"
+          width="600"
+          height="350"
+          @mousedown="handleCanvasMouseDown"
+          @mousemove="handleCanvasMouseMove"
+          @mouseup="handleCanvasMouseUp"
+          @mouseleave="handleCanvasMouseUp"
+          @touchstart="handleCanvasTouchStart"
+          @touchmove="handleCanvasTouchMove"
+          @touchend="handleCanvasTouchEnd"
+        ></canvas>
+      </div>
     </div>
     
     <!-- Primary controls row -->
@@ -355,6 +415,24 @@ const handleBackToPreview = () => {
             Full
           </button>
         </div>
+        
+        <h4>Tool Mode</h4>
+        <div class="brush-buttons">
+          <button 
+            @click="setEraserMode(false)"
+            :class="{ 'active': !isErasing }"
+            class="brush-btn tool-btn"
+          >
+            🎨 Paint
+          </button>
+          <button 
+            @click="setEraserMode(true)"
+            :class="{ 'active': isErasing }"
+            class="brush-btn tool-btn eraser-btn"
+          >
+            🧽 Erase
+          </button>
+        </div>
       </div>
     </div>
     
@@ -424,6 +502,42 @@ const handleBackToPreview = () => {
       </div>
     </div>
     </div>
+
+    <!-- Canvas elements - always rendered, positioned dynamically -->
+    <div class="canvas-container" :class="{ 'canvas-for-preview': !showShareForm, 'canvas-hidden': showShareForm }">
+      <div class="canvas-stack">
+        <!-- Paint layer: user's eyeshadow drawing (erasable) -->
+        <canvas
+          ref="paintCanvas"
+          class="canvas-layer paint-layer"
+          width="600"
+          height="350"
+        ></canvas>
+        
+        <!-- Eye elements layer: SVG eye components (non-erasable) -->
+        <canvas
+          ref="eyeCanvas"
+          class="canvas-layer eye-layer"
+          width="600"
+          height="350"
+        ></canvas>
+        
+        <!-- Interaction layer: captures mouse events -->
+        <canvas
+          ref="canvasElement"
+          class="canvas-layer interaction-layer"
+          width="600"
+          height="350"
+          @mousedown="handleCanvasMouseDown"
+          @mousemove="handleCanvasMouseMove"
+          @mouseup="handleCanvasMouseUp"
+          @mouseleave="handleCanvasMouseUp"
+          @touchstart="handleCanvasTouchStart"
+          @touchmove="handleCanvasTouchMove"
+          @touchend="handleCanvasTouchEnd"
+        ></canvas>
+      </div>
+    </div>
 </template>
 
 <style scoped>
@@ -490,21 +604,66 @@ const handleBackToPreview = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(255, 255, 255, 0.9);
+  /* background color is now dynamic via :style binding */
   border: 1px solid rgba(139, 129, 165, 0.2);
   border-radius: var(--radius-md);
   padding: 20px;
   min-height: 320px;
+  transition: background-color 0.2s ease;
 }
 
-.eye-canvas {
-  width: 400px;
-  height: 300px;
+.canvas-stack {
+  position: relative;
+  width: 600px;
+  height: 350px;
   max-width: 100%;
   border: 2px solid rgba(139, 129, 165, 0.3);
   border-radius: var(--radius-sm);
+}
+
+.canvas-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 600px;
+  height: 350px;
+  max-width: 100%;
+}
+
+.paint-layer {
+  z-index: 1;
+  /* This layer will contain user's eyeshadow painting */
+}
+
+.eye-layer {
+  z-index: 2;
+  /* This layer contains SVG eye elements (non-erasable) */
+}
+
+.interaction-layer {
+  z-index: 3;
   cursor: crosshair;
-  background: white;
+  /* This transparent layer captures mouse events */
+  background: transparent;
+}
+
+/* Canvas container positioning */
+.canvas-container.canvas-for-preview {
+  /* Position inside the eye-canvas-container when in preview mode */
+  position: absolute;
+  top: 235px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+.canvas-container.canvas-hidden {
+  /* Hide when sharing but keep in DOM for composite canvas creation */
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .primary-controls-row {
@@ -710,6 +869,17 @@ const handleBackToPreview = () => {
   background: rgba(106, 90, 205, 0.1);
   border-color: rgba(106, 90, 205, 0.4);
   color: rgba(106, 90, 205, 0.9);
+}
+
+.eraser-btn.active {
+  background: rgba(255, 107, 107, 0.1);
+  border-color: rgba(255, 107, 107, 0.4);
+  color: rgba(255, 107, 107, 0.9);
+}
+
+.tool-btn {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
 }
 
 .action-buttons {
