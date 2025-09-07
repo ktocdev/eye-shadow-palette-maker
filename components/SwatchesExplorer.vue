@@ -19,7 +19,6 @@ import { usePaletteState } from '../composables/palette/usePaletteState.js'
 import { useTheme } from '../composables/utils/useTheme.js'
 import { usePaletteStorage } from '../composables/palette/usePaletteStorage.js'
 import { useSound } from '../composables/utils/useSound.js'
-import { useTitleEditing } from '../composables/palette/useTitleEditing.js'
 import { useColorSelection } from '../composables/color/useColorSelection.js'
 
 // Use composables
@@ -41,11 +40,6 @@ const { playSubtleClick } = useSound()
 // Use color selection composable
 const { clearSelection } = useColorSelection()
 
-// Use title editing composable (only for state access, not handlers)
-const {
-  isEditingTitle,
-  editedTitle
-} = useTitleEditing()
 
 // Reference to PaletteGrid component
 const paletteGridRef = ref(null)
@@ -86,10 +80,36 @@ const handleClear = () => {
   updateGridTracker()
 }
 
+const generateRandomPalette = () => {
+  // Clear the grid first
+  paletteGridRef.value?.clearGrid()
+  
+  if (!allColors.value) return
+  
+  // Get available colors and shuffle them
+  const availableColors = [...allColors.value]
+  const shuffledColors = availableColors.sort(() => Math.random() - 0.5)
+  const totalCells = currentGridSize.value * currentGridSize.value
+  const colorsToUse = Math.min(totalCells, shuffledColors.length)
+  
+  // Fill grid with random colors
+  for (let i = 0; i < colorsToUse; i++) {
+    const selectedColor = shuffledColors[i]
+    const colorData = {
+      colorName: selectedColor.name,
+      hexCode: selectedColor.hex,
+      bgColor: selectedColor.hex,
+      isDark: selectedColor.is_dark,
+      effect: selectedColor.effect || 'matte'
+    }
+    paletteGridRef.value?.setCellData(i, colorData)
+  }
+}
+
 const handleRandomize = () => {
   // Preserve the inline title before clearing
   const currentInlineTitle = inlinePaletteTitle.value
-  paletteGridRef.value?.generateRandomPalette()
+  generateRandomPalette()
   clearPalette()
   // Restore the inline title after clearing
   inlinePaletteTitle.value = currentInlineTitle
@@ -394,8 +414,6 @@ const {
   inlinePaletteTitle,
   showInlineTitleInput,
   showLoadedPaletteTitle,
-  showAppInfo,
-  appInfoInitiallyOpen,
   canSavePalette,
   triggerUserInteraction,
   loadPalette,
@@ -455,16 +473,11 @@ onUnmounted(() => {
               :loaded-palette-title="loadedPaletteTitle"
               :loaded-palette-modified="loadedPaletteModified"
               :is-grid-full="isGridFull"
-              :is-editing-title="isEditingTitle"
-              :edited-title="editedTitle"
               @update:inline-palette-title="(value) => inlinePaletteTitle = value"
-              @update:edited-title="(value) => editedTitle = value"
               @title-saved="handleTitleSaved"
-              @title-edit-cancelled="() => {}"
               @inline-title-saved="handleInlineTitleSaved"
               @inline-title-cancelled="handleInlineTitleCancelled"
               @new-palette="handleNewPalette"
-              @start-title-edit="() => {}"
             />
           </div>
         </div>

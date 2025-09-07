@@ -4,53 +4,8 @@ import eyeSvgUrl from '../../src/assets/espm-eye.svg'
 
 /**
  * Composable for managing eye drawing operations on canvas
- * Handles eye anatomy zones, drawing, and color application using SVG artwork
+ * Handles drawing and color application using SVG artwork
  */
-
-// Eye anatomy zones - these define where different eyeshadow colors can be applied
-export const EYE_ZONES = {
-  MOBILE_LID: 'mobile_lid',           // Main eyelid area
-  CREASE: 'crease',                   // Crease/transition area  
-  OUTER_V: 'outer_v',                 // Outer corner V-shape
-  INNER_CORNER: 'inner_corner',       // Inner corner highlight
-  BROW_BONE: 'brow_bone',            // Brow bone highlight
-  LOWER_LASH: 'lower_lash',          // Lower lash line
-  WATERLINE: 'waterline'              // Inner rim (optional)
-}
-
-// Zone descriptions for UI
-export const ZONE_INFO = {
-  [EYE_ZONES.MOBILE_LID]: {
-    name: 'Lid',
-    description: 'Main eyelid area - where most eyeshadow color goes',
-    color: '#E8F4FD'
-  },
-  [EYE_ZONES.CREASE]: {
-    name: 'Crease', 
-    description: 'Transition area above the lid - for depth and dimension',
-    color: '#D1E7DD'
-  },
-  [EYE_ZONES.OUTER_V]: {
-    name: 'Outer V',
-    description: 'Outer corner - for drama and eye shape definition',
-    color: '#F8D7DA'
-  },
-  [EYE_ZONES.INNER_CORNER]: {
-    name: 'Inner Corner',
-    description: 'Inner corner highlight - to brighten and open the eyes',
-    color: '#FFF3CD'
-  },
-  [EYE_ZONES.BROW_BONE]: {
-    name: 'Brow Bone',
-    description: 'Area under the brow - for highlighting and lifting',
-    color: '#E2E3E5'
-  },
-  [EYE_ZONES.LOWER_LASH]: {
-    name: 'Lower Lash',
-    description: 'Lower lash line - for definition and color coordination',
-    color: '#D4EDDA'
-  }
-}
 
 // Predefined skin tones
 export const SKIN_TONES = [
@@ -365,7 +320,6 @@ export function useEyeDrawing() {
     // Mark that we've drawn on the canvas
     hasDrawnOnCanvas.value = true
   }
-
 
   /**
    * Clear all paint from the paint layer (erasable layer)

@@ -38,7 +38,6 @@ const {
   clearGrid,
   findSourceCellIndex,
   swapOrMoveColors,
-  generateRandomPalette,
   getOccupiedCells,
   findFirstEmptyCell,
   importGridData
@@ -146,7 +145,6 @@ const gridCells = computed(() => {
 // Expose functions for parent component
 defineExpose({
   clearGrid,
-  generateRandomPalette,
   getOccupiedCells,
   importGridData,
   changeGridSize,
