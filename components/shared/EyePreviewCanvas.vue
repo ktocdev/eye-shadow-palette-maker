@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, watch, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import BaseButton from './BaseButton.vue'
 import { useEyeDrawing, SKIN_TONES, EYE_COLORS } from '../../composables/useEyeDrawing.js'
 import { useColorSelection } from '../../composables/useColorSelection.js'
@@ -33,6 +33,7 @@ const {
   initializeCanvas,
   initializeCanvasLayers,
   drawEyeLayer,
+  preCacheEyeColors,
   startDrawing,
   continueDrawing,
   stopDrawing,
@@ -47,7 +48,7 @@ const {
 } = useEyeDrawing()
 
 // Color selection
-const { selectedColor: globalSelectedColor, selectColor } = useColorSelection()
+const { selectedColor: globalSelectedColor, selectColor, clearSelection } = useColorSelection()
 
 const canvasElement = ref(null)
 const paintCanvas = ref(null)
@@ -71,20 +72,36 @@ const canvasHeight = computed(() => {
   return 350 // desktop
 })
 
-// Watch for canvas size changes and redraw content
-watch([canvasWidth, canvasHeight], async () => {
+// Debounced resize handler to prevent multiple rapid redraws
+let resizeDebounceTimer = null
+const debouncedCanvasResize = async () => {
   try {
     await nextTick()
-    // Small delay to ensure canvas dimensions are fully updated
-    setTimeout(() => {
-      if (eyeCanvas.value) {
-        console.log('Redrawing eye layer after canvas resize')
-        drawEyeLayer()
-      }
-    }, 100)
+    if (eyeCanvas.value) {
+      console.log('Redrawing eye layer after canvas resize')
+      drawEyeLayer()
+      // Also trigger pre-caching for new canvas size
+      setTimeout(() => {
+        preCacheEyeColors()
+      }, 200)
+    }
   } catch (error) {
     console.error('Error during canvas resize:', error)
   }
+}
+
+// Watch for canvas size changes with debouncing
+watch([canvasWidth, canvasHeight], () => {
+  // Clear any existing timer
+  if (resizeDebounceTimer) {
+    clearTimeout(resizeDebounceTimer)
+  }
+  
+  // Set new timer - only execute after resize has stopped for 150ms
+  resizeDebounceTimer = setTimeout(() => {
+    debouncedCanvasResize()
+    resizeDebounceTimer = null
+  }, 150)
 })
 
 // Color selection from palette
@@ -147,6 +164,20 @@ onMounted(async () => {
   }
   
   tryInitialize()
+})
+
+// Cleanup on component unmount
+onUnmounted(() => {
+  // Clear resize timer
+  if (resizeDebounceTimer) {
+    clearTimeout(resizeDebounceTimer)
+    resizeDebounceTimer = null
+  }
+  
+  // Clear global color selection to prevent cross-contamination
+  clearSelection()
+  
+  console.log('EyePreviewCanvas cleanup completed')
 })
 
 // Handle canvas mouse events for drawing

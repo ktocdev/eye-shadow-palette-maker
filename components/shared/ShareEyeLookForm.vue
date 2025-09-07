@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import BaseButton from './BaseButton.vue'
 import { useEyeDrawingExport } from '../../composables/useEyeDrawingExport.js'
 import { usePaletteStorage } from '../../composables/usePaletteStorage.js'
@@ -26,7 +26,8 @@ const {
   exportEyeDrawingAsJPG, 
   copyEyeDrawingToClipboard, 
   shareEyeDrawingViaWebAPI,
-  getEyeDrawingShareCapabilities 
+  getEyeDrawingShareCapabilities,
+  clearExportCache
 } = useEyeDrawingExport()
 
 const shareCapabilities = ref({})
@@ -193,6 +194,13 @@ const hasValidData = computed(() => {
 
 const canShare = computed(() => {
   return hasValidData.value && !isExporting.value
+})
+
+// Cleanup on component unmount
+onUnmounted(() => {
+  // Clear export cache to free memory
+  clearExportCache()
+  console.log('ShareEyeLookForm cleanup completed')
 })
 </script>
 
