@@ -170,11 +170,11 @@ export function useEyeDrawing() {
 
       console.log('Loading SVG eye elements, iris color:', eyeColor.value)
       
-      // Clear the eye layer
-      ctx.clearRect(0, 0, 600, 350)
-      
       // Load and render SVG to the eye layer
       const eyeLayerCanvas = eyeCanvasRef.value
+      
+      // Clear the eye layer  
+      ctx.clearRect(0, 0, eyeLayerCanvas.width, eyeLayerCanvas.height)
       const imageData = await loadSVGToCanvas(eyeSvgUrl, eyeLayerCanvas, styleOverrides)
       
       // Store the eye layer data
@@ -307,7 +307,8 @@ export function useEyeDrawing() {
     
     console.log('Clearing paint layer')
     // Clear only the paint layer - eye layer and skin tone remain intact
-    ctx.clearRect(0, 0, 600, 350)
+    const canvas = paintCanvasRef.value
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
     
     // Reset the drawn state
     hasDrawnOnCanvas.value = false
@@ -349,15 +350,15 @@ export function useEyeDrawing() {
    * @returns {HTMLCanvasElement} Composite canvas with all layers combined
    */
   const createCompositeCanvas = (paintCanvasEl, eyeCanvasEl) => {
-    // Create output canvas
+    // Create output canvas with same dimensions as paint canvas
     const composite = document.createElement('canvas')
-    composite.width = 600
-    composite.height = 350
+    composite.width = paintCanvasEl.width
+    composite.height = paintCanvasEl.height
     const ctx = composite.getContext('2d')
 
     // 1. Fill with skin tone background
     ctx.fillStyle = skinTone.value
-    ctx.fillRect(0, 0, 600, 350)
+    ctx.fillRect(0, 0, composite.width, composite.height)
 
     // 2. Draw paint layer (user's eyeshadow)
     if (paintCanvasEl) {
@@ -394,7 +395,10 @@ export function useEyeDrawing() {
     const ctx = paintContext.value
     if (!ctx) return
     
-    const imageData = ctx.getImageData(0, 0, 600, 350)
+    const canvas = paintCanvasRef.value
+    if (!canvas) return
+    
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
     undoHistory.value.push(imageData)
     
     // Limit history size to prevent memory issues
