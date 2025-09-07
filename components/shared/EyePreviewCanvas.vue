@@ -4,6 +4,7 @@ import BaseButton from './BaseButton.vue'
 import { useEyeDrawing, SKIN_TONES, EYE_COLORS } from '../../composables/useEyeDrawing.js'
 import { useColorSelection } from '../../composables/useColorSelection.js'
 import { usePaletteStorage } from '../../composables/usePaletteStorage.js'
+import { useResponsive } from '../../composables/useResponsive.js'
 
 const props = defineProps({
   paletteId: {
@@ -31,6 +32,7 @@ const {
   eyeColor,
   initializeCanvas,
   initializeCanvasLayers,
+  drawEyeLayer,
   startDrawing,
   continueDrawing,
   stopDrawing,
@@ -52,6 +54,38 @@ const paintCanvas = ref(null)
 const eyeCanvas = ref(null)
 const activeColorIndex = ref(0)
 const paletteColors = ref([])
+
+// Responsive screen size detection
+const { isMobile, isTablet, isDesktop } = useResponsive()
+
+// Reactive canvas dimensions based on screen size
+const canvasWidth = computed(() => {
+  if (isMobile()) return 300  // 400 * 0.75 = 300
+  if (isTablet()) return 375  // 500 * 0.75 = 375
+  return 600 // desktop
+})
+
+const canvasHeight = computed(() => {
+  if (isMobile()) return 175  // 234 * 0.75 ≈ 175
+  if (isTablet()) return 219  // 292 * 0.75 ≈ 219
+  return 350 // desktop
+})
+
+// Watch for canvas size changes and redraw content
+watch([canvasWidth, canvasHeight], async () => {
+  try {
+    await nextTick()
+    // Small delay to ensure canvas dimensions are fully updated
+    setTimeout(() => {
+      if (eyeCanvas.value) {
+        console.log('Redrawing eye layer after canvas resize')
+        drawEyeLayer()
+      }
+    }, 100)
+  } catch (error) {
+    console.error('Error during canvas resize:', error)
+  }
+})
 
 // Color selection from palette
 const handleColorSelect = (colorData, index) => {
@@ -219,7 +253,7 @@ const handleEyeColorSelect = async (color) => {
 
 // Handle share button
 const handleShare = () => {
-  // Create composite canvas for sharing
+  // Create composite canvas for sharing using current dimensions
   if (paintCanvas.value && eyeCanvas.value) {
     console.log('Creating composite canvas for sharing')
     try {
@@ -247,24 +281,24 @@ const handleShare = () => {
           <canvas
             ref="paintCanvas"
             class="eye-preview-canvas__canvas-layer eye-preview-canvas__canvas-layer--paint"
-            width="600"
-            height="350"
+            :width="canvasWidth"
+            :height="canvasHeight"
           ></canvas>
           
           <!-- Eye elements layer: SVG eye components (non-erasable) -->
           <canvas
             ref="eyeCanvas"
             class="eye-preview-canvas__canvas-layer eye-preview-canvas__canvas-layer--eye"
-            width="600"
-            height="350"
+            :width="canvasWidth"
+            :height="canvasHeight"
           ></canvas>
           
           <!-- Interaction layer: captures mouse events -->
           <canvas
             ref="canvasElement"
             class="eye-preview-canvas__canvas-layer eye-preview-canvas__canvas-layer--interaction"
-            width="600"
-            height="350"
+            :width="canvasWidth"
+            :height="canvasHeight"
             @mousedown="handleCanvasMouseDown"
             @mousemove="handleCanvasMouseMove"
             @mouseup="handleCanvasMouseUp"
@@ -500,40 +534,40 @@ const handleShare = () => {
   border: 1px solid rgba(139, 129, 165, 0.2);
   border-radius: var(--radius-md);
   padding: 12px;
-  min-height: 200px;
+  min-height: 199px;
   transition: background-color 0.2s ease;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 481px) {
   .eye-preview-canvas__canvas-container {
-    min-height: 280px;
+    min-height: 251px;
     padding: 16px;
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 973px) {
   .eye-preview-canvas__canvas-container {
     padding: 20px;
-    min-height: 320px;
+    min-height: 390px;
   }
 }
 
 .eye-preview-canvas__canvas-stack {
   position: relative;
   width: 100%;
-  max-width: 400px;
-  height: 240px;
+  max-width: 300px;
+  height: 175px;
   border-radius: var(--radius-sm);
 }
 
 @media (min-width: 480px) {
   .eye-preview-canvas__canvas-stack {
-    max-width: 500px;
-    height: 300px;
+    max-width: 375px;
+    height: 219px;
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 973px) {
   .eye-preview-canvas__canvas-stack {
     width: 600px;
     height: 350px;
@@ -747,6 +781,12 @@ const handleShare = () => {
 }
 
 .eye-preview-canvas__brush-btn--active {
+  background: rgba(106, 90, 205, 0.1);
+  border-color: rgba(106, 90, 205, 0.4);
+  color: rgba(106, 90, 205, 0.9);
+}
+
+.eye-preview-canvas__brush-btn:hover.eye-preview-canvas__brush-btn--active {
   background: rgba(106, 90, 205, 0.1);
   border-color: rgba(106, 90, 205, 0.4);
   color: rgba(106, 90, 205, 0.9);

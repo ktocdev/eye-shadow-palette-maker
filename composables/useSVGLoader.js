@@ -69,14 +69,27 @@ export function useSVGLoader() {
             // Clear canvas to transparent
             ctx.clearRect(0, 0, width, height)
             
-            // Center the SVG horizontally and position it in taller canvas
-            // SVG original aspect ratio: ~1.28:1, so for 300px height, width would be ~384px
-            // Center it in 600px width: (600 - 384) / 2 = 108px offset
-            // Keep SVG at original size (300px height) and position at top
-            const svgWidth = 384 // Approximate scaled width to maintain aspect ratio
-            const svgHeight = 300 // Keep original height, extra 50px below for lower eyeshadow
+            // Dynamic SVG scaling based on canvas size
+            // SVG original aspect ratio: ~1.28:1 (width:height)
+            const svgAspectRatio = 384 / 300 // Original proportions
+            
+            // Scale SVG to fit canvas while maintaining aspect ratio
+            // Use 85% of canvas height to leave space below for lower eyeshadow
+            const maxSvgHeight = height * 0.85
+            const maxSvgWidth = width * 0.95 // Use most of canvas width
+            
+            // Calculate dimensions maintaining aspect ratio
+            let svgHeight = maxSvgHeight
+            let svgWidth = svgHeight * svgAspectRatio
+            
+            // If width exceeds canvas, scale down by width instead
+            if (svgWidth > maxSvgWidth) {
+              svgWidth = maxSvgWidth
+              svgHeight = svgWidth / svgAspectRatio
+            }
+            
             const offsetX = (width - svgWidth) / 2
-            const offsetY = 0 // Position at top, giving space below for lower lash drawing
+            const offsetY = 0 // Position at top
             
             // Draw SVG to canvas with scaling and centering
             ctx.drawImage(img, offsetX, offsetY, svgWidth, svgHeight)
